@@ -58,6 +58,8 @@ struct ContentView: View {
                     .ignoresSafeArea()
                 SecondPlayerView()
                     .ignoresSafeArea()
+                
+               
 
                 VStack {
                     // "What would you like to focus on?" Text
@@ -73,7 +75,7 @@ struct ContentView: View {
 
                     // Navigation Buttons
                     VStack(spacing: 20) {
-                        NavigationLink(destination: MeditationView()) {
+                        NavigationLink(destination: MeditationIntroView()) {
                             Text("Meditation")
                                 .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
                                 .frame(maxWidth: .infinity)

@@ -153,9 +153,12 @@ struct ContentView: View {
                  
                 }
                 .navigationBarHidden(true)
+                .navigationTransition(
+                    .fade(.in).animation(.easeInOut(duration: 2)))
             }
              // Hide the navigation bar on this screen
             .navigationBarHidden(true)
+            
         }
         .navigationBarHidden(true)
     }

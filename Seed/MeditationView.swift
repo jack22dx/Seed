@@ -15,9 +15,9 @@ struct MeditationView: View {
                 
                 // Top image section with circular gradient background
                 ZStack {
-                    RadialGradient(gradient: Gradient(colors: [Color.white.opacity(0.5), lightblue]), center: .center, startRadius: 20, endRadius: 125)
-                        .frame(width: 250, height: 250)
-                        .clipShape(Circle())
+                    Circle() // White circle with 70% opacity
+                                           .fill(Color.white.opacity(0.4))
+                                           .frame(width: 250, height: 250)
                     
                     Image("treeseed") // Replace with the name of your image asset
                         .resizable()
@@ -54,7 +54,7 @@ struct MeditationView: View {
                     RoundedRectangle(cornerRadius: 40) // Use a rounded rectangle for the button background
                                             .fill(lightblue)
                                             .frame(width: 120, height: 50) // Adjust rectangle size as needed
-                                            .shadow(radius: 5)
+                                            .shadow(radius: 2)
 
                     Button(action: {
                         print("Start tapped")

@@ -39,7 +39,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
-				View/Untitled.swift,
 			);
 			target = 049BE70B2CD9658300624DB8 /* Seed */;
 		};

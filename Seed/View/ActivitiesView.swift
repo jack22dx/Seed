@@ -151,7 +151,7 @@ struct ActivitiesView: View {
     }
     
     private func createActivityCard(title: String, progress: Int, colors: [Color], completed: [Bool]) -> some View {
-        ActivityCard(
+        ActivityCardView(
             title: title,
             progress: progress,
             colors: colors,

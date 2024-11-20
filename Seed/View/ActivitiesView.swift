@@ -193,10 +193,10 @@ struct ActivitiesView: View {
                 .padding()
         }
     }
-}
-
-struct ActivitiesView_Previews: PreviewProvider {
-    static var previews: some View {
-        ActivitiesView()
+    struct ActivitiesView_Previews: PreviewProvider {
+        static var previews: some View {
+            ActivitiesView()
+            
+        }
     }
 }

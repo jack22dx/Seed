@@ -24,9 +24,9 @@ struct SeedApp: App {
     let persistenceController = PersistenceController.shared
     var body: some Scene {
         WindowGroup {
-            //WelcomeView()
+            WelcomeView()
             //.environment(\.managedObjectContext, persistenceController.container.viewContext)
-            ActivitiesView()
+//            ActivitiesView()
                 .environment(\.modelContext, container.mainContext)
         }
         .modelContainer(for: [LessonInfor.self]) // Configure data model / 配置数据模型

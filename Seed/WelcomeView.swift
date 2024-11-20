@@ -134,7 +134,7 @@ struct WelcomeView: View {
 
                     HStack {
                         // Skip Button
-                        NavigationLink(destination: ContentView()) {
+                        NavigationLink(destination: NameView()) {
                             Text("Skip")
                                 .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
                                 .foregroundColor(.white)
@@ -164,7 +164,7 @@ struct WelcomeView: View {
                             }
                             .padding(.trailing, 50)
                         } else {
-                            NavigationLink(destination: ContentView()) {
+                            NavigationLink(destination: NameView()) {
                                 ZStack {
                                     Circle()
                                         .fill(LinearGradient(

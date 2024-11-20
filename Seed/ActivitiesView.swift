@@ -2,6 +2,9 @@ import SwiftUI
 import NavigationTransitions
 
 struct ActivitiesView: View {
+    @State private var navigateToVirtualForest = false
+    @State private var navigateToProgressTracker = false
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -31,8 +34,7 @@ struct ActivitiesView: View {
                                 days: ["M", "T", "W", "T", "F", "S", "S"],
                                 completed: [true, false, false, false, false, false, false]
                             )
-                            .padding(.trailing, 20)
-                            .padding(.leading, 20)
+                            .padding(.horizontal, 20)
                         }
                         .buttonStyle(PlainButtonStyle()) // Remove default button style
                         
@@ -44,8 +46,7 @@ struct ActivitiesView: View {
                             days: ["M", "T", "W", "T", "F", "S", "S"],
                             completed: [true, true, true, false, false, false, false]
                         )
-                        .padding(.trailing, 20)
-                        .padding(.leading, 20)
+                        .padding(.horizontal, 20)
                         
                         // Digital Detox Card
                         ActivityCard(
@@ -55,19 +56,29 @@ struct ActivitiesView: View {
                             days: ["M", "T", "W", "T", "F", "S", "S"],
                             completed: [true, true, false, false, false, false, false]
                         )
-                        .padding(.trailing, 20)
-                        .padding(.leading, 20)
+                        .padding(.horizontal, 20)
                     }
                     
                     Spacer()
                     
                     // Bottom Navigation
                     HStack {
-                        Image(systemName: "leaf.circle")
-                            .resizable()
-                            .frame(width: 50, height: 50)
-                            .foregroundColor(.green)
-                            .padding()
+                        // Leaf Button - Navigate to VirtualForestView
+                        NavigationLink(
+                            destination: VirtualGardenView()
+                                .navigationBarHidden(true), // Replace with your actual VirtualForestView
+                            isActive: $navigateToVirtualForest
+                        ) {
+                            Button(action: {
+                                navigateToVirtualForest = true
+                            }) {
+                                Image(systemName: "leaf.circle")
+                                    .resizable()
+                                    .frame(width: 50, height: 50)
+                                    .foregroundColor(.green)
+                                    .padding()
+                            }
+                        }
                         
                         Spacer()
                         
@@ -86,19 +97,35 @@ struct ActivitiesView: View {
                         
                         Spacer()
                         
-                        Image(systemName: "circle")
-                            .resizable()
-                            .frame(width: 50, height: 50)
-                            .foregroundColor(.gray)
-                            .padding()
+                        // Pink Button - Navigate to ProgressTrackerView
+                        NavigationLink(
+                            destination: WeeklySummaryView()
+                                .navigationBarHidden(true), // Replace with your actual ProgressTrackerView
+                            isActive: $navigateToProgressTracker
+                        ) {
+                            Button(action: {
+                                navigateToProgressTracker = true
+                            }) {
+                                Circle()
+                                    .fill(Color.pink)
+                                    .frame(width: 50, height: 50)
+                                    .overlay(
+                                        Image(systemName: "chart.bar.fill")
+                                            .foregroundColor(.white)
+                                            .font(.system(size: 25))
+                                    )
+                            }
+                        }
                     }
                     .padding(.horizontal, 30)
                 }
                 .padding(.top, 40)
             }
         }
+        .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 2.0)))
     }
 }
+
 
 struct ActivityCard: View {
     var title: String

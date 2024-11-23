@@ -8,10 +8,13 @@ struct MeditationIntroView: View {
     @State private var outerCircleScale: CGFloat = 1.0
     @State private var innerCircleScale: CGFloat = 1.0
     
-    private let fullText = "To unlock your first seed, I will be guiding you through your first meditation practice."
+    @AppStorage("userName") private var userName: String = "Friend" // Persistent storage for the user's name
+    
+    private var fullText: String {
+        return "To unlock your first seed, I will be guiding you through your first meditation practice."
+    }
 
     var body: some View {
-        
         let lightpink = Color(hue: 0.89, saturation: 0.4, brightness: 1, opacity: 1.0)
         
         NavigationStack {
@@ -48,7 +51,7 @@ struct MeditationIntroView: View {
                     Spacer()
                     
                     if showWelcome {
-                        Text("Welcome.")
+                        Text("Welcome, \(userName).")
                             .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 30))
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
@@ -80,16 +83,10 @@ struct MeditationIntroView: View {
                     }
                     Spacer()
                 }
-                
-                // Invisible NavigationLink to trigger fade transition to MeditationView
-                NavigationLink(
-                    destination: MeditationView()
-                        .navigationBarHidden(true),
-                    isActive: $isComplete
-                ) {
-                    EmptyView()
+                .navigationDestination(isPresented: $isComplete) {
+                    DidYouKnowView() // Updated for iOS 16+ NavigationLink
+                        .navigationBarHidden(true)
                 }
-                .hidden()
             }
             .background(Color.black.opacity(0.7).ignoresSafeArea())
         }

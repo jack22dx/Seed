@@ -6,6 +6,7 @@
 	<array>
 		<string>Fontspring-DEMO-visbycf-medium.otf</string>
 		<string>Fontspring-DEMO-visbycf-demibold.otf</string>
+		<string>VisbySemibold.otf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array/>

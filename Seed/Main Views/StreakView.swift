@@ -25,7 +25,7 @@ struct StreakView: View {
                 VStack(spacing: 30) {
                     // Title
                     Text("Crimson Oak Tree")
-                        .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 30))
+                        .font(Font.custom("Visby", size: 30))
                         .foregroundColor(.white)
                         .shadow(radius: 5)
                     
@@ -45,10 +45,11 @@ struct StreakView: View {
                     
                     // Congratulatory Text
                     Text("Well Done! You have unlocked your first seed.")
-                        .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 24))
+                        .font(Font.custom("Visby", size: 24))
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
                         .shadow(radius: 5)
+                        .lineSpacing(10) 
                         .padding(.bottom, 30)
                     
                     // Weekly Streak Section
@@ -66,7 +67,7 @@ struct StreakView: View {
                                         )
                                     
                                     Text(day)
-                                        .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 14))
+                                        .font(Font.custom("Visby", size: 14))
                                         .foregroundColor(.white)
                                 }
                             }
@@ -75,7 +76,7 @@ struct StreakView: View {
                         .padding(.horizontal, 20) // Ensure extra padding for the edges
                         
                         Text("Weekly streak")
-                            .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                            .font(Font.custom("Visby", size: 18))
                             .foregroundColor(.white)
                             .shadow(radius: 5)
                             .padding(.top, 10)
@@ -89,7 +90,7 @@ struct StreakView: View {
                             navigateToMeditations = true
                         }) {
                             Text("Meditations")
-                                .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                                .font(Font.custom("Visby", size: 18))
                                 .padding()
                                 .frame(minWidth: 150)
                                 .background(buttonColors[0])
@@ -105,7 +106,7 @@ struct StreakView: View {
                             navigateToGarden = true
                         }) {
                             Text("My Garden")
-                                .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                                .font(Font.custom("Visby", size: 18))
                                 .padding()
                                 .frame(minWidth: 150)
                                 .background(buttonColors[1])
@@ -114,7 +115,7 @@ struct StreakView: View {
                                 .shadow(radius: 5)
                         }
                         .background(
-                            NavigationLink("", destination: MyGardenView().navigationBarHidden(true), isActive: $navigateToGarden)
+                            NavigationLink("", destination: VirtualGardenView().navigationBarHidden(true), isActive: $navigateToGarden)
                         )
                     }
                 }

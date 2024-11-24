@@ -63,7 +63,7 @@ struct DidYouKnowView: View {
 
                     // "Did you know?" title text with fade-in animation
                     Text(titleText)
-                        .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 30))
+                        .font(Font.custom("Visby", size: 30))
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
@@ -85,9 +85,10 @@ struct DidYouKnowView: View {
                         .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 22))
                         .foregroundColor(.white.opacity(0.9))
                         .multilineTextAlignment(.center)
-                        .frame(width: UIScreen.main.bounds.width * 0.8, height: 180) // Fixed height
+                        .frame(width: UIScreen.main.bounds.width * 0.8, height: 300, alignment: .top) // Fixed height
                         .padding(.horizontal, 50)
                         .shadow(radius: 5)
+                        .padding(.top,30)
 
                     Spacer()
 

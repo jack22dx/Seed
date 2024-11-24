@@ -78,7 +78,7 @@ struct MeditationIntroView: View {
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                             .padding()
-                            .frame(width: UIScreen.main.bounds.width * 0.9, height: UIScreen.main.bounds.height * 0.4)
+                            .frame(width: UIScreen.main.bounds.width * 0.9, height: 300, alignment: .top)
                             .opacity(displayedText.isEmpty ? 0 : 1)
                     }
                     Spacer()

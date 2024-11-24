@@ -1,6 +1,10 @@
 import SwiftUI
 
 struct WeeklySummaryView: View {
+    @State private var navigateToGardenView = false
+    @State private var navigateToActivitiesView = false
+    @State private var navigateToSummaryView = false
+
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
@@ -9,100 +13,70 @@ struct WeeklySummaryView: View {
                     PlayerView()
                         .ignoresSafeArea()
 
-                    VStack(spacing: geometry.size.height * 0.05) { // Increased spacing for better separation
+                    VStack {
                         // Header
                         Text("This Week’s Summary")
-                            .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 30))
+                            .font(Font.custom("Visby", size: 30))
                             .foregroundColor(.white)
                             .shadow(radius: 5)
                             .padding(.top, geometry.size.height * 0.03)
+                            .padding(.bottom,50)
 
-                        // Meditation Summary Card
-                        DynamicCard(
-                            title: "Meditation",
-                            description: "You meditated for a total of 25 minutes. Well done on reaching Level 3!",
-                            cardColor: Color.cyan,
-                            tipsDestination: MeditationTipsView(),
-                            geometry: geometry,
-                            hasExclamation: true // Add exclamation
-                        )
-                        .frame(height: geometry.size.height * 0.18)
+                        // Summary Cards
+                        VStack(spacing: geometry.size.height * 0.05) {
+                            DynamicCard(
+                                title: "Meditation",
+                                description: "You meditated for a total of 25 minutes. Well done on reaching Level 3!",
+                                cardColor: Color.cyan,
+                                tipsDestination: MeditationTipsView(),
+                                geometry: geometry,
+                                hasExclamation: true
+                            )
+                            .frame(height: geometry.size.height * 0.18)
+                            .padding(.horizontal, geometry.size.width * 0.05)
+                            .lineSpacing(10)
 
-                        // Mood Tracker Card
-                        DynamicMoodCard(
-                            title: "Mood Tracker",
-                            description: "Last 7 days Mood Tracker: Reflect on your moods",
-                            moods: ["😃", "🙂", "😐", "😐", "🙂", "😔", "😔"], // All 7 emojis
-                            cardColor: Color.red.opacity(0.6),
-                            tipsDestination: MoodTipsView(),
-                            geometry: geometry
-                        )
-                        .frame(height: geometry.size.height * 0.22)
+                            DynamicMoodCard(
+                                title: "Mood Tracker",
+                                description: "Last 7 days Mood Tracker: Reflect on your moods",
+                                moods: ["😃", "🙂", "😐", "😐", "🙂", "😔", "😔"],
+                                cardColor: Color.red.opacity(0.6),
+                                tipsDestination: MoodTipsView(),
+                                geometry: geometry
+                            )
+                            .frame(height: geometry.size.height * 0.22)
+                            .padding(.horizontal, geometry.size.width * 0.05)
+                            .lineSpacing(10)
 
-                        // Digital Detox Summary Card
-                        DynamicCard(
-                            title: "Digital Detox",
-                            description: "You detoxed for a total of 2 hours 15 minutes so far. Good job!",
-                            cardColor: Color.orange.opacity(0.7),
-                            tipsDestination: DetoxTipsView(),
-                            geometry: geometry,
-                            hasExclamation: true // Add exclamation
-                        )
-                        .frame(height: geometry.size.height * 0.18)
+                            DynamicCard(
+                                title: "Digital Detox",
+                                description: "You detoxed for a total of 2 hours 15 minutes so far. Good job!",
+                                cardColor: Color.orange.opacity(0.7),
+                                tipsDestination: DetoxTipsView(),
+                                geometry: geometry,
+                                hasExclamation: true
+                            )
+                            .frame(height: geometry.size.height * 0.18)
+                            .padding(.horizontal, geometry.size.width * 0.05)
+                            .lineSpacing(10)
+                        }
 
-                        Spacer() // Push cards upwards to avoid overlap with bottom buttons
+                        Spacer()
 
                         // Bottom Navigation Bar
-                        HStack {
-                            // Leaf Button
-                            Button(action: {
-                                print("Leaf button tapped")
-                            }) {
-                                Image(systemName: "leaf.circle")
-                                    .resizable()
-                                    .frame(width: 50, height: 50)
-                                    .foregroundColor(.green)
-                            }
-
-                            Spacer()
-
-                            // Play Button
-                            Button(action: {
-                                print("Play button tapped")
-                            }) {
-                                Circle()
-                                    .fill(Color.blue)
-                                    .frame(width: 60, height: 60)
-                                    .overlay(
-                                        Image(systemName: "play.fill")
-                                            .foregroundColor(.white)
-                                            .font(.system(size: 30))
-                                    )
-                            }
-
-                            Spacer()
-
-                            // Pink Button
-                            Button(action: {
-                                print("Pink button tapped")
-                            }) {
-                                Circle()
-                                    .fill(Color.pink)
-                                    .frame(width: 50, height: 50)
-                                    .overlay(
-                                        Image(systemName: "chart.bar.fill")
-                                            .foregroundColor(.white)
-                                            .font(.system(size: 25))
-                                    )
-                            }
-                        }
-                        .padding(.horizontal, geometry.size.width * 0.1)
-                        .padding(.bottom, geometry.size.height * 0.05) // Increased bottom padding
+                        BottomNavigationBar(
+                            navigateToGardenView: $navigateToGardenView,
+                            navigateToActivitiesView: $navigateToActivitiesView,
+                            navigateToSummaryView: $navigateToSummaryView
+                        )
+                      // Respect safe area
+                        .padding(.top,58)
                     }
-                    .padding(.horizontal, geometry.size.width * 0.05) // Horizontal padding
+                    
                 }
             }
         }
+        .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 2.0)))
     }
 }
 
@@ -124,13 +98,13 @@ struct DynamicCard<Destination: View>: View {
             VStack(alignment: .center, spacing: 10) {
                 // Title
                 Text(title)
-                    .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 20))
+                    .font(Font.custom("Visby", size: 20))
                     .foregroundColor(.white)
                     .shadow(radius: 5)
 
                 // Description
                 Text(description + (hasExclamation ? "!" : ""))
-                    .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 14))
+                    .font(Font.custom("Visby", size: 14))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
@@ -139,7 +113,7 @@ struct DynamicCard<Destination: View>: View {
                 // Tips Button in the center
                 NavigationLink(destination: tipsDestination) {
                     Text("Tips")
-                        .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 14))
+                        .font(Font.custom("Visby", size: 14))
                         .foregroundColor(.white)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 5)
@@ -173,13 +147,13 @@ struct DynamicMoodCard<Destination: View>: View {
             VStack(alignment: .center, spacing: 10) {
                 // Title
                 Text(title)
-                    .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 20))
+                    .font(Font.custom("Visby", size: 20))
                     .foregroundColor(.white)
                     .shadow(radius: 5)
 
                 // Description without full stop
                 Text(description)
-                    .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 14))
+                    .font(Font.custom("Visby", size: 14))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
@@ -197,7 +171,7 @@ struct DynamicMoodCard<Destination: View>: View {
                 // Tips Button in the center
                 NavigationLink(destination: tipsDestination) {
                     Text("Tips")
-                        .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 14))
+                        .font(Font.custom("Visby", size: 14))
                         .foregroundColor(.white)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 5)
@@ -222,7 +196,7 @@ struct MeditationTipsView: View {
 
             VStack {
                 Text("Meditation Tips")
-                    .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 30))
+                    .font(Font.custom("Visby", size: 30))
                     .foregroundColor(.white)
                     .padding()
 
@@ -231,10 +205,11 @@ struct MeditationTipsView: View {
                     2. Focus on your breath.
                     3. Try a 2-minute body scan exercise.
                 """)
-                    .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                    .font(Font.custom("Visby", size: 18))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                     .padding()
+                    .lineSpacing(10)
 
                 Spacer()
             }
@@ -250,7 +225,7 @@ struct MoodTipsView: View {
 
             VStack {
                 Text("Mood Tracker Tips")
-                    .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 30))
+                    .font(Font.custom("Visby", size: 30))
                     .foregroundColor(.white)
                     .padding()
 
@@ -259,10 +234,11 @@ struct MoodTipsView: View {
                     2. Reflect on triggers for negative emotions.
                     3. Celebrate small moments of joy.
                 """)
-                    .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                    .font(Font.custom("Visby", size: 18))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                     .padding()
+                    .lineSpacing(10)
 
                 Spacer()
             }
@@ -278,7 +254,7 @@ struct DetoxTipsView: View {
 
             VStack {
                 Text("Digital Detox Tips")
-                    .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 30))
+                    .font(Font.custom("Visby", size: 30))
                     .foregroundColor(.white)
                     .padding()
 
@@ -287,10 +263,11 @@ struct DetoxTipsView: View {
                     2. Turn off non-essential notifications.
                     3. Replace screen time with hobbies or exercise.
                 """)
-                    .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                    .font(Font.custom("Visby", size: 18))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                     .padding()
+                    .lineSpacing(10)
 
                 Spacer()
             }

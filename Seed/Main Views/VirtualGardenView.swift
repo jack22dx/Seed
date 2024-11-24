@@ -11,7 +11,9 @@ struct VirtualGardenView: View {
         GardenElement(id: UUID(), name: "Butterfly", type: .gif("butterfly"), position: CGPoint(x: 200, y: 100), scale: 1.0),
         GardenElement(id: UUID(), name: "Bird", type: .gif("bird"), position: CGPoint(x: 300, y: 50), scale: 1.0)
     ]
-
+    @State private var navigateToGardenView = false
+    @State private var navigateToActivitiesView = false
+    @State private var navigateToSummaryView = false
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
@@ -29,6 +31,8 @@ struct VirtualGardenView: View {
                     .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.height * 0.6)
                     .offset(y: 60) // Adjust position
                 
+              
+                
                 // Grass Layer
                 Image("Grass")
                     .resizable()
@@ -38,7 +42,12 @@ struct VirtualGardenView: View {
                     .offset(y: UIScreen.main.bounds.height * 0.44) // Adjust to sit at the bottom
                     .ignoresSafeArea() // Ensure it fills the screen appropriately
 
-                
+                Image("river")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.height * 0.9)
+                    .scaleEffect(1.5)
+                    .offset(y: 200) // Adjust position
              
 
               
@@ -77,51 +86,16 @@ struct VirtualGardenView: View {
                 // Bottom Navigation Bar
                 VStack {
                     Spacer()
-                    HStack {
-                        Button(action: {
-                            print("Leaf button tapped")
-                        }) {
-                            Image(systemName: "leaf.circle")
-                                .resizable()
-                                .frame(width: 50, height: 50)
-                                .foregroundColor(.green)
-                        }
-
-                        Spacer()
-
-                        Button(action: {
-                            print("Play button tapped")
-                        }) {
-                            Circle()
-                                .fill(Color.blue)
-                                .frame(width: 60, height: 60)
-                                .overlay(
-                                    Image(systemName: "play.fill")
-                                        .foregroundColor(.white)
-                                        .font(.system(size: 30))
-                                )
-                        }
-
-                        Spacer()
-
-                        Button(action: {
-                            print("Pink button tapped")
-                        }) {
-                            Circle()
-                                .fill(Color.pink)
-                                .frame(width: 50, height: 50)
-                                .overlay(
-                                    Image(systemName: "chart.bar.fill")
-                                        .foregroundColor(.white)
-                                        .font(.system(size: 25))
-                                )
-                        }
-                    }
-                    .padding(.horizontal, 40)
-                    .padding(.bottom, 60)
+                    BottomNavigationBar(
+                        navigateToGardenView: $navigateToGardenView,
+                        navigateToActivitiesView: $navigateToActivitiesView,
+                        navigateToSummaryView: $navigateToSummaryView
+                    )
                 }
+
             }
         }
+        .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 2.0)))
     }
 }
 
@@ -279,5 +253,62 @@ struct SettingsView: View {
 struct VirtualGardenView_Previews: PreviewProvider {
     static var previews: some View {
         VirtualGardenView()
+    }
+}
+
+struct BottomNavigationBar: View {
+    @Binding var navigateToGardenView: Bool
+    @Binding var navigateToActivitiesView: Bool
+    @Binding var navigateToSummaryView: Bool
+
+    var body: some View {
+        HStack {
+            // Leaf Button
+            NavigationLink(destination: VirtualGardenView().navigationBarHidden(true),
+                           isActive: $navigateToGardenView) {
+                Button(action: { navigateToGardenView = true }) {
+                    Image("leaf")
+                        .resizable()
+                        .frame(width: 50, height: 50)
+                        .foregroundColor(.green)
+                }
+            }
+
+            Spacer()
+
+            // Play Button
+            NavigationLink(destination: ActivitiesView().navigationBarHidden(true),
+                           isActive: $navigateToActivitiesView) {
+                Button(action: { navigateToActivitiesView = true }) {
+                    Circle()
+                        .fill(Color.blue)
+                        .frame(width: 60, height: 60)
+                        .overlay(
+                            Image(systemName: "play.fill")
+                                .foregroundColor(.white)
+                                .font(.system(size: 30))
+                        )
+                }
+            }
+
+            Spacer()
+
+            // Pink Button
+            NavigationLink(destination: WeeklySummaryView().navigationBarHidden(true),
+                           isActive: $navigateToSummaryView) {
+                Button(action: { navigateToSummaryView = true }) {
+                    Circle()
+                        .fill(Color.pink)
+                        .frame(width: 50, height: 50)
+                        .overlay(
+                            Image(systemName: "chart.bar.fill")
+                                .foregroundColor(.white)
+                                .font(.system(size: 25))
+                        )
+                }
+            }
+        }
+        .padding(.horizontal, 40)
+        .padding(.bottom, 60)
     }
 }

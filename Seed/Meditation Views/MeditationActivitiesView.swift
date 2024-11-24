@@ -3,27 +3,26 @@ import NavigationTransitions
 
 struct MeditationActivitiesView: View {
     @State private var expandedCardIndex: Int? = nil // Tracks which card is expanded
-    @State private var navigateToNextView = false
+    @State private var navigateToGardenView = false
+    @State private var navigateToActivitiesView = false
+    @State private var navigateToSummaryView = false
+
     var body: some View {
         NavigationStack {
-            
             ZStack {
                 // Background Color
                 PlayerView()
                     .ignoresSafeArea()
-                
+
                 VStack(spacing: 20) {
                     // Title
                     Text("Meditation")
                         .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 30))
                         .foregroundColor(.white)
-                    
                         .shadow(radius: 5)
-                    
-                    
-                    
+
                     // Meditation Cards in a ScrollView
-                    ScrollView {
+                  
                         VStack(spacing: 8) {
                             MeditationCard(
                                 index: 0,
@@ -35,7 +34,8 @@ struct MeditationActivitiesView: View {
                                 isCompleted: false,
                                 times: ["1 min", "3 min", "5 min"]
                             )
-                            
+                            .padding(.horizontal, 20)
+
                             MeditationCard(
                                 index: 1,
                                 expandedCardIndex: $expandedCardIndex,
@@ -46,7 +46,8 @@ struct MeditationActivitiesView: View {
                                 isCompleted: false,
                                 times: ["3 min", "5 min", "10 min"]
                             )
-                            
+                            .padding(.horizontal, 20)
+
                             MeditationCard(
                                 index: 2,
                                 expandedCardIndex: $expandedCardIndex,
@@ -57,7 +58,8 @@ struct MeditationActivitiesView: View {
                                 isCompleted: false,
                                 times: ["5 min", "10 min", "15 min"]
                             )
-                            
+                            .padding(.horizontal, 20)
+
                             MeditationCard(
                                 index: 3,
                                 expandedCardIndex: $expandedCardIndex,
@@ -68,55 +70,22 @@ struct MeditationActivitiesView: View {
                                 isCompleted: false,
                                 times: ["3 min", "7 min", "10 min"]
                             )
-                        }
+                        
                         .padding(.horizontal, 20)
+                        
                     }
-                    
+
                     Spacer()
                     
-                    // Bottom Navigation
-                    HStack {
-                        Image(systemName: "leaf.circle")
-                            .resizable()
-                            .frame(width: 50, height: 50)
-                            .foregroundColor(.green)
-                            .padding()
-                        
-                        Spacer()
-                        
-                        NavigationLink(destination: ActivitiesView() // Replace with your next view
-                            .navigationBarHidden(true),
-                                       isActive: $navigateToNextView) {
-                            Button("", action: {
-                                navigateToNextView = true
-                            })
-                            Circle()
-                                .fill(Color.blue)
-                                .frame(width: 60, height: 60)
-                                .overlay(
-                                    Image(systemName: "play.fill")
-                                        .foregroundColor(.white)
-                                        .font(.system(size: 30))
-                                )
-                        }
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            print("Pink button tapped")
-                        }) {
-                            Circle()
-                                .fill(Color.pink)
-                                .frame(width: 50, height: 50)
-                                .overlay(
-                                    Image(systemName: "chart.bar.fill")
-                                        .foregroundColor(.white)
-                                        .font(.system(size: 25))
-                                )
-                        }
-                    
-                    }
-                    .padding(.horizontal, 30)
+                       
+                    // Bottom Navigation Bar
+                    BottomNavigationBar(
+                        navigateToGardenView: $navigateToGardenView,
+                        navigateToActivitiesView: $navigateToActivitiesView,
+                        navigateToSummaryView: $navigateToSummaryView
+                    )
+                  
+                  
                 }
             }
         }

@@ -1,10 +1,18 @@
 import SwiftUI
+import SwiftData
+
 
 struct StreakView: View {
     @State private var navigateToMeditations = false
     @State private var navigateToGarden = false
+    @Query private var lessons: [LessonInfor]  // Automatically query all lessons from the model context
     
     var body: some View {
+        
+        let completedDays = getCompletedData(name: "Meditation") // Replace "Lesson Name" with actual name
+        let dayLabels = ["M", "T", "W", "T", "F", "S", "S"]
+        
+        
         let buttonColors = [
             LinearGradient(
                 gradient: Gradient(colors: [Color.orange, Color.red]),
@@ -55,21 +63,37 @@ struct StreakView: View {
                     VStack(spacing: 10) {
                         HStack {
                             Spacer() // Add space before the first day
-                            ForEach(["M", "T", "W", "T", "F", "S", "S"], id: \.self) { day in
+                            
+                            ForEach(dayLabels.indices, id: \.self) { index in
                                 ZStack {
                                     Circle()
-                                        .fill(day == "M" ? Color.green : Color.clear)
+                                        .fill(completedDays[index] ? Color.green : Color.clear) // Use true/false to decide color
                                         .frame(width: 40, height: 40)
                                         .overlay(
                                             Circle()
                                                 .stroke(Color.white, lineWidth: 2)
                                         )
                                     
-                                    Text(day)
+                                    Text(dayLabels[index])
                                         .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 14))
                                         .foregroundColor(.white)
                                 }
                             }
+//                            ForEach(["M", "T", "W", "T", "F", "S", "S"], id: \.self) { day in
+//                                ZStack {
+//                                    Circle()
+//                                        .fill(day == "M" ? Color.green : Color.clear)
+//                                        .frame(width: 40, height: 40)
+//                                        .overlay(
+//                                            Circle()
+//                                                .stroke(Color.white, lineWidth: 2)
+//                                        )
+//
+//                                    Text(day)
+//                                        .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 14))
+//                                        .foregroundColor(.white)
+//                                }
+//                            }
                             Spacer() // Add space after the last day
                         }
                         .padding(.horizontal, 20) // Ensure extra padding for the edges
@@ -114,7 +138,7 @@ struct StreakView: View {
                                 .shadow(radius: 5)
                         }
                         .background(
-                            NavigationLink("", destination: MyGardenView().navigationBarHidden(true), isActive: $navigateToGarden)
+                            NavigationLink("", destination: VirtualGardenView().navigationBarHidden(true), isActive: $navigateToGarden)
                         )
                     }
                 }
@@ -123,6 +147,17 @@ struct StreakView: View {
             }
             .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 2.0)))
             .navigationBarHidden(true)
+        }
+    }
+    private func getCompletedData(name: String) -> [Bool] {
+        // Return completed days (Mon-Sun) for a lesson
+        if let lesson = lessons.first(where: { $0.name == name }) {
+            return [
+                lesson.Monday, lesson.Tuesday, lesson.Wednesday, lesson.Thursday,
+                lesson.Friday, lesson.Saturday, lesson.Sunday
+            ]
+        } else {
+            return Array(repeating: false, count: 7) // Default if lesson not found
         }
     }
 }

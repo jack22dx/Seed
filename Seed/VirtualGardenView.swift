@@ -1,16 +1,31 @@
 import SwiftUI
 import WebKit
+import SwiftData
 
 struct VirtualGardenView: View {
     // State to track garden elements
     @State private var gardenElements: [GardenElement] = [
-        GardenElement(id: UUID(), name: "Sunflower", type: .png("sunflower"), position: CGPoint(x: 250, y: 300), scale: 3.0), // Increased scale
-        GardenElement(id: UUID(), name: "Trees", type: .png("trees"), position: CGPoint(x: 300, y: 200), scale: 5.0), // Increased scale
-        GardenElement(id: UUID(), name: "Forest", type: .png("forest"), position: CGPoint(x: 50, y: 250), scale: 1.0),
-        GardenElement(id: UUID(), name: "Purple Flower", type: .png("purpleflower"), position: CGPoint(x: 150, y: 450), scale: 3.0), // Increased scale
-        GardenElement(id: UUID(), name: "Rabbit", type: .gif("Rabbit2"), position: CGPoint(x: 100, y: 300), scale: 3.0), // Increased scale
-        GardenElement(id: UUID(), name: "butterfly 3", type: .gif("butterfly3"), position: CGPoint(x: 200, y: 100), scale: 3.0), // Increased scale
-        GardenElement(id: UUID(), name: "Bird", type: .gif("birdfly"), position: CGPoint(x: 300, y: 50), scale: 3.0) // Increased scale
+        GardenElement(
+            id: UUID(), name: "Sunflower", type: .png("sunflower"),
+            position: CGPoint(x: 250, y: 300), scale: 3.0, isVisible: false),  // Increased scale
+        GardenElement(
+            id: UUID(), name: "Trees", type: .png("trees"),
+            position: CGPoint(x: 300, y: 200), scale: 5.0, isVisible: false),  // Increased scale
+        GardenElement(
+            id: UUID(), name: "Forest", type: .png("forest"),
+            position: CGPoint(x: 50, y: 250), scale: 1.0, isVisible: false),
+        GardenElement(
+            id: UUID(), name: "Purple Flower", type: .png("purpleflower"),
+            position: CGPoint(x: 150, y: 450), scale: 3.0, isVisible: false),  // Increased scale
+        GardenElement(
+            id: UUID(), name: "Rabbit", type: .gif("Rabbit2"),
+            position: CGPoint(x: 100, y: 300), scale: 3.0, isVisible: false),  // Increased scale
+        GardenElement(
+            id: UUID(), name: "butterfly 3", type: .gif("butterfly3"),
+            position: CGPoint(x: 200, y: 100), scale: 3.0, isVisible: false),  // Increased scale
+        GardenElement(
+            id: UUID(), name: "Bird", type: .gif("birdfly"),
+            position: CGPoint(x: 300, y: 50), scale: 3.0, isVisible: true),  // Increased scale
     ]
 
     var body: some View {
@@ -24,48 +39,57 @@ struct VirtualGardenView: View {
                         .scaledToFill()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .ignoresSafeArea()
-
+                    
                     Spacer()
                 }
-
+                
                 // Grass Layer (Bottom to More of the Middle)
                 VStack {
                     Spacer()
                     Image("Grass")
                         .resizable()
                         .scaledToFill()
-                        .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.height * 0.5) // Grass takes more height
+                        .frame(
+                            maxWidth: .infinity,
+                            maxHeight: UIScreen.main.bounds.height * 0.5
+                        )  // Grass takes more height
                         .ignoresSafeArea()
                 }
-
+                
                 // Mountain Layer (Middle of the Grass to Above)
                 VStack {
                     Spacer()
                     Image("mountains")
                         .resizable()
                         .scaledToFill()
-                        .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.height * 0.4)
+                        .frame(
+                            maxWidth: .infinity,
+                            maxHeight: UIScreen.main.bounds.height * 0.4
+                        )
                         .ignoresSafeArea()
                 }
-
+                
                 // Interactive Elements in the Garden
                 ForEach($gardenElements) { $element in
                     GardenElementView(element: $element)
                 }
-
+                
                 // Top controls: Plus and Gear
                 VStack {
                     HStack {
-                        NavigationLink(destination: AddElementsView(gardenElements: $gardenElements)) {
+                        NavigationLink(
+                            destination: AddElementsView(
+                                gardenElements: $gardenElements)
+                        ) {
                             Image(systemName: "plus.circle")
                                 .resizable()
                                 .frame(width: 40, height: 40)
                                 .foregroundColor(.green)
                                 .padding(.leading, 20)
                         }
-
+                        
                         Spacer()
-
+                        
                         NavigationLink(destination: SettingsView()) {
                             Image(systemName: "gearshape.fill")
                                 .resizable()
@@ -75,10 +99,10 @@ struct VirtualGardenView: View {
                         }
                     }
                     .padding(.top, 20)
-
+                    
                     Spacer()
                 }
-
+                
                 // Bottom Navigation Bar
                 VStack {
                     Spacer()
@@ -92,9 +116,9 @@ struct VirtualGardenView: View {
                                 .frame(width: 50, height: 50)
                                 .foregroundColor(.green)
                         }
-
+                        
                         Spacer()
-
+                        
                         // Play Button
                         Button(action: {
                             print("Play button tapped")
@@ -108,9 +132,9 @@ struct VirtualGardenView: View {
                                         .font(.system(size: 30))
                                 )
                         }
-
+                        
                         Spacer()
-
+                        
                         // Pink Button (Navigates to Weekly Summary)
                         Button(action: {
                             print("Pink button tapped")
@@ -140,6 +164,8 @@ struct GardenElement: Identifiable {
     var type: GardenElementType
     var position: CGPoint
     var scale: CGFloat
+    //
+    var isVisible: Bool
 }
 
 enum GardenElementType {
@@ -152,7 +178,7 @@ struct GardenElementView: View {
     @Binding var element: GardenElement
     @State private var dragOffset: CGSize = .zero
     @State private var currentScale: CGFloat = 1.0
-
+    
     var body: some View {
         Group {
             switch element.type {
@@ -160,14 +186,18 @@ struct GardenElementView: View {
                 Image(imageName)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 100 * element.scale, height: 100 * element.scale)
+                    .frame(
+                        width: 100 * element.scale, height: 100 * element.scale)
             case .gif(let gifName):
                 GIFView(gifName: gifName)
-                    .frame(width: 100 * element.scale, height: 100 * element.scale)
+                    .frame(
+                        width: 100 * element.scale, height: 100 * element.scale)
             }
         }
-        .position(x: element.position.x + dragOffset.width,
-                  y: element.position.y + dragOffset.height)
+        .position(
+            x: element.position.x + dragOffset.width,
+            y: element.position.y + dragOffset.height
+        )
         .gesture(
             DragGesture()
                 .onChanged { value in
@@ -195,7 +225,7 @@ struct GardenElementView: View {
 // MARK: - GIF View
 struct GIFView: UIViewRepresentable {
     let gifName: String
-
+    
     func makeUIView(context: Context) -> WKWebView {
         let webView = WKWebView()
         webView.scrollView.isScrollEnabled = false
@@ -204,7 +234,9 @@ struct GIFView: UIViewRepresentable {
 
         if let gifPath = Bundle.main.path(forResource: gifName, ofType: "gif") {
             let gifData = try? Data(contentsOf: URL(fileURLWithPath: gifPath))
-            webView.load(gifData!, mimeType: "image/gif", characterEncodingName: "", baseURL: URL(fileURLWithPath: gifPath))
+            webView.load(
+                gifData!, mimeType: "image/gif", characterEncodingName: "",
+                baseURL: URL(fileURLWithPath: gifPath))
         }
 
         return webView
@@ -216,7 +248,7 @@ struct GIFView: UIViewRepresentable {
 // MARK: - Add Elements View
 struct AddElementsView: View {
     @Binding var gardenElements: [GardenElement]
-
+    @Query private var lessons: [LessonInfor]  // Automatically query all lessons from the model context
     var body: some View {
         NavigationStack {
             VStack {
@@ -225,7 +257,7 @@ struct AddElementsView: View {
                     .padding()
 
                 ScrollView {
-                    ForEach(sampleElements) { element in
+                    ForEach(sampleElements.filter{ $0.isVisible }) { element in
                         Button(action: {
                             gardenElements.append(element)
                         }) {
@@ -256,12 +288,25 @@ struct AddElementsView: View {
         }
     }
 
+    
     // Sample elements to add
     var sampleElements: [GardenElement] {
         [
-            GardenElement(id: UUID(), name: "New Tree", type: .png("trees"), position: CGPoint(x: 100, y: 100), scale: 1.0),
-            GardenElement(id: UUID(), name: "New Rabbit", type: .gif("rabbit"), position: CGPoint(x: 150, y: 150), scale: 1.0)
+            GardenElement(
+                id: UUID(), name: "New Tree", type: .png("trees"),
+                position: CGPoint(x: 100, y: 100), scale: 1.0,isVisible: getLessonCount(name: "Meditation")>0),
+            GardenElement(
+                id: UUID(), name: "New Rabbit", type: .gif("rabbit"),
+                position: CGPoint(x: 150, y: 150), scale: 1.0,isVisible: getLessonCount(name: "Meditation")>3),
         ]
+    }
+    private func getLessonCount(name: String) -> Int {
+        // Return completed days (Mon-Sun) for a lesson
+        if let lesson = lessons.first(where: { $0.name == name }) {
+            return lesson.count
+        } else {
+            return 0 // Default if lesson not found
+        }
     }
 }
 

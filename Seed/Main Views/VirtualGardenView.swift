@@ -2,7 +2,6 @@ import SwiftUI
 import WebKit
 
 struct VirtualGardenView: View {
-    // State to track garden elements
     @State private var gardenElements: [GardenElement] = [
         GardenElement(id: UUID(), name: "Sunflower", type: .png("sunflower"), position: CGPoint(x: 250, y: 300), scale: 1.0),
         GardenElement(id: UUID(), name: "Trees", type: .png("trees"), position: CGPoint(x: 300, y: 200), scale: 1.5),
@@ -14,50 +13,55 @@ struct VirtualGardenView: View {
     @State private var navigateToGardenView = false
     @State private var navigateToActivitiesView = false
     @State private var navigateToSummaryView = false
+
     var body: some View {
         NavigationStack {
-            ZStack(alignment: .top) {
-                // Sky Background
-                Image("Sky")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .ignoresSafeArea()
-                
-                // Mountains Layer
-                Image("Mountains")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.height * 0.6)
-                    .offset(y: 60) // Adjust position
-                
-              
-                
-                // Grass Layer
-                Image("Grass")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.height * 0.4) // Base frame
-                    .scaleEffect(2.5) // Scale 300%
-                    .offset(y: UIScreen.main.bounds.height * 0.44) // Adjust to sit at the bottom
-                    .ignoresSafeArea() // Ensure it fills the screen appropriately
+            ZStack {
+                // Scrollable Garden
+                ScrollView(.horizontal) {
+                    ZStack(alignment: .top) {
+                        // Wide container for scrolling
+                        Color.clear
+                            .frame(width: UIScreen.main.bounds.width * 3, height: UIScreen.main.bounds.height)
 
-                Image("river")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.height * 0.9)
-                    .scaleEffect(1.5)
-                    .offset(y: 200) // Adjust position
-             
+                        // Sky Background
+                        Image("Sky")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: UIScreen.main.bounds.width * 3, height: UIScreen.main.bounds.height)
+                            .ignoresSafeArea()
 
-              
+                        // Mountains Layer
+                        Image("Mountains")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: UIScreen.main.bounds.width * 2, height: UIScreen.main.bounds.height * 0.6)
+                            .offset(y: 60)
 
-                // Draggable Garden Elements
-                ForEach($gardenElements) { $element in
-                    GardenElementView(element: $element)
+                        // Grass Layer
+                        Image("Grass")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: UIScreen.main.bounds.width * 3, height: UIScreen.main.bounds.height * 0.4)
+                            .offset(y: UIScreen.main.bounds.height * 0.44)
+                            .ignoresSafeArea()
+
+                        // River
+                        Image("river")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.height * 4.0)
+                            .scaleEffect(1.5)
+                            .offset(y: 160)
+
+                        
+                        ForEach($gardenElements) { $element in
+                            GardenElementView(element: $element)
+                        }
+                    }
                 }
 
-                // Top controls: Plus and Gear
+                // Top Controls: Plus and Gear
                 VStack {
                     HStack {
                         NavigationLink(destination: AddElementsView(gardenElements: $gardenElements)) {
@@ -83,7 +87,7 @@ struct VirtualGardenView: View {
                     Spacer()
                 }
 
-                // Bottom Navigation Bar
+                // Fixed Bottom Navigation Bar
                 VStack {
                     Spacer()
                     BottomNavigationBar(
@@ -91,14 +95,13 @@ struct VirtualGardenView: View {
                         navigateToActivitiesView: $navigateToActivitiesView,
                         navigateToSummaryView: $navigateToSummaryView
                     )
+                    .padding(.bottom, 20) // Add spacing from the bottom
                 }
-
             }
         }
         .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 2.0)))
     }
 }
-
 
 // MARK: - Garden Element
 struct GardenElement: Identifiable {
@@ -184,44 +187,81 @@ struct GIFView: UIViewRepresentable {
 struct AddElementsView: View {
     @Binding var gardenElements: [GardenElement]
 
+    let categorizedAssets: [String: [GardenElement]] = [
+        "Meditation": [
+            GardenElement(id: UUID(), name: "Sunflower", type: .png("sunflower"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Butterfly", type: .gif("butterfly"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Bonsai Tree", type: .png("bonsaitree"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Palm Tree", type: .png("palmtree"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Purple Tree", type: .png("purpletree"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Orange Butterfly", type: .png("orangebutterfly"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Treeseed", type: .png("treeseed"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Pink Flower", type: .png("pinkflower"), position: CGPoint(x: 150, y: 450), scale: 1.0)
+        ],
+        "Journaling": [
+            GardenElement(id: UUID(), name: "Rose", type: .png("rose"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Cherry Blossom", type: .png("cherryblossom"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Deer", type: .png("deer"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Bouquet", type: .png("bouquet"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Purple Rose", type: .png("purplerose"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Christmastree", type: .png("christmastree"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Mushroom", type: .png("mushroom"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Mountains", type: .png("mountains"), position: CGPoint(x: 150, y: 450), scale: 1.0)
+        ],
+        "Digital Detox": [
+            GardenElement(id: UUID(), name: "Turtle", type: .png("turtle"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Pine Tree", type: .png("pinetree"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Snow Mountain", type: .png("snowmountain"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Yellow Tree", type: .png("yellowtree"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Rabbit", type: .gif("rabbit"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Duck", type: .gif("duck"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Cat", type: .gif("cat"), position: CGPoint(x: 150, y: 450), scale: 1.0),
+            GardenElement(id: UUID(), name: "Bird", type: .gif("bird"), position: CGPoint(x: 150, y: 450), scale: 1.0)
+        ]
+    ]
+
     var body: some View {
         NavigationStack {
-            VStack {
-                Text("Add New Elements")
-                    .font(.headline)
-                    .padding()
-
-                ScrollView {
-                    ForEach(sampleElements) { element in
-                        Button(action: {
-                            gardenElements.append(element)
-                        }) {
-                            HStack {
-                                if case .png(let imageName) = element.type {
-                                    Image(imageName)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 50, height: 50)
+            ScrollView(.vertical) { // Vertical scrollable list
+                VStack(alignment: .leading, spacing: 16) {
+                    ForEach(categorizedAssets.keys.sorted(), id: \.self) { category in
+                        VStack(alignment: .leading) {
+                            Text(category)
+                                .font(.headline)
+                                .padding(.bottom, 8)
+                            LazyVGrid(columns: [GridItem(), GridItem(), GridItem()], spacing: 16) {
+                                ForEach(categorizedAssets[category] ?? []) { element in
+                                    Button(action: {
+                                        gardenElements.append(element)
+                                    }) {
+                                        VStack {
+                                            if case .png(let imageName) = element.type {
+                                                Image(imageName)
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(width: 80, height: 80)
+                                            } else if case .gif(let gifName) = element.type {
+                                                GIFView(gifName: gifName)
+                                                    .frame(width: 80, height: 80)
+                                            }
+                                            Text(element.name)
+                                                .font(.caption)
+                                                .multilineTextAlignment(.center)
+                                        }
+                                    }
                                 }
-                                Text(element.name)
-                                    .font(.body)
-                                    .padding()
                             }
-                            .frame(maxWidth: .infinity)
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(10)
-                            .padding(.horizontal)
                         }
                     }
                 }
-
-                Spacer()
+                .padding()
             }
-            .padding()
             .navigationTitle("Add Elements")
             .navigationBarTitleDisplayMode(.inline)
         }
     }
+}
+
 
     // Sample elements to add
     var sampleElements: [GardenElement] {
@@ -230,7 +270,7 @@ struct AddElementsView: View {
             GardenElement(id: UUID(), name: "New Rabbit", type: .gif("rabbit"), position: CGPoint(x: 150, y: 150), scale: 1.0)
         ]
     }
-}
+
 
 // MARK: - Settings View
 struct SettingsView: View {
@@ -249,13 +289,7 @@ struct SettingsView: View {
     }
 }
 
-// MARK: - Preview
-struct VirtualGardenView_Previews: PreviewProvider {
-    static var previews: some View {
-        VirtualGardenView()
-    }
-}
-
+// MARK: - Bottom Navigation Bar
 struct BottomNavigationBar: View {
     @Binding var navigateToGardenView: Bool
     @Binding var navigateToActivitiesView: Bool
@@ -309,6 +343,12 @@ struct BottomNavigationBar: View {
             }
         }
         .padding(.horizontal, 40)
-        .padding(.bottom, 60)
+    }
+}
+
+// MARK: - Preview
+struct VirtualGardenView_Previews: PreviewProvider {
+    static var previews: some View {
+        VirtualGardenView()
     }
 }

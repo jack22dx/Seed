@@ -1,5 +1,8 @@
 import SwiftUI
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 4a34895 (add, function for lesson completed, level control in garden,streak view retrieve database)
 import SwiftData
 
 struct MeditationStreakView: View {
@@ -12,6 +15,7 @@ struct MeditationStreakView: View {
         let completedDays = getCompletedData(name: "Meditation") // Replace "Lesson Name" with actual name
         let dayLabels = ["M", "T", "W", "T", "F", "S", "S"]
         
+<<<<<<< HEAD
 =======
 import NavigationTransitions
 
@@ -26,6 +30,8 @@ struct MeditationStreakView: View {
     
     var body: some View {
 >>>>>>> 09b3651 (Updated activites view fonts and mountains in garden. Added Journaling views)
+=======
+>>>>>>> 4a34895 (add, function for lesson completed, level control in garden,streak view retrieve database)
         let buttonColors = [
             LinearGradient(
                 gradient: Gradient(colors: [Color.orange, Color.red]),
@@ -59,10 +65,13 @@ struct MeditationStreakView: View {
 <<<<<<< HEAD
                     Text("Crimson Oak Tree")
                         .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 30))
+<<<<<<< HEAD
 =======
                     Text("Elegant Purple Rose")
                         .font(Font.custom("Visby", size: 30))
 >>>>>>> 09b3651 (Updated activites view fonts and mountains in garden. Added Journaling views)
+=======
+>>>>>>> 4a34895 (add, function for lesson completed, level control in garden,streak view retrieve database)
                         .foregroundColor(.white)
                         .shadow(radius: 5)
                     
@@ -74,10 +83,14 @@ struct MeditationStreakView: View {
                             .shadow(radius: 10)
                         
 <<<<<<< HEAD
+<<<<<<< HEAD
                         Image("treeseed")
 =======
                         Image("purplerose") // Replace with your tree icon for journaling
 >>>>>>> 09b3651 (Updated activites view fonts and mountains in garden. Added Journaling views)
+=======
+                        Image("treeseed")
+>>>>>>> 4a34895 (add, function for lesson completed, level control in garden,streak view retrieve database)
                             .resizable()
                             .scaledToFit()
                             .frame(width: 100, height: 100)
@@ -95,13 +108,17 @@ struct MeditationStreakView: View {
                         .multilineTextAlignment(.center)
                         .shadow(radius: 5)
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
                         .lineSpacing(10)
 >>>>>>> 09b3651 (Updated activites view fonts and mountains in garden. Added Journaling views)
+=======
+>>>>>>> 4a34895 (add, function for lesson completed, level control in garden,streak view retrieve database)
                         .padding(.bottom, 30)
                     
                     // Weekly Streak Section
                     VStack(spacing: 10) {
+<<<<<<< HEAD
 <<<<<<< HEAD
                         HStack(spacing: 10) {
                             ForEach(dayLabels.indices, id: \.self) { index in
@@ -116,12 +133,20 @@ struct MeditationStreakView: View {
                                     Circle()
                                         .fill(day == "M" ? Color.green : Color.clear) // Highlight Monday as an example
 >>>>>>> 09b3651 (Updated activites view fonts and mountains in garden. Added Journaling views)
+=======
+                        HStack(spacing: 10) {
+                            ForEach(dayLabels.indices, id: \.self) { index in
+                                ZStack {
+                                    Circle()
+                                        .fill(completedDays[index] ? Color.green : Color.clear)
+>>>>>>> 4a34895 (add, function for lesson completed, level control in garden,streak view retrieve database)
                                         .frame(width: 40, height: 40)
                                         .overlay(
                                             Circle()
                                                 .stroke(Color.white, lineWidth: 2)
                                         )
                                     
+<<<<<<< HEAD
 <<<<<<< HEAD
                                     Text(dayLabels[index])
                                         .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 20))
@@ -135,16 +160,25 @@ struct MeditationStreakView: View {
 =======
                                     Text(day)
                                         .font(Font.custom("Visby", size: 14))
+=======
+                                    Text(dayLabels[index])
+                                        .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 20))
+>>>>>>> 4a34895 (add, function for lesson completed, level control in garden,streak view retrieve database)
                                         .foregroundColor(.white)
+                                        .shadow(radius: 5)
                                 }
                             }
-                            Spacer() // Add space after the last day
                         }
+<<<<<<< HEAD
                         .padding(.horizontal, 20) // Ensure extra padding for the edges
                         
                         Text("Weekly journaling streak")
                             .font(Font.custom("Visby", size: 18))
 >>>>>>> 09b3651 (Updated activites view fonts and mountains in garden. Added Journaling views)
+=======
+                        Text("Weekly streak")
+                            .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+>>>>>>> 4a34895 (add, function for lesson completed, level control in garden,streak view retrieve database)
                             .foregroundColor(.white)
                             .shadow(radius: 5)
                             .padding(.top, 10)
@@ -153,6 +187,7 @@ struct MeditationStreakView: View {
                     
                     // Navigation Buttons
                     HStack(spacing: 30) {
+<<<<<<< HEAD
 <<<<<<< HEAD
                         NavigationLink(destination: MeditationActivitiesView().navigationBarHidden(true)) {
                             Text("Meditations")
@@ -165,6 +200,11 @@ struct MeditationStreakView: View {
                             Text("Activities")
                                 .font(Font.custom("Visby", size: 18))
 >>>>>>> 09b3651 (Updated activites view fonts and mountains in garden. Added Journaling views)
+=======
+                        NavigationLink(destination: MeditationActivitiesView().navigationBarHidden(true)) {
+                            Text("Meditations")
+                                .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+>>>>>>> 4a34895 (add, function for lesson completed, level control in garden,streak view retrieve database)
                                 .padding()
                                 .frame(minWidth: 150)
                                 .background(buttonColors[0])
@@ -172,6 +212,7 @@ struct MeditationStreakView: View {
                                 .clipShape(Capsule())
                                 .shadow(radius: 5)
                         }
+<<<<<<< HEAD
 <<<<<<< HEAD
                         
                         NavigationLink(destination: VirtualGardenView().navigationBarHidden(true)) {
@@ -189,6 +230,12 @@ struct MeditationStreakView: View {
                             Text("My Garden")
                                 .font(Font.custom("Visby", size: 18))
 >>>>>>> 09b3651 (Updated activites view fonts and mountains in garden. Added Journaling views)
+=======
+                        
+                        NavigationLink(destination: VirtualGardenView().navigationBarHidden(true)) {
+                            Text("My Garden")
+                                .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+>>>>>>> 4a34895 (add, function for lesson completed, level control in garden,streak view retrieve database)
                                 .padding()
                                 .frame(minWidth: 150)
                                 .background(buttonColors[1])
@@ -197,11 +244,14 @@ struct MeditationStreakView: View {
                                 .shadow(radius: 5)
                         }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
                         .background(
                             NavigationLink("", destination: VirtualGardenView().navigationBarHidden(true), isActive: $navigateToGarden)
                         )
 >>>>>>> 09b3651 (Updated activites view fonts and mountains in garden. Added Journaling views)
+=======
+>>>>>>> 4a34895 (add, function for lesson completed, level control in garden,streak view retrieve database)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -210,6 +260,9 @@ struct MeditationStreakView: View {
             .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 2.0)))
             .navigationBarHidden(true)
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 4a34895 (add, function for lesson completed, level control in garden,streak view retrieve database)
         }}
     private func getCompletedData(name: String) -> [Bool] {
         // Return completed days (Mon-Sun) for a lesson
@@ -220,8 +273,11 @@ struct MeditationStreakView: View {
             ]
         } else {
             return Array(repeating: false, count: 7) // Default if lesson not found
+<<<<<<< HEAD
 =======
 >>>>>>> 09b3651 (Updated activites view fonts and mountains in garden. Added Journaling views)
+=======
+>>>>>>> 4a34895 (add, function for lesson completed, level control in garden,streak view retrieve database)
         }
     }
 }

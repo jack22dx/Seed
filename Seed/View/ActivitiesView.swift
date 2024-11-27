@@ -84,6 +84,7 @@ struct ActivitiesView: View {
             default:
                 print("Unexpected day of the week encountered.")
             }
+            
             // Save the updated model context
             do {
                 try modelContext.save() // Save changes to the model context
@@ -94,6 +95,7 @@ struct ActivitiesView: View {
             }
         }
     }
+    
     private func printDatabaseLocation() {
         guard let container = try? ModelContainer(for: LessonInfor.self),
               let url = container.configurations.first?.url else {
@@ -196,17 +198,24 @@ struct ActivitiesView: View {
             
             Spacer()
             
-            Image(systemName: "circle")
-                .resizable()
-                .frame(width: 50, height: 50)
-                .foregroundColor(.gray)
-                .padding()
+            NavigationLink(destination: WeeklySummaryView().navigationBarHidden(true)) {
+                Circle()
+                    .fill(Color.pink)
+                    .frame(width: 50, height: 50)
+                    .overlay(
+                        Image(systemName: "chart.bar.fill")
+                            .foregroundColor(.white)
+                            .font(.system(size: 25))
+                    )
+            }
         }
+        .padding()
     }
 }
-
 struct ActivitiesView_Previews: PreviewProvider {
     static var previews: some View {
         ActivitiesView()
+        
+        
     }
 }

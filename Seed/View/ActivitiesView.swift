@@ -84,11 +84,6 @@ struct ActivitiesView: View {
             default:
                 print("Unexpected day of the week encountered.")
             }
-<<<<<<< HEAD
-            
-=======
-
->>>>>>> 09b3651 (Updated activites view fonts and mountains in garden. Added Journaling views)
             // Save the updated model context
             do {
                 try modelContext.save() // Save changes to the model context

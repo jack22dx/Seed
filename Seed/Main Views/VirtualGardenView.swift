@@ -36,11 +36,9 @@ struct VirtualGardenView: View {
                         Image("Mountains")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: UIScreen.main.bounds.width * 2, height: UIScreen.main.bounds.height )
+                            .frame(width: UIScreen.main.bounds.width * 2, height: UIScreen.main.bounds.height * 0.6)
                             .offset(y: 60)
-                            .offset(x: 100)
-                            .scaleEffect(1.5)
-
+                        
                         // Grass Layer
                         Image("Grass")
                             .resizable()
@@ -98,7 +96,7 @@ struct VirtualGardenView: View {
                         navigateToActivitiesView: $navigateToActivitiesView,
                         navigateToSummaryView: $navigateToSummaryView
                     )
-                    .padding(.bottom, 50) // Add spacing from the bottom
+                    .padding(.bottom, 20) // Add spacing from the bottom
                 }
             }
         }

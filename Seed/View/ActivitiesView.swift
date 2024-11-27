@@ -7,10 +7,7 @@ struct ActivitiesView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var lessons: [LessonInfor]  // Automatically query all lessons from the model context
     @State private var isInitialized = false
-    @State private var navigateToGardenView = false
-    @State private var navigateToActivitiesView = false
-    @State private var navigateToSummaryView = false
-
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -24,12 +21,7 @@ struct ActivitiesView: View {
                     
                     Spacer()
                     
-                    BottomNavigationBar(
-                        navigateToGardenView: $navigateToGardenView,
-                        navigateToActivitiesView: $navigateToActivitiesView,
-                        navigateToSummaryView: $navigateToSummaryView
-                    )
-                    .padding(.bottom, 50) // Add spacing from the bottom
+                    bottomNavigation
                 }
                 .padding(.top, 40)
                 .onAppear {
@@ -40,7 +32,7 @@ struct ActivitiesView: View {
                     }
                 }
             }
-
+            
             Button(action: {
                 printDatabaseLocation()
                 incrementCount(for: "Meditation") // Increment course count
@@ -50,7 +42,7 @@ struct ActivitiesView: View {
             }
         }
     }
-
+    
     private func incrementCount(for name: String) {
         // Increment count logic
         if let function = lessons.first(where: { $0.name == name }) {
@@ -104,15 +96,15 @@ struct ActivitiesView: View {
         }
         print("Database location: \(url.absoluteString)")
     }
-
+    
     private var greetingHeader: some View {
         Text("Good Morning, Jack.")
-            .font(Font.custom("Visby", size: 30))
+            .font(.title)
             .foregroundColor(.white)
             .padding(.bottom, 20)
             .shadow(radius: 5)
     }
-
+    
     private var activitiesSection: some View {
         VStack(spacing: 40) {
             // Fetch and display the lessons correctly
@@ -124,16 +116,13 @@ struct ActivitiesView: View {
                     completed: getCompletedData(name: "Meditation")
                 )
             }
-
-            // Navigation to JournalingView
-            NavigationLink(destination: JournalingView().navigationTransition(.fade(.cross))) {
-                createActivityCard(
-                    title: "Journaling",
-                    progress: getProgressForLesson(name: "Journaling"),
-                    colors: AppConstants.gradientColors["Journaling"]!,
-                    completed: getCompletedData(name: "Journaling")
-                )
-            }
+            
+            createActivityCard(
+                title: "Journaling",
+                progress: getProgressForLesson(name: "Journaling"),
+                colors: AppConstants.gradientColors["Journaling"]!,
+                completed: getCompletedData(name: "Journaling")
+            )
             
             createActivityCard(
                 title: "Digital Detox",
@@ -143,12 +132,12 @@ struct ActivitiesView: View {
             )
         }
     }
-
+    
     private func getProgressForLesson(name: String) -> Int {
         // Returns the count for a lesson
         return lessons.first(where: { $0.name == name })?.count ?? 0
     }
-
+    
     private func getCompletedData(name: String) -> [Bool] {
         // Return completed days (Mon-Sun) for a lesson
         if let lesson = lessons.first(where: { $0.name == name }) {
@@ -160,7 +149,7 @@ struct ActivitiesView: View {
             return Array(repeating: false, count: 7) // Default if lesson not found
         }
     }
-
+    
     private func createActivityCard(title: String, progress: Int, colors: [Color], completed: [Bool]) -> some View {
         ActivityCardView(
             title: title,
@@ -171,7 +160,7 @@ struct ActivitiesView: View {
         )
         .padding(.horizontal, 20)
     }
-
+    
     private var bottomNavigation: some View {
         HStack {
             Image(systemName: "leaf.circle")

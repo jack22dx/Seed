@@ -23,6 +23,9 @@ struct MeditationSummaryView: View {
             ZStack {
                 PlayerView()
                     .ignoresSafeArea()
+                Color.blue
+                        .opacity(0.2) // Adjust transparency as needed
+                        .ignoresSafeArea()
                 
                 VStack(spacing: 20) {
                     // Title
@@ -106,7 +109,7 @@ struct MeditationSummaryView: View {
                     
                     
                     // Continue Button
-                    NavigationLink(destination: StreakView() // Replace with your next view
+                    NavigationLink(destination: MeditationStreakView() // Replace with your next view
                         .navigationBarHidden(true),
                                    isActive: $navigateToNextView) {
                         Button(action: {

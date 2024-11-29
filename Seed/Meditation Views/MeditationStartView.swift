@@ -29,6 +29,9 @@ struct MeditationStartView: View {
             ZStack {
                 PlayerView()
                     .ignoresSafeArea()
+                Color.blue
+                        .opacity(0.2) // Adjust transparency as needed
+                        .ignoresSafeArea()
                 
                 VStack(spacing: 30) {
                     // Title

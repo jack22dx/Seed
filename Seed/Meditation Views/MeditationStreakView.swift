@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct StreakView: View {
+struct MeditationStreakView: View {
     @State private var navigateToMeditations = false
     @State private var navigateToGarden = false
     
@@ -21,6 +21,9 @@ struct StreakView: View {
             ZStack {
                 PlayerView()
                     .ignoresSafeArea()
+                Color.blue
+                        .opacity(0.2) // Adjust transparency as needed
+                        .ignoresSafeArea()
                 
                 VStack(spacing: 30) {
                     // Title
@@ -147,8 +150,8 @@ struct MyGardenView: View {
     }
 }
 
-struct StreakView_Previews: PreviewProvider {
+struct MeditationStreakView_Previews: PreviewProvider {
     static var previews: some View {
-        StreakView()
+        MeditationStreakView()
     }
 }

@@ -2,7 +2,6 @@ import SwiftUI
 import NavigationTransitions
 import SwiftData
 
-
 struct ActivitiesView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var lessons: [LessonInfor]  // Automatically query all lessons from the model context
@@ -59,6 +58,7 @@ struct ActivitiesView: View {
             let calendar = Calendar.current
             let currentDay = calendar.component(.weekday, from: Date())
             var currentDayEnglish = ""
+
             switch currentDay {
             case 1:
                 function.Sunday = true
@@ -84,11 +84,7 @@ struct ActivitiesView: View {
             default:
                 print("Unexpected day of the week encountered.")
             }
-<<<<<<< HEAD
-            
-=======
 
->>>>>>> 09b3651 (Updated activites view fonts and mountains in garden. Added Journaling views)
             // Save the updated model context
             do {
                 try modelContext.save() // Save changes to the model context
@@ -99,6 +95,7 @@ struct ActivitiesView: View {
             }
         }
     }
+
     private func printDatabaseLocation() {
         guard let container = try? ModelContainer(for: LessonInfor.self),
               let url = container.configurations.first?.url else {
@@ -179,7 +176,6 @@ struct ActivitiesView: View {
         HStack {
             Image(systemName: "leaf.circle")
                 .resizable()
-                .aspectRatio(contentMode: .fit)
                 .frame(width: 50, height: 50)
                 .foregroundColor(.green)
                 .padding()

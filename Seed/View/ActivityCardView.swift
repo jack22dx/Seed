@@ -22,7 +22,7 @@ struct ActivityCardView: View {
                 // Title and Progress
                 HStack {
                     Text(title)
-                        .font(.title2)
+                        .font(Font.custom("Visby", size: 20))
                         .foregroundColor(.white)
                         .padding(.leading, 30)
                     
@@ -33,7 +33,7 @@ struct ActivityCardView: View {
                             .stroke(Color.white.opacity(0.6), lineWidth: 4)
                             .frame(width: 40, height: 40)
                         Text("\(progress)")
-                            .font(.title3)
+                            .font(Font.custom("Visby", size: 20))
                             .foregroundColor(.white)
                     }
                     .padding(.trailing, 20)
@@ -51,7 +51,7 @@ struct ActivityCardView: View {
                                         .stroke(Color.white, lineWidth: 2)
                                 )
                             Text(days[index])
-                                .font(.caption)
+                                .font(Font.custom("Visby", size: 12))
                                 .foregroundColor(.white)
                         }
                     }

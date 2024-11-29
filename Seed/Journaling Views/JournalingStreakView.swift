@@ -1,8 +1,13 @@
 import SwiftUI
 import NavigationTransitions
 
+<<<<<<<< HEAD:Seed/Journaling Views/JournalingStreakView.swift
 struct JournalingStreakView: View {
     @State private var navigateToActivities = false
+========
+struct MeditationStreakView: View {
+    @State private var navigateToMeditations = false
+>>>>>>>> 09b3651 (Updated activites view fonts and mountains in garden. Added Journaling views):Seed/Meditation Views/MeditationStreakView.swift
     @State private var navigateToGarden = false
     
     var body: some View {
@@ -22,7 +27,11 @@ struct JournalingStreakView: View {
             ZStack {
                 PlayerView()
                     .ignoresSafeArea()
+<<<<<<<< HEAD:Seed/Journaling Views/JournalingStreakView.swift
                 Color.yellow
+========
+                Color.blue
+>>>>>>>> 09b3651 (Updated activites view fonts and mountains in garden. Added Journaling views):Seed/Meditation Views/MeditationStreakView.swift
                         .opacity(0.2) // Adjust transparency as needed
                         .ignoresSafeArea()
                 
@@ -133,8 +142,33 @@ struct JournalingStreakView: View {
     }
 }
 
+<<<<<<<< HEAD:Seed/Journaling Views/JournalingStreakView.swift
 struct JournalingStreakView_Previews: PreviewProvider {
     static var previews: some View {
         JournalingStreakView()
+========
+// Placeholder Views
+struct MeditationsView: View {
+    var body: some View {
+        Text("Meditations View")
+            .foregroundColor(.white)
+            .font(.largeTitle)
+            .background(Color.black.ignoresSafeArea())
+    }
+}
+
+struct MyGardenView: View {
+    var body: some View {
+        Text("My Garden View")
+            .foregroundColor(.white)
+            .font(.largeTitle)
+            .background(Color.black.ignoresSafeArea())
+    }
+}
+
+struct MeditationStreakView_Previews: PreviewProvider {
+    static var previews: some View {
+        MeditationStreakView()
+>>>>>>>> 09b3651 (Updated activites view fonts and mountains in garden. Added Journaling views):Seed/Meditation Views/MeditationStreakView.swift
     }
 }

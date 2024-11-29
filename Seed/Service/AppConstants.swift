@@ -7,5 +7,5 @@ struct AppConstants {
         "Digital Detox": [Color.orange, Color.red]
     ]
     
-    static let weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sa", "Sun"]
+    static let weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 }

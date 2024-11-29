@@ -21,6 +21,9 @@ struct MeditationIntroView: View {
             ZStack {
                 PlayerView()
                     .ignoresSafeArea()
+                Color.blue
+                        .opacity(0.2) // Adjust transparency as needed
+                        .ignoresSafeArea()
                 
                 VStack {
                     // Pulsing circle at the top

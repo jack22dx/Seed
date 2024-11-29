@@ -38,6 +38,8 @@ struct VirtualGardenView: View {
                             .scaledToFit()
                             .frame(width: UIScreen.main.bounds.width * 2, height: UIScreen.main.bounds.height )
                             .offset(y: 60)
+                            .offset(x: 100)
+                            .scaleEffect(1.5)
 
                         
                             .offset(x: 100)

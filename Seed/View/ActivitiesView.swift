@@ -2,33 +2,38 @@ import SwiftUI
 import NavigationTransitions
 import SwiftData
 
-
 struct ActivitiesView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var lessons: [LessonInfor]  // Automatically query all lessons from the model context
     @State private var isInitialized = false
-    
+    @State private var navigateToGardenView = false
+    @State private var navigateToActivitiesView = false
+    @State private var navigateToSummaryView = false
+
     var body: some View {
         NavigationStack {
             ZStack {
                 PlayerView()
                     .ignoresSafeArea()
-                
+
                 VStack(spacing: 20) {
                     greetingHeader
-                    
+
                     activitiesSection
-                    
+
                     Spacer()
-                    
-                    bottomNavigation
+
+                    CustomBottomNavigationBar(
+                        navigateToGardenView: $navigateToGardenView,
+                        navigateToActivitiesView: $navigateToActivitiesView,
+                        navigateToSummaryView: $navigateToSummaryView
+                    )
+                    .padding(.bottom, 50) // Add spacing from the bottom
                 }
                 .padding(.top, 40)
                 .onAppear {
-                    // Ensure data is initialized only once
                     if !isInitialized {
-                        initializeLessonsIfNeeded(context: modelContext, lessons: lessons)
-                        isInitialized = true
+                        initializeData()
                     }
                 }
             }
@@ -42,44 +47,29 @@ struct ActivitiesView: View {
             //            }
         }
     }
-    
+
+    // MARK: - Private Methods
+
+    private func initializeData() {
+        initializeLessonsIfNeeded(context: modelContext, lessons: lessons)
+        isInitialized = true
+    }
+
+    private func handleMissionComplete() {
+        printDatabaseLocation()
+        incrementCount(for: "Meditation")
+        print("Mission Complete tapped for Meditation")
+    }
+
     private func incrementCount(for name: String) {
-        // Increment count logic
         if let function = lessons.first(where: { $0.name == name }) {
-            function.count += 1 // Increment count
-            // Update current day's attendance
-            let calendar = Calendar.current
-            let currentDay = calendar.component(.weekday, from: Date())
-            var currentDayEnglish = ""
-            switch currentDay {
-            case 1:
-                function.Sunday = true
-                currentDayEnglish = "Sunday"
-            case 2:
-                function.Monday = true
-                currentDayEnglish = "Monday"
-            case 3:
-                function.Tuesday = true
-                currentDayEnglish = "Tuesday"
-            case 4:
-                function.Wednesday = true
-                currentDayEnglish = "Wednesday"
-            case 5:
-                function.Thursday = true
-                currentDayEnglish = "Thursday"
-            case 6:
-                function.Friday = true
-                currentDayEnglish = "Friday"
-            case 7:
-                function.Saturday = true
-                currentDayEnglish = "Saturday"
-            default:
-                print("Unexpected day of the week encountered.")
-            }
+            function.count += 1
+
+            let currentDayEnglish = updateCurrentDayAttendance(for: function)
             
             // Save the updated model context
             do {
-                try modelContext.save() // Save changes to the model context
+                try modelContext.save()
                 print("\(currentDayEnglish)'s Mission Complete:")
                 printDatabaseLocation()
             } catch {
@@ -87,7 +77,26 @@ struct ActivitiesView: View {
             }
         }
     }
-    
+
+    private func updateCurrentDayAttendance(for lesson: LessonInfor) -> String {
+        let calendar = Calendar.current
+        let currentDay = calendar.component(.weekday, from: Date())
+        var currentDayEnglish = ""
+
+        switch currentDay {
+        case 1: lesson.Sunday = true; currentDayEnglish = "Sunday"
+        case 2: lesson.Monday = true; currentDayEnglish = "Monday"
+        case 3: lesson.Tuesday = true; currentDayEnglish = "Tuesday"
+        case 4: lesson.Wednesday = true; currentDayEnglish = "Wednesday"
+        case 5: lesson.Thursday = true; currentDayEnglish = "Thursday"
+        case 6: lesson.Friday = true; currentDayEnglish = "Friday"
+        case 7: lesson.Saturday = true; currentDayEnglish = "Saturday"
+        default: print("Unexpected day of the week encountered.")
+        }
+
+        return currentDayEnglish
+    }
+
     private func printDatabaseLocation() {
         guard let container = try? ModelContainer(for: LessonInfor.self),
               let url = container.configurations.first?.url else {
@@ -96,15 +105,17 @@ struct ActivitiesView: View {
         }
         print("Database location: \(url.absoluteString)")
     }
-    
+
+    // MARK: - Subviews
+
     private var greetingHeader: some View {
         Text("Good Morning, Jack.")
-            .font(.title)
+            .font(Font.custom("Visby", size: 30))
             .foregroundColor(.white)
             .padding(.bottom, 20)
             .shadow(radius: 5)
     }
-    
+
     private var activitiesSection: some View {
         VStack(spacing: 40) {
             // Fetch and display the lessons correctly
@@ -134,24 +145,7 @@ struct ActivitiesView: View {
             )
         }
     }
-    
-    private func getProgressForLesson(name: String) -> Int {
-        // Returns the count for a lesson
-        return lessons.first(where: { $0.name == name })?.count ?? 0
-    }
-    
-    private func getCompletedData(name: String) -> [Bool] {
-        // Return completed days (Mon-Sun) for a lesson
-        if let lesson = lessons.first(where: { $0.name == name }) {
-            return [
-                lesson.Monday, lesson.Tuesday, lesson.Wednesday, lesson.Thursday,
-                lesson.Friday, lesson.Saturday, lesson.Sunday
-            ]
-        } else {
-            return Array(repeating: false, count: 7) // Default if lesson not found
-        }
-    }
-    
+
     private func createActivityCard(title: String, progress: Int, colors: [Color], completed: [Bool]) -> some View {
         ActivityCardView(
             title: title,
@@ -162,8 +156,31 @@ struct ActivitiesView: View {
         )
         .padding(.horizontal, 20)
     }
-    
-    private var bottomNavigation: some View {
+
+    private func getProgressForLesson(name: String) -> Int {
+        return lessons.first(where: { $0.name == name })?.count ?? 0
+    }
+
+    private func getCompletedData(name: String) -> [Bool] {
+        if let lesson = lessons.first(where: { $0.name == name }) {
+            return [
+                lesson.Monday, lesson.Tuesday, lesson.Wednesday, lesson.Thursday,
+                lesson.Friday, lesson.Saturday, lesson.Sunday
+            ]
+        } else {
+            return Array(repeating: false, count: 7)
+        }
+    }
+}
+
+// MARK: - Custom Bottom Navigation Bar Component
+
+struct CustomBottomNavigationBar: View {
+    @Binding var navigateToGardenView: Bool
+    @Binding var navigateToActivitiesView: Bool
+    @Binding var navigateToSummaryView: Bool
+
+    var body: some View {
         HStack {
             Image(systemName: "leaf.circle")
                 .resizable()
@@ -171,9 +188,9 @@ struct ActivitiesView: View {
                 .frame(width: 50, height: 50)
                 .foregroundColor(.green)
                 .padding()
-            
+
             Spacer()
-            
+
             Button(action: {
                 print("Play button tapped")
             }) {
@@ -186,9 +203,9 @@ struct ActivitiesView: View {
                             .font(.system(size: 30))
                     )
             }
-            
+
             Spacer()
-            
+
             NavigationLink(destination: WeeklySummaryView().navigationBarHidden(true)) {
                 Circle()
                     .fill(Color.pink)
@@ -203,10 +220,11 @@ struct ActivitiesView: View {
         .padding()
     }
 }
+
+// MARK: - Previews
+
 struct ActivitiesView_Previews: PreviewProvider {
     static var previews: some View {
         ActivitiesView()
-        
-        
     }
 }

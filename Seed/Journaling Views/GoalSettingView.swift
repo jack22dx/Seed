@@ -1,15 +1,10 @@
 import SwiftUI
 import NavigationTransitions
-import SwiftData
 
 struct GoalSettingView: View {
     @State private var goalText: String = "" // For the user input in the text area
     @State private var navigateToStreakView = false // State to track navigation
 
-    //for oracle
-    @Environment(\.modelContext) private var modelContext
-    @State private var oracleTips_journaling: [OracleTip] = []
-    
     var body: some View {
         NavigationStack { // Ensure NavigationStack wraps the view hierarchy
             ZStack {
@@ -47,24 +42,31 @@ struct GoalSettingView: View {
                         .padding(.bottom, 20)
                         .shadow(radius: 5)
                     
-                    // Tips Button in the center
-                    NavigationLink(destination: JournalingOracleTipsView(oracleTips: oracleTips_journaling)) {
-                            Text("Tips")
-                            .font(Font.custom("Visby", size: 14))
+                    // Tips Button
+                    Button(action: {
+                        print("Tips button tapped")
+                    }) {
+                        Text("Tips")
+                            .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                            .padding()
+                            .frame(width: 120)
+                            .background(
+                                RoundedRectangle(cornerRadius: 40)
+                                    .fill(LinearGradient(
+                                        gradient: Gradient(colors: [Color.red.opacity(0.9), Color.orange.opacity(0.9)]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ))
+                            )
                             .foregroundColor(.white)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 5)
-                            .background(Color.red)
-                            .opacity(0.8) // Adjust transparency as needed
-                            .cornerRadius(10)
                             .shadow(radius: 5)
                     }
-                    .padding(.bottom, 30)
+                    .padding(.bottom, 20)
                     
                     // Text Input Area
                     TextEditor(text: $goalText)
                         .padding()
-                        .frame(height: 200)
+                        .frame(height: 150)
                         .background(Color.white.opacity(0.9))
                         .cornerRadius(15)
                         .shadow(radius: 5)
@@ -98,43 +100,10 @@ struct GoalSettingView: View {
                             .hidden() // Make the NavigationLink invisible
                     )
                 }
-                .onDisappear {
-                    
-                    fetchOracleTips()
-                }
             }
             .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.0)))// Avoid default NavigationLink styling
         
         }
-    }
-    
-    func fetchOracleTips() {
-                
-        let fetchRequest = FetchDescriptor<OracleTip>(
-            predicate: #Predicate { $0.type == "journaling" },
-            sortBy: [
-                SortDescriptor(\OracleTip.level),  // Sort by level
-                SortDescriptor(\OracleTip.seq)     // Then sort by seq
-            ]
-        )
-        
-        do {
-            
-           let  oracleTips = try modelContext.fetch(fetchRequest)
-            
-            if (oracleTips_journaling.isEmpty) {
-                
-                oracleTips_journaling.removeAll();
-
-                for tip in oracleTips {
-                    
-                    oracleTips_journaling.append(tip)
-                }
-            }
-            
-       } catch {
-           print("Failed to fetch OracleTips: \(error)")
-       }
     }
 }
 

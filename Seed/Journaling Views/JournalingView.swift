@@ -1,6 +1,5 @@
 import SwiftUI
 import NavigationTransitions
-import SwiftData
 
 struct JournalingView: View {
     @State private var outerCircleScale: CGFloat = 1.0
@@ -12,11 +11,6 @@ struct JournalingView: View {
     @State private var animationTaskID = UUID()  // Unique ID for tracking animation tasks
     @State private var navigateToMoodSelection = false // Tracks navigation to MoodSelectionView
 
-    @Environment(\.modelContext) private var modelContext
-    @State private var oracleFacts_journaling: [OracleFact] = []
-    @State private var clickTimes = 0;
-    @State private var  fullText = "Journaling can reduce stress by helping you process emotions, clarify thoughts, and release pent-up feelings, promoting better mental health."
-
     var body: some View {
         let backgroundGradient = LinearGradient(
             gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
@@ -25,6 +19,7 @@ struct JournalingView: View {
         )
         
         let lightPink = Color(hue: 0.89, saturation: 0.4, brightness: 1.0, opacity: 1.0)
+        let fullText = "Journaling can reduce stress by helping you process emotions, clarify thoughts, and release pent-up feelings, promoting better mental health."
         let learnMoreText = "In this section, reflect on your emotions with guided questions. Answer freely and review your entries anytime on the summary page."
 
         NavigationStack {
@@ -106,9 +101,11 @@ struct JournalingView: View {
                         // Learn More Button (fades out when pressed)
                         if !isLearnMorePressed {
                             Button(action: {
-                                
-                                changeOracleFacts();
-                                
+                                withAnimation(.easeInOut(duration: 1.5)) {
+                                    isLearnMorePressed = true // Trigger fade-out
+                                }
+                                cancelTextAnimation() // Cancel any running animation
+                                startTextAnimation(fullText: learnMoreText) // Start new text animation
                             }) {
                                 Text("Learn More")
                                     .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
@@ -131,27 +128,9 @@ struct JournalingView: View {
                         // Start Button (fades in and moves to center)
                         NavigationLink(destination: MoodSelectionView().navigationBarHidden(true), isActive: $navigateToMoodSelection) {
                             Button(action: {
-                                
-                                clickTimes = clickTimes + 1
-                                
-                                if(clickTimes == 1){
-                                    
-                                    withAnimation(.easeInOut(duration: 1.5)) {
-                                        isLearnMorePressed = true;
-                                         // Trigger fade-out
-                                    }
-                                    cancelTextAnimation() // Cancel any running animation
-                                    startTextAnimation(fullText: learnMoreText) // Start new text animation
-                                }
-                                
-                                if(clickTimes > 1){
-                                    
-                                    navigateToMoodSelection = true
-                                    
-                                }
-                                                                    
+                                navigateToMoodSelection = true
                             }) {
-                                Text(clickTimes == 1 ? "Continue" : "Start")
+                                Text("Start")
                                     .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
                                     .padding()
                                     .frame(minWidth: 150)
@@ -180,8 +159,6 @@ struct JournalingView: View {
     
     /// Starts a word-by-word text animation.
     func startTextAnimation(fullText: String) {
-        
-        displayedText = ""
         cancelTextAnimation() // Ensure no overlapping animations
         animationTaskID = UUID() // Create a new task identifier
         displayedText = "" // Clear any existing text
@@ -206,36 +183,6 @@ struct JournalingView: View {
     func cancelTextAnimation() {
         animationTaskID = UUID() // Invalidate any pending tasks
         displayedText = "" // Clear the text immediately
-    }
-    
-    func fetchOracleFacts(randomOracleId: Int) {
-                
-        let fetchRequest = FetchDescriptor<OracleFact>(
-            predicate: #Predicate { $0.id == randomOracleId && $0.type == "journaling"}
-        )
-        
-        do {
-            
-           let  oracleFacts = try modelContext.fetch(fetchRequest)
-            
-            if (oracleFacts_journaling.isEmpty) {
-                                
-                fullText = oracleFacts
-                       .map { $0.text }
-                       .joined(separator: " ")
-            }
-            
-       } catch {
-           print("Failed to fetch fetchOracleFacts: \(error)")
-       }
-    }
-    
-    private func  changeOracleFacts(){
-        
-        var changeOracleId = Int.random(in: 1...8)
-        fetchOracleFacts(randomOracleId: changeOracleId)
-        startTextAnimation(fullText: fullText)
-
     }
 }
 

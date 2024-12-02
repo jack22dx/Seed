@@ -1,9 +1,10 @@
 # macOS system files
 .DS_Store
-.DS_Store
+DS_Store
 Seed/.DS_Store
 
 # Xcode user-specific files
 Seed.xcodeproj/project.xcworkspace/xcuserdata/
 Seed.xcodeproj/xcuserdata/
+xcuserdata/
 

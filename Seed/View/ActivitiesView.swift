@@ -9,6 +9,7 @@ struct ActivitiesView: View {
     @State private var navigateToGardenView = false
     @State private var navigateToActivitiesView = false
     @State private var navigateToSummaryView = false
+    @AppStorage("userName") private var userName: String = "Friend" 
 
     var body: some View {
         NavigationStack {
@@ -106,7 +107,7 @@ struct ActivitiesView: View {
     }
 
     private var greetingHeader: some View {
-        Text("Good Morning, Jack.")
+        Text("Good Morning, \(userName).")
             .font(Font.custom("Visby", size: 30))
             .foregroundColor(.white)
             .padding(.bottom, 20)
@@ -115,7 +116,7 @@ struct ActivitiesView: View {
 
     private var activitiesSection: some View {
         VStack(spacing: 40) {
-            // Fetch and display the lessons correctly
+            // Navigation to MeditationActivitiesView
             NavigationLink(destination: MeditationActivitiesView().navigationTransition(.fade(.cross))) {
                 createActivityCard(
                     title: "Meditation",
@@ -135,12 +136,16 @@ struct ActivitiesView: View {
                 )
             }
             
-            createActivityCard(
-                title: "Digital Detox",
-                progress: getProgressForLesson(name: "Digital Detox"),
-                colors: AppConstants.gradientColors["Digital Detox"]!,
-                completed: getCompletedData(name: "Digital Detox")
-            )
+            // Navigation to DetoxStartView
+            NavigationLink(destination: DigitalDetoxView().navigationTransition(.fade(.cross))) {
+                createActivityCard(
+                    title: "Digital Detox",
+                    progress: getProgressForLesson(name: "Digital Detox"),
+                    colors: AppConstants.gradientColors["Digital Detox"]!,
+                    completed: getCompletedData(name: "Digital Detox")
+                )
+            }
+            .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.0)))
         }
     }
 

@@ -1,5 +1,6 @@
 import SwiftUI
 import NavigationTransitions
+
 struct JournalingStreakView: View {
     @State private var navigateToActivities = false
     @State private var navigateToGarden = false
@@ -131,10 +132,7 @@ struct JournalingStreakView: View {
         }
     }
 }
-<<<<<<< HEAD
-=======
 
->>>>>>> frontend
 struct JournalingStreakView_Previews: PreviewProvider {
     static var previews: some View {
         JournalingStreakView()

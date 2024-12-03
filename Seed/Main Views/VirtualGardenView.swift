@@ -38,6 +38,8 @@ struct VirtualGardenView: View {
                             .scaledToFit()
                             .frame(width: UIScreen.main.bounds.width * 2, height: UIScreen.main.bounds.height )
                             .offset(y: 60)
+                            .offset(x: 100)
+                            .scaleEffect(1.5)
 
                         
                             .offset(x: 100)
@@ -334,7 +336,7 @@ struct BottomNavigationBar: View {
                 Button(action: { navigateToGardenView = true }) {
                     Image("leaf")
                         .resizable()
-                        .frame(width: 50, height: 50)
+                        .frame(width: 60, height: 60)
                         .foregroundColor(.green)
                 }
             }

@@ -5,6 +5,10 @@ Seed/.DS_Store
 
 # Xcode user-specific files
 Seed.xcodeproj/project.xcworkspace/xcuserdata/
+<<<<<<< HEAD
 Seed.xcodeproj/xcuserdata/
 xcuserdata/
 
+=======
+Seed.xcodeproj/xcuserdata/
+>>>>>>> frontend

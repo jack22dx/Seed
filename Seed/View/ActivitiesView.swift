@@ -9,6 +9,7 @@ struct ActivitiesView: View {
     @State private var navigateToGardenView = false
     @State private var navigateToActivitiesView = false
     @State private var navigateToSummaryView = false
+    @AppStorage("userName") private var userName: String = "Friend" 
 
     var body: some View {
         NavigationStack {
@@ -22,8 +23,8 @@ struct ActivitiesView: View {
                     activitiesSection
 
                     Spacer()
-
-                    CustomBottomNavigationBar(
+                    
+                    BottomNavigationBar(
                         navigateToGardenView: $navigateToGardenView,
                         navigateToActivitiesView: $navigateToActivitiesView,
                         navigateToSummaryView: $navigateToSummaryView
@@ -38,59 +39,60 @@ struct ActivitiesView: View {
                 }
             }
 
-            Button(action: handleMissionComplete) {
+            Button(action: {
+                printDatabaseLocation()
+                incrementCount(for: "Meditation") // Increment course count
+                print("Mission Complete tapped for Meditation")
+            }) {
                 Text("Completed")
             }
         }
     }
 
-    // MARK: - Private Methods
-
-    private func initializeData() {
-        initializeLessonsIfNeeded(context: modelContext, lessons: lessons)
-        isInitialized = true
-    }
-
-    private func handleMissionComplete() {
-        printDatabaseLocation()
-        incrementCount(for: "Meditation")
-        print("Mission Complete tapped for Meditation")
-    }
-
     private func incrementCount(for name: String) {
+        // Increment count logic
         if let function = lessons.first(where: { $0.name == name }) {
-            function.count += 1
+            function.count += 1 // Increment count
+            // Update current day's attendance
+            let calendar = Calendar.current
+            let currentDay = calendar.component(.weekday, from: Date())
+            var currentDayEnglish = ""
 
-            let currentDayEnglish = updateCurrentDayAttendance(for: function)
-            
+            switch currentDay {
+            case 1:
+                function.Sunday = true
+                currentDayEnglish = "Sunday"
+            case 2:
+                function.Monday = true
+                currentDayEnglish = "Monday"
+            case 3:
+                function.Tuesday = true
+                currentDayEnglish = "Tuesday"
+            case 4:
+                function.Wednesday = true
+                currentDayEnglish = "Wednesday"
+            case 5:
+                function.Thursday = true
+                currentDayEnglish = "Thursday"
+            case 6:
+                function.Friday = true
+                currentDayEnglish = "Friday"
+            case 7:
+                function.Saturday = true
+                currentDayEnglish = "Saturday"
+            default:
+                print("Unexpected day of the week encountered.")
+            }
+
             // Save the updated model context
             do {
-                try modelContext.save()
+                try modelContext.save() // Save changes to the model context
                 print("\(currentDayEnglish)'s Mission Complete:")
                 printDatabaseLocation()
             } catch {
                 print("Failed to save context: \(error)")
             }
         }
-    }
-
-    private func updateCurrentDayAttendance(for lesson: LessonInfor) -> String {
-        let calendar = Calendar.current
-        let currentDay = calendar.component(.weekday, from: Date())
-        var currentDayEnglish = ""
-
-        switch currentDay {
-        case 1: lesson.Sunday = true; currentDayEnglish = "Sunday"
-        case 2: lesson.Monday = true; currentDayEnglish = "Monday"
-        case 3: lesson.Tuesday = true; currentDayEnglish = "Tuesday"
-        case 4: lesson.Wednesday = true; currentDayEnglish = "Wednesday"
-        case 5: lesson.Thursday = true; currentDayEnglish = "Thursday"
-        case 6: lesson.Friday = true; currentDayEnglish = "Friday"
-        case 7: lesson.Saturday = true; currentDayEnglish = "Saturday"
-        default: print("Unexpected day of the week encountered.")
-        }
-
-        return currentDayEnglish
     }
 
     private func printDatabaseLocation() {
@@ -102,10 +104,8 @@ struct ActivitiesView: View {
         print("Database location: \(url.absoluteString)")
     }
 
-    // MARK: - Subviews
-
     private var greetingHeader: some View {
-        Text("Good Morning, Jack.")
+        Text("Good Morning, \(userName).")
             .font(Font.custom("Visby", size: 30))
             .foregroundColor(.white)
             .padding(.bottom, 20)
@@ -114,6 +114,7 @@ struct ActivitiesView: View {
 
     private var activitiesSection: some View {
         VStack(spacing: 40) {
+            // Navigation to MeditationActivitiesView
             NavigationLink(destination: MeditationActivitiesView().navigationTransition(.fade(.cross))) {
                 createActivityCard(
                     title: "Meditation",
@@ -123,6 +124,7 @@ struct ActivitiesView: View {
                 )
             }
 
+            // Navigation to JournalingView
             NavigationLink(destination: JournalingView().navigationTransition(.fade(.cross))) {
                 createActivityCard(
                     title: "Journaling",
@@ -131,25 +133,18 @@ struct ActivitiesView: View {
                     completed: getCompletedData(name: "Journaling")
                 )
             }
-
-            createActivityCard(
-                title: "Digital Detox",
-                progress: getProgressForLesson(name: "Digital Detox"),
-                colors: AppConstants.gradientColors["Digital Detox"]!,
-                completed: getCompletedData(name: "Digital Detox")
-            )
+            
+            // Navigation to DetoxStartView
+            NavigationLink(destination: DigitalDetoxView().navigationTransition(.fade(.cross))) {
+                createActivityCard(
+                    title: "Digital Detox",
+                    progress: getProgressForLesson(name: "Digital Detox"),
+                    colors: AppConstants.gradientColors["Digital Detox"]!,
+                    completed: getCompletedData(name: "Digital Detox")
+                )
+            }
+            .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.0)))
         }
-    }
-
-    private func createActivityCard(title: String, progress: Int, colors: [Color], completed: [Bool]) -> some View {
-        ActivityCardView(
-            title: title,
-            progress: progress,
-            colors: colors,
-            days: AppConstants.weekDays,
-            completed: completed
-        )
-        .padding(.horizontal, 20)
     }
 
     private func getProgressForLesson(name: String) -> Int {
@@ -166,16 +161,19 @@ struct ActivitiesView: View {
             return Array(repeating: false, count: 7)
         }
     }
-}
 
-// MARK: - Custom Bottom Navigation Bar Component
+    private func createActivityCard(title: String, progress: Int, colors: [Color], completed: [Bool]) -> some View {
+        ActivityCardView(
+            title: title,
+            progress: progress,
+            colors: colors,
+            days: AppConstants.weekDays,
+            completed: completed
+        )
+        .padding(.horizontal, 20)
+    }
 
-struct CustomBottomNavigationBar: View {
-    @Binding var navigateToGardenView: Bool
-    @Binding var navigateToActivitiesView: Bool
-    @Binding var navigateToSummaryView: Bool
-
-    var body: some View {
+    private var bottomNavigation: some View {
         HStack {
             Image(systemName: "leaf.circle")
                 .resizable()
@@ -200,19 +198,19 @@ struct CustomBottomNavigationBar: View {
             }
 
             Spacer()
-
-            NavigationLink(destination: WeeklySummaryView().navigationBarHidden(true)) {
-                Circle()
-                    .fill(Color.pink)
-                    .frame(width: 50, height: 50)
-                    .overlay(
-                        Image(systemName: "chart.bar.fill")
-                            .foregroundColor(.white)
-                            .font(.system(size: 25))
-                    )
-            }
+            
+            Image(systemName: "circle")
+                .resizable()
+                .frame(width: 50, height: 50)
+                .foregroundColor(.gray)
+                .padding()
         }
-        .padding()
+    }
+}
+
+struct ActivitiesView_Previews: PreviewProvider {
+    static var previews: some View {
+        ActivitiesView()
     }
 }
 

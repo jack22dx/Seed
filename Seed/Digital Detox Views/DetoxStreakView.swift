@@ -1,6 +1,7 @@
 import SwiftUI
 import NavigationTransitions
-struct JournalingStreakView: View {
+
+struct DetoxStreakView: View {
     @State private var navigateToActivities = false
     @State private var navigateToGarden = false
     
@@ -21,13 +22,13 @@ struct JournalingStreakView: View {
             ZStack {
                 PlayerView()
                     .ignoresSafeArea()
-                Color.yellow
+                Color.red
                         .opacity(0.2) // Adjust transparency as needed
                         .ignoresSafeArea()
                 
                 VStack(spacing: 30) {
                     // Title
-                    Text("Elegant Purple Rose")
+                    Text("Daphne the Deer")
                         .font(Font.custom("Visby", size: 30))
                         .foregroundColor(.white)
                         .shadow(radius: 5)
@@ -39,7 +40,7 @@ struct JournalingStreakView: View {
                             .frame(width: 120, height: 120)
                             .shadow(radius: 10)
                         
-                        Image("purplerose") // Replace with your tree icon for journaling
+                        Image("deer") // Replace with your tree icon for journaling
                             .resizable()
                             .scaledToFit()
                             .frame(width: 100, height: 100)
@@ -47,7 +48,7 @@ struct JournalingStreakView: View {
                     }
                     
                     // Congratulatory Text
-                    Text("Well Done! You have unlocked your first journaling seed.")
+                    Text("Well Done! You have unlocked your first detox seed.")
                         .font(Font.custom("Visby", size: 24))
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
@@ -131,12 +132,9 @@ struct JournalingStreakView: View {
         }
     }
 }
-<<<<<<< HEAD
-=======
 
->>>>>>> frontend
-struct JournalingStreakView_Previews: PreviewProvider {
+struct DetoxStreakView_Previews: PreviewProvider {
     static var previews: some View {
-        JournalingStreakView()
+        DetoxStreakView()
     }
 }

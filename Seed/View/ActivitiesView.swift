@@ -33,13 +33,13 @@ struct ActivitiesView: View {
                 }
             }
             
-            Button(action: {
-                printDatabaseLocation()
-                incrementCount(for: "Meditation") // Increment course count
-                print("Mission Complete tapped for Meditation")
-            }) {
-                Text("Completed")
-            }
+            //            Button(action: {
+            //                printDatabaseLocation()
+            //                incrementCount(for: "Meditation") // Increment course count
+            //                print("Mission Complete tapped for Meditation")
+            //            }) {
+            //                Text("Completed")
+            //            }
         }
     }
     
@@ -108,7 +108,8 @@ struct ActivitiesView: View {
     private var activitiesSection: some View {
         VStack(spacing: 40) {
             // Fetch and display the lessons correctly
-            NavigationLink(destination: MeditationActivitiesView().navigationTransition(.fade(.cross))) {
+            NavigationLink(destination: MeditationActivitiesView().navigationTransition(.fade(.cross)))
+            {
                 createActivityCard(
                     title: "Meditation",
                     progress: getProgressForLesson(name: "Meditation"),
@@ -116,13 +117,14 @@ struct ActivitiesView: View {
                     completed: getCompletedData(name: "Meditation")
                 )
             }
-            
-            createActivityCard(
-                title: "Journaling",
-                progress: getProgressForLesson(name: "Journaling"),
-                colors: AppConstants.gradientColors["Journaling"]!,
-                completed: getCompletedData(name: "Journaling")
-            )
+            NavigationLink(destination: JournalingView().navigationTransition(.fade(.cross))){
+                createActivityCard(
+                    title: "Journaling",
+                    progress: getProgressForLesson(name: "Journaling"),
+                    colors: AppConstants.gradientColors["Journaling"]!,
+                    completed: getCompletedData(name: "Journaling")
+                )
+            }
             
             createActivityCard(
                 title: "Digital Detox",

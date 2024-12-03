@@ -52,7 +52,7 @@ struct MeditationStreakView: View {
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
                         .shadow(radius: 5)
-                        .lineSpacing(10)
+                        .lineSpacing(10) 
                         .padding(.bottom, 30)
                     
                     // Weekly Streak Section

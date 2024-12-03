@@ -16,12 +16,12 @@ struct ActivitiesView: View {
             ZStack {
                 PlayerView()
                     .ignoresSafeArea()
-
+                
                 VStack(spacing: 20) {
                     greetingHeader
-
+                    
                     activitiesSection
-
+                    
                     Spacer()
                     
                     BottomNavigationBar(
@@ -33,8 +33,10 @@ struct ActivitiesView: View {
                 }
                 .padding(.top, 40)
                 .onAppear {
+                    // Ensure data is initialized only once
                     if !isInitialized {
-                        initializeData()
+                        initializeLessonsIfNeeded(context: modelContext, lessons: lessons)
+                        isInitialized = true
                     }
                 }
             }
@@ -148,17 +150,19 @@ struct ActivitiesView: View {
     }
 
     private func getProgressForLesson(name: String) -> Int {
+        // Returns the count for a lesson
         return lessons.first(where: { $0.name == name })?.count ?? 0
     }
 
     private func getCompletedData(name: String) -> [Bool] {
+        // Return completed days (Mon-Sun) for a lesson
         if let lesson = lessons.first(where: { $0.name == name }) {
             return [
                 lesson.Monday, lesson.Tuesday, lesson.Wednesday, lesson.Thursday,
                 lesson.Friday, lesson.Saturday, lesson.Sunday
             ]
         } else {
-            return Array(repeating: false, count: 7)
+            return Array(repeating: false, count: 7) // Default if lesson not found
         }
     }
 
@@ -177,13 +181,12 @@ struct ActivitiesView: View {
         HStack {
             Image(systemName: "leaf.circle")
                 .resizable()
-                .aspectRatio(contentMode: .fit)
                 .frame(width: 50, height: 50)
                 .foregroundColor(.green)
                 .padding()
-
+            
             Spacer()
-
+            
             Button(action: {
                 print("Play button tapped")
             }) {
@@ -196,7 +199,7 @@ struct ActivitiesView: View {
                             .font(.system(size: 30))
                     )
             }
-
+            
             Spacer()
             
             Image(systemName: "circle")
@@ -207,14 +210,6 @@ struct ActivitiesView: View {
         }
     }
 }
-
-struct ActivitiesView_Previews: PreviewProvider {
-    static var previews: some View {
-        ActivitiesView()
-    }
-}
-
-// MARK: - Previews
 
 struct ActivitiesView_Previews: PreviewProvider {
     static var previews: some View {

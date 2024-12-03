@@ -1,5 +1,7 @@
 import SwiftUI
 import AVFoundation
+import SwiftData
+
 
 struct MeditationStartView: View {
     @State private var timeRemaining: Int = 0 // Timer will dynamically reflect the audio duration
@@ -11,6 +13,12 @@ struct MeditationStartView: View {
     @State private var showContinueButton: Bool = false // Tracks whether the Continue button should appear
     @State private var navigateToSummary: Bool = false // Navigation state
     
+    //for oracle
+    @Environment(\.modelContext) private var modelContext
+    @State private var oracleTips_meditation: [OracleTip] = []
+    @State private var clickTipBtn: Bool = false
+
+
     var body: some View {
         let lightpink = Color(hue: 0.89, saturation: 0.4, brightness: 1, opacity: 1.0)
         let buttonColors = [
@@ -27,6 +35,7 @@ struct MeditationStartView: View {
         ]
         NavigationStack {
             ZStack {
+            
                 PlayerView()
                     .ignoresSafeArea()
                 Color.blue
@@ -53,7 +62,7 @@ struct MeditationStartView: View {
                             .frame(width: 80, height: 80)
                             .clipShape(Circle())
                     }
-                    .padding(.bottom, 57)
+                    .padding(.bottom, 10)
                     
                     // Pulsing Circles
                     ZStack {
@@ -77,6 +86,26 @@ struct MeditationStartView: View {
                                 }
                             }
                     }
+                    .padding(.bottom,10)
+
+                    // Tips Button in the center
+                    NavigationLink(destination: MeditationOracleTipsView(oracleTips: oracleTips_meditation), isActive: $clickTipBtn) {
+                        Button(action: {
+                            player?.pause()
+                            timer?.invalidate() // Pause the timer
+                            isPlaying = false
+                            self.clickTipBtn = true
+                        })
+                        {Text("Tips")
+                                .font(Font.custom("Visby", size: 14))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 5)
+                                .background(Color.purple)
+                                .cornerRadius(10)
+                                .shadow(radius: 5)
+                        }
+                    }
                     
                     // Timer Display
                     Text(timeFormatted(timeRemaining))
@@ -90,15 +119,15 @@ struct MeditationStartView: View {
                         NavigationLink(destination: MeditationSummaryView()
                                         .navigationBarHidden(true), isActive: $navigateToSummary) {
                             Text("Continue")
-                                                .font(Font.custom("Visby", size: 18))
-                                                .padding()
-                                                .frame(minWidth: 150)
-                                                .background(buttonColors[1])
-                                                .foregroundColor(.white)
-                                                .clipShape(Capsule())
-                                                .shadow(radius: 5)
-                                .opacity(showContinueButton ? 1 : 0) // Fade effect
-                                .animation(.easeInOut(duration: 3), value: showContinueButton) // Smooth fade
+                            .font(Font.custom("Visby", size: 18))
+                            .padding()
+                            .frame(minWidth: 150)
+                            .background(buttonColors[1])
+                            .foregroundColor(.white)
+                            .clipShape(Capsule())
+                            .shadow(radius: 5)
+                            .opacity(showContinueButton ? 1 : 0) // Fade effect
+                            .animation(.easeInOut(duration: 3), value: showContinueButton) // Smooth fade
                         }
                         .padding(.top, 30)
                     } else {
@@ -147,7 +176,8 @@ struct MeditationStartView: View {
                 }
                 .onAppear {
                     setupAudio()
-                    togglePlayback() 
+                    togglePlayback()
+                    fetchOracleTips()
                 }
                 .onDisappear {
                     timer?.invalidate() // Stop the timer if the view is dismissed
@@ -222,10 +252,92 @@ struct MeditationStartView: View {
             player.play()
         }
     }
-}
+    
+    func fetchOracleTips() {
+                
+        let fetchRequest = FetchDescriptor<OracleTip>(
+            predicate: #Predicate { $0.type == "meditation" },
+            sortBy: [
+                SortDescriptor(\OracleTip.level),  // Sort by level
+                SortDescriptor(\OracleTip.seq)     // Then sort by seq
+            ]
+        )
+        
+        do {
+            
+           let  oracleTips = try modelContext.fetch(fetchRequest)
+            
+            if (oracleTips_meditation.isEmpty) {
+                
+                oracleTips_meditation.removeAll();
 
-struct MeditationStartView_Previews: PreviewProvider {
-    static var previews: some View {
-        MeditationStartView()
+                for tip in oracleTips {
+                    
+                    oracleTips_meditation.append(tip)
+                }
+            }
+            
+       } catch {
+           print("Failed to fetch OracleTips: \(error)")
+       }
     }
 }
+
+// MARK: - Tips Views
+struct MeditationOracleTipsView: View {
+    
+    let oracleTips: [OracleTip]
+    
+        var body: some View {
+            
+            GeometryReader { geometry in
+
+            ZStack {
+                PlayerView()
+                    .ignoresSafeArea()
+                
+                VStack {
+                    Text("Meditation Tips")
+                        .font(Font.custom("Visby", size: 30))
+                        .foregroundColor(.white)
+                        .padding()
+                    
+                    ScrollView {
+                        
+                        // Use ForEach to display the oracleTips
+                        ForEach(oracleTips, id: \.seq) { tip in
+                            Text("\(tip.seq). \(tip.text)")
+                                .font(Font.custom("Visby", size: 18))
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .lineSpacing(10)
+                        }
+                    }
+                    .frame(height: geometry.size.height * 0.6) // screen height 60%
+                    
+                    // scroll more icon
+                    VStack {
+                        Spacer()
+                        Image(systemName: "arrow.down.circle.fill")
+                            .foregroundColor(.white)
+                            .font(.system(size: 20))
+                            .padding(.bottom, 8)
+                        Text("Scroll down for more")
+                            .font(Font.custom("Visby", size: 14))
+                            .foregroundColor(.white)
+                    }
+                    .opacity(0.8)
+                    
+                    Spacer()
+                }
+            }
+        }
+    }
+}
+
+//struct MeditationStartView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        MeditationStartView()
+//    }
+//}

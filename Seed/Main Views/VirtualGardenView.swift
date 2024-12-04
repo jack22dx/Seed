@@ -308,7 +308,7 @@ var sampleElements: [GardenElement] {
 }
 
 
-// MARK: - Settings View
+/* MARK: - Settings View
 struct SettingsView: View {
     var body: some View {
         NavigationStack {
@@ -323,7 +323,7 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
     }
-}
+}*/
 
 // MARK: - Bottom Navigation Bar
 struct BottomNavigationBar: View {

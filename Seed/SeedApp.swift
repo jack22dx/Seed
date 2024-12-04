@@ -25,6 +25,7 @@ struct SeedApp: App {
     var body: some Scene {
         WindowGroup {
             WelcomeView()
+            
             //.environment(\.managedObjectContext, persistenceController.container.viewContext)
 //            ActivitiesView()
                 .environment(\.modelContext, container.mainContext)

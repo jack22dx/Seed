@@ -1,8 +1,5 @@
 import SwiftUI
-import CoreData
-import SDWebImageSwiftUI
 import AVKit
-import AVFoundation
 
 // Custom UIView for the second video without looping
 class SecondPlayerUIView: UIView {
@@ -13,9 +10,9 @@ class SecondPlayerUIView: UIView {
 
         // Use the local video file URL from the app bundle
         guard let fileURL = Bundle.main.url(forResource: "plant-1", withExtension: "mov") else {
-            fatalError("SecondVideo.mp4 not found")
+            fatalError("plant-1.mov not found")
         }
-        
+
         let player = AVPlayer(url: fileURL)
         player.actionAtItemEnd = .pause // Pause the player when the video ends
         player.play() // Start playing the video
@@ -44,7 +41,6 @@ struct SecondPlayerView: UIViewRepresentable {
 }
 
 struct ContentView: View {
-    // State variables to control visibility
     @State private var showText = false
     @State private var showMeditationButton = false
     @State private var showJournalingButton = false
@@ -53,118 +49,69 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                // Video Player Background
+                // Background videos
                 PlayerView()
                     .ignoresSafeArea()
                 SecondPlayerView()
                     .ignoresSafeArea()
-                
-               
 
                 VStack {
-                    // "What would you like to focus on?" Text
                     Text("What would you like to focus on?")
                         .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 24))
                         .foregroundColor(.white)
-                        .opacity(showText ? 1 : 0) // Fade-in effect
+                        .opacity(showText ? 1 : 0)
                         .padding(.top, 20)
                         .padding(.bottom, 40)
-                        .padding(.horizontal, 40)
                         .multilineTextAlignment(.center)
                         .shadow(radius: 5)
 
-                    // Navigation Buttons
                     VStack(spacing: 20) {
                         NavigationLink(destination: MeditationIntroView()) {
-                            Text("Meditation")
-                                .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(LinearGradient(
-                                    gradient: Gradient(colors: [Color.cyan, Color.teal]),
-                                                startPoint: .topLeading,
-                                                endPoint: .bottomTrailing
-                                            ))
-                                .foregroundColor(.white)
-                                .clipShape(Capsule())
-                                .opacity(showMeditationButton ? 1 : 0) // Fade-in effect
-                                .padding(.horizontal, 40)
-                                .shadow(radius: 3)
+                            ActivityButton(title: "Meditation", colors: [Color.cyan, Color.teal])
                         }
 
                         NavigationLink(destination: JournalingView()) {
-                            Text("Journaling")
-                                .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(LinearGradient(
-                                    gradient: Gradient(colors: [Color.green, Color.yellow]),
-                                                startPoint: .topLeading,
-                                                endPoint: .bottomTrailing
-                                            ))
-                                .foregroundColor(.white)
-                                .clipShape(Capsule())
-                                .opacity(showJournalingButton ? 1 : 0) // Fade-in effect
-                                .padding(.horizontal, 40)
-                                .shadow(radius: 3)
+                            ActivityButton(title: "Journaling", colors: [Color.green, Color.yellow])
                         }
 
                         NavigationLink(destination: DigitalDetoxView()) {
-                            Text("Digital Detox")
-                                .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(LinearGradient(
-                                    gradient: Gradient(colors: [Color.gray, Color.orange]),
-                                                startPoint: .topLeading,
-                                                endPoint: .bottomTrailing
-                                            ))
-                                .foregroundColor(.white)
-                                .clipShape(Capsule())
-                                .opacity(showDigitalDetoxButton ? 1 : 0) // Fade-in effect
-                                .padding(.horizontal, 40)
-                                .shadow(radius: 3)
+                            ActivityButton(title: "Digital Detox", colors: [Color.gray, Color.orange])
                         }
                     }
                 }
                 .padding(.bottom, 50)
                 .frame(maxHeight: .infinity, alignment: .top)
                 .onAppear {
-                    // Animate each element with a delay
-                    withAnimation(.easeIn(duration: 1.5)) {
-                        showText = true
-                    }
+                    withAnimation(.easeIn(duration: 1.5)) { showText = true }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        withAnimation(.easeIn(duration: 1)) {
-                            showMeditationButton = true
-                        }
+                        withAnimation(.easeIn(duration: 1)) { showMeditationButton = true }
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
-                        withAnimation(.easeIn(duration: 1)) {
-                            showJournalingButton = true
-                        }
+                        withAnimation(.easeIn(duration: 1)) { showJournalingButton = true }
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                        withAnimation(.easeIn(duration: 1)) {
-                            showDigitalDetoxButton = true
-                        }
-                      
+                        withAnimation(.easeIn(duration: 1)) { showDigitalDetoxButton = true }
                     }
-                 
                 }
-                .navigationBarHidden(true)
-                .navigationTransition(
-                    .fade(.in).animation(.easeInOut(duration: 2)))
             }
-             // Hide the navigation bar on this screen
             .navigationBarHidden(true)
-            
         }
-        .navigationBarHidden(true)
     }
-    
 }
 
-#Preview {
-    ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+struct ActivityButton: View {
+    let title: String
+    let colors: [Color]
+
+    var body: some View {
+        Text(title)
+            .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(LinearGradient(gradient: Gradient(colors: colors), startPoint: .topLeading, endPoint: .bottomTrailing))
+            .foregroundColor(.white)
+            .clipShape(Capsule())
+            .shadow(radius: 3)
+            .padding(.horizontal, 40)
+    }
 }

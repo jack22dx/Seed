@@ -1,10 +1,18 @@
 import SwiftUI
+import SwiftData
+
 
 struct MeditationStreakView: View {
     @State private var navigateToMeditations = false
     @State private var navigateToGarden = false
+    @Environment(\.modelContext) private var modelContext
+    @Query private var lessons: [LessonInfor]
     
     var body: some View {
+        
+        let completedDays = getCompletedData(name: "Meditation") // Replace "Lesson Name" with actual name
+        let dayLabels = ["M", "T", "W", "T", "F", "S", "S"]
+        
         let buttonColors = [
             LinearGradient(
                 gradient: Gradient(colors: [Color.orange, Color.red]),
@@ -22,8 +30,8 @@ struct MeditationStreakView: View {
                 PlayerView()
                     .ignoresSafeArea()
                 Color.blue
-                        .opacity(0.2) // Adjust transparency as needed
-                        .ignoresSafeArea()
+                    .opacity(0.2) // Adjust transparency as needed
+                    .ignoresSafeArea()
                 
                 VStack(spacing: 30) {
                     // Title
@@ -52,24 +60,23 @@ struct MeditationStreakView: View {
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
                         .shadow(radius: 5)
-                        .lineSpacing(10) 
+                        .lineSpacing(10)
                         .padding(.bottom, 30)
                     
                     // Weekly Streak Section
                     VStack(spacing: 10) {
                         HStack {
                             Spacer() // Add space before the first day
-                            ForEach(["M", "T", "W", "T", "F", "S", "S"], id: \.self) { day in
+                            ForEach(dayLabels.indices, id: \.self) { index in
                                 ZStack {
                                     Circle()
-                                        .fill(day == "M" ? Color.green : Color.clear)
+                                        .fill(completedDays[index] ? Color.green : Color.clear)
                                         .frame(width: 40, height: 40)
                                         .overlay(
                                             Circle()
                                                 .stroke(Color.white, lineWidth: 2)
                                         )
-                                    
-                                    Text(day)
+                                    Text(dayLabels[index])
                                         .font(Font.custom("Visby", size: 14))
                                         .foregroundColor(.white)
                                 }
@@ -127,6 +134,17 @@ struct MeditationStreakView: View {
             }
             .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 2.0)))
             .navigationBarHidden(true)
+        }
+    }
+    private func getCompletedData(name: String) -> [Bool] {
+        // Return completed days (Mon-Sun) for a lesson
+        if let lesson = lessons.first(where: { $0.name == name }) {
+            return [
+                lesson.Monday, lesson.Tuesday, lesson.Wednesday, lesson.Thursday,
+                lesson.Friday, lesson.Saturday, lesson.Sunday
+            ]
+        } else {
+            return Array(repeating: false, count: 7) // Default if lesson not found
         }
     }
 }

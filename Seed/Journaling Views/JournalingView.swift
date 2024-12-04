@@ -1,13 +1,27 @@
 import SwiftUI
+import NavigationTransitions
 
 struct JournalingView: View {
     @State private var outerCircleScale: CGFloat = 1.0
     @State private var innerCircleScale: CGFloat = 1.0
     @State private var showWelcomeText = true
     @State private var displayedText = ""
-    @State private var navigateToTabs = false
+    @State private var isComplete = false
+    @State private var isLearnMorePressed = false // Tracks whether "Learn More" has been pressed
+    @State private var animationTaskID = UUID()  // Unique ID for tracking animation tasks
+    @State private var navigateToMoodSelection = false // Tracks navigation to MoodSelectionView
 
     var body: some View {
+        let backgroundGradient = LinearGradient(
+            gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        
+        let lightPink = Color(hue: 0.89, saturation: 0.4, brightness: 1.0, opacity: 1.0)
+        let fullText = "Journaling can reduce stress by helping you process emotions, clarify thoughts, and release pent-up feelings, promoting better mental health."
+        let learnMoreText = "In this section, reflect on your emotions with guided questions. Answer freely and review your entries anytime on the summary page."
+
         NavigationStack {
             ZStack {
                 PlayerView()
@@ -71,11 +85,57 @@ struct JournalingView: View {
                     }
 
                     Spacer()
+                    
+                    // Action buttons
+                    HStack(spacing: isLearnMorePressed ? 0 : 40) {
+                        // Learn More Button (fades out when pressed)
+                        if !isLearnMorePressed {
+                            Button(action: {
+                                withAnimation(.easeInOut(duration: 1.5)) {
+                                    isLearnMorePressed = true // Trigger fade-out
+                                }
+                                cancelTextAnimation() // Cancel any running animation
+                                startTextAnimation(fullText: learnMoreText) // Start new text animation
+                            }) {
+                                Text("Learn More")
+                                    .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                                    .padding()
+                                    .frame(minWidth: 150)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 40)
+                                            .fill(LinearGradient(
+                                                gradient: Gradient(colors: [Color.orange, Color.red]),
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            ))
+                                    )
+                                    .foregroundColor(.white)
+                                    .shadow(radius: 5)
+                            }
+                            .transition(.opacity) // Smooth fade-out
+                        }
 
-                    // Navigation button
-                    NavigationLink(destination: JournalingTabsView(), isActive: $navigateToTabs) {
-                        Button("Continue") {
-                            navigateToTabs = true
+                        // Start Button (fades in and moves to center)
+                        NavigationLink(destination: MoodSelectionView().navigationBarHidden(true), isActive: $navigateToMoodSelection) {
+                            Button(action: {
+                                navigateToMoodSelection = true
+                            }) {
+                                Text("Start")
+                                    .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                                    .padding()
+                                    .frame(minWidth: 150)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 40)
+                                            .fill(LinearGradient(
+                                                gradient: Gradient(colors: [Color.green, Color.teal]),
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            ))
+                                    )
+                                    .foregroundColor(.white)
+                                    .shadow(radius: 5)
+                            }
+                            .transition(.opacity) // Smooth fade-in
                         }
                         .padding()
                         .frame(minWidth: 150)
@@ -93,9 +153,13 @@ struct JournalingView: View {
             }
         }
     }
-
-    private func startTextAnimation(_ fullText: String) {
-        displayedText = ""
+    
+    /// Starts a word-by-word text animation.
+    func startTextAnimation(fullText: String) {
+        cancelTextAnimation() // Ensure no overlapping animations
+        animationTaskID = UUID() // Create a new task identifier
+        displayedText = "" // Clear any existing text
+        
         let words = fullText.split(separator: " ").map(String.init)
         var delay: Double = 0.1
         for word in words {
@@ -104,5 +168,11 @@ struct JournalingView: View {
             }
             delay += 0.2
         }
+    }
+    
+    /// Cancels any ongoing text animation.
+    func cancelTextAnimation() {
+        animationTaskID = UUID() // Invalidate any pending tasks
+        displayedText = "" // Clear the text immediately
     }
 }

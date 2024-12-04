@@ -6,11 +6,13 @@ import SwiftUI
 
 
 
+
 struct MoodSelectionView: View {
     let activity: JournalingActivity // Receives the selected activity
     @State private var moodValue: Double = 1.0 // Slider value to represent mood
-    @State private var navigateToQuestionsView = false // Tracks navigation to QuestionsView
-
+    @State private var navigateToGratitudeView = false // Tracks navigation to GratitudeView
+    @Query private var lessons: [LessonInfor]// Automatically query all lessons from the model context
+    @Environment(\.modelContext) private var modelContext
     var body: some View {
         NavigationStack {
             ZStack {

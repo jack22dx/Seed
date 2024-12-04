@@ -1,11 +1,17 @@
 import SwiftUI
 import NavigationTransitions
+import SwiftData
 
 struct JournalingStreakView: View {
     @State private var navigateToActivities = false
     @State private var navigateToGarden = false
+    @Query private var lessons: [LessonInfor]  // Automatically query all lessons from the model context
     
     var body: some View {
+        
+        let completedDays = getCompletedData(name: "Journaling") // Replace "Lesson Name" with actual name
+        let dayLabels = ["M", "T", "W", "T", "F", "S", "S"]
+        
         let buttonColors = [
             LinearGradient(
                 gradient: Gradient(colors: [Color.orange, Color.red]),
@@ -23,8 +29,8 @@ struct JournalingStreakView: View {
                 PlayerView()
                     .ignoresSafeArea()
                 Color.yellow
-                        .opacity(0.2) // Adjust transparency as needed
-                        .ignoresSafeArea()
+                    .opacity(0.2) // Adjust transparency as needed
+                    .ignoresSafeArea()
                 
                 VStack(spacing: 30) {
                     // Title
@@ -59,23 +65,39 @@ struct JournalingStreakView: View {
                     // Weekly Streak Section
                     VStack(spacing: 10) {
                         HStack {
-                            Spacer() // Add space before the first day
-                            ForEach(["M", "T", "W", "T", "F", "S", "S"], id: \.self) { day in
+                            ForEach(dayLabels.indices, id: \.self) { index in
                                 ZStack {
                                     Circle()
-                                        .fill(day == "M" ? Color.green : Color.clear) // Highlight Monday as an example
+                                        .fill(completedDays[index] ? Color.green : Color.clear)
                                         .frame(width: 40, height: 40)
                                         .overlay(
                                             Circle()
                                                 .stroke(Color.white, lineWidth: 2)
                                         )
                                     
-                                    Text(day)
-                                        .font(Font.custom("Visby", size: 14))
+                                    Text(dayLabels[index])
+                                        .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 20))
                                         .foregroundColor(.white)
+                                        .shadow(radius: 5)
                                 }
                             }
-                            Spacer() // Add space after the last day
+                            Spacer() // Add space before the first day
+//                            ForEach(["M", "T", "W", "T", "F", "S", "S"], id: \.self) { day in
+//                                ZStack {
+//                                    Circle()
+//                                        .fill(day == "M" ? Color.green : Color.clear) // Highlight Monday as an example
+//                                        .frame(width: 40, height: 40)
+//                                        .overlay(
+//                                            Circle()
+//                                                .stroke(Color.white, lineWidth: 2)
+//                                        )
+//                                    
+//                                    Text(day)
+//                                        .font(Font.custom("Visby", size: 14))
+//                                        .foregroundColor(.white)
+//                                }
+//                            }
+//                            Spacer() // Add space after the last day
                         }
                         .padding(.horizontal, 20) // Ensure extra padding for the edges
                         
@@ -131,10 +153,22 @@ struct JournalingStreakView: View {
             .navigationBarHidden(true)
         }
     }
+    private func getCompletedData(name: String) -> [Bool] {
+        // Return completed days (Mon-Sun) for a lesson
+        if let lesson = lessons.first(where: { $0.name == name }) {
+            return [
+                lesson.Monday, lesson.Tuesday, lesson.Wednesday, lesson.Thursday,
+                lesson.Friday, lesson.Saturday, lesson.Sunday
+            ]
+        } else {
+            return Array(repeating: false, count: 7) // Default if lesson not found
+        }
+    }
 }
 
 struct JournalingStreakView_Previews: PreviewProvider {
     static var previews: some View {
         JournalingStreakView()
+        
     }
 }

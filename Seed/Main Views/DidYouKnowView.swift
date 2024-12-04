@@ -1,5 +1,7 @@
 import SwiftUI
 import NavigationTransitions
+import SwiftData
+
 
 struct DidYouKnowView: View {
     @State private var displayedText = ""
@@ -9,8 +11,11 @@ struct DidYouKnowView: View {
     @State private var isAnimatingText = false
     @State private var navigateToMeditationView = false // Tracks navigation to MeditationView
 
+    @Environment(\.modelContext) private var modelContext
+    @State private var oracleFacts_meditation: [OracleFact] = []
+    
     private let titleText = "Did you know?"
-    private let descriptionText = """
+    @State private var descriptionText = """
     Meditation can physically change your brain. It can also reduce the size of the amygdala, which is associated with stress and fear.
     """
 
@@ -96,7 +101,7 @@ struct DidYouKnowView: View {
                     HStack(spacing: 40) {
                         // Learn More Button
                         Button(action: {
-                            print("Learn More tapped")
+                            changeOracleFacts()
                         }) {
                             Text("Learn More")
                                 .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
@@ -134,6 +139,8 @@ struct DidYouKnowView: View {
     }
 
     func animateDescriptionText() {
+        
+        displayedText = ""
         let words = descriptionText.split(separator: " ").map(String.init)
         var delay: Double = 0.1
 
@@ -151,10 +158,41 @@ struct DidYouKnowView: View {
             isAnimatingText = true
         }
     }
+    
+    func fetchOracleFacts(randomOracleId: Int) {
+                
+        let fetchRequest = FetchDescriptor<OracleFact>(
+            predicate: #Predicate { $0.id == randomOracleId && $0.type == "meditation"}
+        )
+        
+        do {
+            
+           let  oracleFacts = try modelContext.fetch(fetchRequest)
+            
+            if (oracleFacts_meditation.isEmpty) {
+                                
+                descriptionText = oracleFacts
+                       .map { $0.text }
+                       .joined(separator: " ")
+            }
+            
+       } catch {
+           print("Failed to fetch fetchOracleFacts: \(error)")
+       }
+    }
+    
+    private func  changeOracleFacts(){
+        
+        var changeOracleId = Int.random(in: 1...10)
+        fetchOracleFacts(randomOracleId: changeOracleId)
+        animateDescriptionText()
+
+    }
+
 }
 
-struct DidYouKnowView_Previews: PreviewProvider {
-    static var previews: some View {
-        DidYouKnowView()
-    }
-}
+//struct DidYouKnowView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        DidYouKnowView()
+//    }
+//}

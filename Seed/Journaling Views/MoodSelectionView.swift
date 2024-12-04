@@ -1,9 +1,13 @@
 import SwiftUI
 import NavigationTransitions
+import SwiftData
 
 struct MoodSelectionView: View {
     @State private var moodValue: Double = 1.0 // Slider value to represent mood
     @State private var navigateToGratitudeView = false // Tracks navigation to GratitudeView
+
+    @Query private var lessons: [LessonInfor]// Automatically query all lessons from the model context
+    @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         let backgroundGradient = LinearGradient(
@@ -97,6 +101,7 @@ struct MoodSelectionView: View {
                                    isActive: $navigateToGratitudeView) {
                         Button(action: {
                             navigateToGratitudeView = true
+                            incrementCount(for:"Journaling")
                         }) {
                             Text("Continue")
                                 .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
@@ -121,6 +126,50 @@ struct MoodSelectionView: View {
             }
         }
     }
+    private func incrementCount(for name: String) {
+        // Increment count logic
+        if let function = lessons.first(where: { $0.name == name }) {
+            function.count += 1 // Increment count
+            // Update current day's attendance
+            let calendar = Calendar.current
+            let currentDay = calendar.component(.weekday, from: Date())
+            var currentDayEnglish = ""
+            switch currentDay {
+            case 1:
+                function.Sunday = true
+                currentDayEnglish = "Sunday"
+            case 2:
+                function.Monday = true
+                currentDayEnglish = "Monday"
+            case 3:
+                function.Tuesday = true
+                currentDayEnglish = "Tuesday"
+            case 4:
+                function.Wednesday = true
+                currentDayEnglish = "Wednesday"
+            case 5:
+                function.Thursday = true
+                currentDayEnglish = "Thursday"
+            case 6:
+                function.Friday = true
+                currentDayEnglish = "Friday"
+            case 7:
+                function.Saturday = true
+                currentDayEnglish = "Saturday"
+            default:
+                print("Unexpected day of the week encountered.")
+            }
+            
+            // Save the updated model context
+            do {
+                try modelContext.save() // Save changes to the model context
+                print("\(currentDayEnglish)'s Mission Complete:")
+            } catch {
+                print("Failed to save context: \(error)")
+            }
+        }
+    }
+
 }
 
 struct MoodSelectionView_Previews: PreviewProvider {

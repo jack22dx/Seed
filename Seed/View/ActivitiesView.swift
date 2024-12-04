@@ -125,9 +125,7 @@ struct ActivitiesView: View {
                     completed: getCompletedData(name: "Meditation")
                 )
             }
-
-            // Navigation to JournalingView
-            NavigationLink(destination: JournalingView().navigationTransition(.fade(.cross))) {
+            NavigationLink(destination: JournalingView().navigationTransition(.fade(.cross))){
                 createActivityCard(
                     title: "Journaling",
                     progress: getProgressForLesson(name: "Journaling"),

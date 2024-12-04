@@ -1,20 +1,13 @@
 import SwiftUI
 import NavigationTransitions
-<<<<<<< HEAD
 import SwiftData
-=======
->>>>>>> 09b3651 (Updated activites view fonts and mountains in garden. Added Journaling views)
+
 
 struct MoodSelectionView: View {
     @State private var moodValue: Double = 1.0 // Slider value to represent mood
     @State private var navigateToGratitudeView = false // Tracks navigation to GratitudeView
-
-<<<<<<< HEAD
     @Query private var lessons: [LessonInfor]// Automatically query all lessons from the model context
     @Environment(\.modelContext) private var modelContext
-
-=======
->>>>>>> 09b3651 (Updated activites view fonts and mountains in garden. Added Journaling views)
     var body: some View {
         let backgroundGradient = LinearGradient(
             gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
@@ -107,10 +100,7 @@ struct MoodSelectionView: View {
                                    isActive: $navigateToGratitudeView) {
                         Button(action: {
                             navigateToGratitudeView = true
-<<<<<<< HEAD
                             incrementCount(for:"Journaling")
-=======
->>>>>>> 09b3651 (Updated activites view fonts and mountains in garden. Added Journaling views)
                         }) {
                             Text("Continue")
                                 .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))

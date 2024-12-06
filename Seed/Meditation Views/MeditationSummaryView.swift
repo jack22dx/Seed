@@ -164,9 +164,6 @@ struct MeditationSummaryView: View {
              element.isVisible = true
          }
         
-        
-        
-        
         function.count += 1
         
         let calendar = Calendar.current
@@ -192,7 +189,6 @@ struct MeditationSummaryView: View {
             print("Failed to save context: \(error)")
         }
     }
-    
     private func getDayName(for dayNumber: Int) -> String {
         switch dayNumber {
         case 1: return "Sunday"

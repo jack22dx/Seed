@@ -81,23 +81,7 @@ struct JournalingStreakView: View {
                                         .shadow(radius: 5)
                                 }
                             }
-                            Spacer() // Add space before the first day
-//                            ForEach(["M", "T", "W", "T", "F", "S", "S"], id: \.self) { day in
-//                                ZStack {
-//                                    Circle()
-//                                        .fill(day == "M" ? Color.green : Color.clear) // Highlight Monday as an example
-//                                        .frame(width: 40, height: 40)
-//                                        .overlay(
-//                                            Circle()
-//                                                .stroke(Color.white, lineWidth: 2)
-//                                        )
-//                                    
-//                                    Text(day)
-//                                        .font(Font.custom("Visby", size: 14))
-//                                        .foregroundColor(.white)
-//                                }
-//                            }
-//                            Spacer() // Add space after the last day
+                            Spacer() 
                         }
                         .padding(.horizontal, 20) // Ensure extra padding for the edges
                         

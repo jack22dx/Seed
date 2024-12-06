@@ -24,8 +24,9 @@ struct SeedApp: App {
     let persistenceController = PersistenceController.shared
     var body: some Scene {
         WindowGroup {
-                        WelcomeView()
-//            MeditationActivitiesView()
+//                        VirtualGardenView()
+            WelcomeView()
+            //            MeditationActivitiesView()
             //.environment(\.managedObjectContext, persistenceController.container.viewContext)
             //            ActivitiesView()
                 .environment(\.modelContext, container.mainContext)

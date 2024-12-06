@@ -12,11 +12,11 @@ struct DigitalDetoxView: View {
     @State private var navigateToMoodSelection = false // Tracks navigation to MoodSelectionView
 
     var body: some View {
-        let backgroundGradient = LinearGradient(
-            gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
+//        let backgroundGradient = LinearGradient(
+//            gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
+//            startPoint: .top,
+//            endPoint: .bottom
+//        )
         
         let lightPink = Color(hue: 0.89, saturation: 0.4, brightness: 1.0, opacity: 1.0)
         let fullText = "A digital detox can reduce stress, improve focus, and boost your mood by giving your mind a chance to rest."
@@ -126,26 +126,30 @@ struct DigitalDetoxView: View {
                         }
 
                         // Start Button (fades in and moves to center)
-                        NavigationLink(destination: DetoxStartView().navigationBarHidden(true), isActive: $navigateToMoodSelection) {
-                            Button(action: {
+                        Button(action: {
+                            withAnimation {
                                 navigateToMoodSelection = true
-                            }) {
-                                Text("Start")
-                                    .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
-                                    .padding()
-                                    .frame(minWidth: 150)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 40)
-                                            .fill(LinearGradient(
-                                                gradient: Gradient(colors: [Color.green, Color.teal]),
-                                                startPoint: .topLeading,
-                                                endPoint: .bottomTrailing
-                                            ))
-                                    )
-                                    .foregroundColor(.white)
-                                    .shadow(radius: 5)
                             }
-                            .transition(.opacity) // Smooth fade-in
+                        }) {
+                            Text("Start")
+                                .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                                .padding()
+                                .frame(minWidth: 150)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 40)
+                                        .fill(LinearGradient(
+                                            gradient: Gradient(colors: [Color.green, Color.teal]),
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        ))
+                                )
+                                .foregroundColor(.white)
+                                .shadow(radius: 5)
+                        }
+                        .transition(.opacity) // Smooth fade-in
+                        .navigationDestination(isPresented: $navigateToMoodSelection) {
+                            DetoxStartView()
+                                .navigationBarHidden(true)
                         }
                     }
                     .frame(maxWidth: .infinity) // Ensures proper centering

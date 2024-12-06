@@ -1,6 +1,38 @@
 import SwiftUI
+import NavigationTransitions
+import SwiftData
 
 struct JournalingView: View {
+    
+    static let gardenElements: [GardenElementData] = [
+        GardenElementData(name: "mountains", type: .png("mountains")),
+        GardenElementData(name: "mushroom", type: .gif("mushroom")),
+        GardenElementData(name: "christmastree", type: .png("christmastree")),
+        GardenElementData(name: "purplerose", type: .png("purplerose")),
+        GardenElementData(name: "deer", type: .png("deer")),
+        GardenElementData(name: "cherryblossom", type: .png("cherryblossom")),
+        GardenElementData(name: "rose", type: .png("rose"))
+    ]
+    @Query private var lessons: [LessonInfor]  // Automatically query all lessons from the model context
+    var journalingLessonCount: Int {
+        lessons.first(where: { $0.name == "Journaling" })?.count ?? 0
+    }
+    // Compute selected garden element based on time
+    var selectedGardenElement: GardenElementData {
+        let filteredElements: [GardenElementData]
+        switch journalingLessonCount {
+        case ...3:
+            filteredElements = Self.gardenElements.filter { ["rose", "cherryblossom"].contains($0.name) }
+        case 3...6:
+            filteredElements = Self.gardenElements.filter { ["deer", "purplerose"].contains($0.name) }
+        case 7...:
+            filteredElements = Self.gardenElements.filter { ["christmastree", "mushroom", "mountains"].contains($0.name) }
+        default:
+            filteredElements = []
+        }
+        
+        return filteredElements.randomElement() ?? Self.gardenElements.first { $0.name == "sunflower" }!
+    }
     @State private var outerCircleScale: CGFloat = 1.0
     @State private var innerCircleScale: CGFloat = 1.0
     @State private var showWelcomeText = true
@@ -8,6 +40,18 @@ struct JournalingView: View {
     @State private var navigateToTabs = false
 
     var body: some View {
+        
+        let selectedElement = selectedGardenElement
+//        let backgroundGradient = LinearGradient(
+//            gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
+//            startPoint: .top,
+//            endPoint: .bottom
+//        )
+        
+        let lightPink = Color(hue: 0.89, saturation: 0.4, brightness: 1.0, opacity: 1.0)
+        let fullText = "Journaling can reduce stress by helping you process emotions, clarify thoughts, and release pent-up feelings, promoting better mental health."
+        let learnMoreText = "In this section, reflect on your emotions with guided questions. Answer freely and review your entries anytime on the summary page."
+
         NavigationStack {
             ZStack {
                 PlayerView()
@@ -72,10 +116,28 @@ struct JournalingView: View {
 
                     Spacer()
 
-                    // Navigation button
-                    NavigationLink(destination: JournalingTabsView(), isActive: $navigateToTabs) {
-                        Button("Continue") {
-                            navigateToTabs = true
+                        // Start Button (fades in and moves to center)
+                        Button(action: {
+                            navigateToMoodSelection = true
+                        }) {
+                            Text("Start")
+                                .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                                .padding()
+                                .frame(minWidth: 150)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 40)
+                                        .fill(LinearGradient(
+                                            gradient: Gradient(colors: [Color.green, Color.teal]),
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        ))
+                                )
+                                .foregroundColor(.white)
+                                .shadow(radius: 5)
+                        }
+                        .navigationDestination(isPresented: $navigateToMoodSelection){
+                            MoodSelectionView(selectedGardenElement:selectedElement)
+                                .navigationBarHidden(true)
                         }
                         .padding()
                         .frame(minWidth: 150)
@@ -104,5 +166,11 @@ struct JournalingView: View {
             }
             delay += 0.2
         }
+    }
+}
+
+struct JournalingView_Previews: PreviewProvider {
+    static var previews: some View {
+        JournalingView()
     }
 }

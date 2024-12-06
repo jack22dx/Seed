@@ -192,137 +192,26 @@ struct GIFView: UIViewRepresentable {
 }
 
 // MARK: - Add Elements View
-//struct AddElementsView: View {
-//    @Binding var gardenElements: [GardenElement]
-//    @Query private var lessons: [LessonInfor]
-//    @Query private var elementForGarden: [ElementForGarden]
-//    
-//    private var meditationLessonCount: Int {
-//        getLessonCount(name: "Meditation")
-//    }
-//    private func getLessonCount(name: String) -> Int {
-//        lessons.first(where: { $0.name == name })?.count ?? 0
-//    }
-//    
-//    func isElementVisible(elementName: String) -> Bool {
-//        elementForGarden.first(where: { $0.elementName == elementName })?.isVisible ?? false
-//    }
-//    
-//    var categorizedAssets: [String: [GardenElement]] {
-//        [
-//            "Meditation": [
-//                //Do not delete
-//                GardenElement(id: UUID(), name: "Sunflower", type: .png("sunflower"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: isElementVisible(elementName: "sunflower")),
-//                GardenElement(id: UUID(), name: "Butterfly", type: .gif("butterfly"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: isElementVisible(elementName: "butterfly")),
-//                GardenElement(id: UUID(), name: "Bonsai Tree", type: .png("bonsaitree"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: meditationLessonCount > 100),
-//                GardenElement(id: UUID(), name: "Palm Tree", type: .png("palmtree"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: meditationLessonCount > 0),
-//                GardenElement(id: UUID(), name: "Purple Tree", type: .png("purpletree"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: meditationLessonCount >  0),
-//                GardenElement(id: UUID(), name: "Orange Butterfly", type: .png("orangebutterfly"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: meditationLessonCount > 0),
-//                GardenElement(id: UUID(), name: "Treeseed", type: .png("treeseed"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: false)
-//                //                GardenElement(id: UUID(), name: "Pink Flower", type: .png("pinkflower"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
-//                //                GardenElement(id: UUID(), name: "Sunflower", type: .png("sunflower"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: true),
-//                //                GardenElement(id: UUID(), name: "Butterfly", type: .gif("butterfly"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
-//                //                GardenElement(id: UUID(), name: "Bonsai Tree", type: .png("bonsaitree"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
-//                //                GardenElement(id: UUID(), name: "Palm Tree", type: .png("palmtree"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
-//                //                GardenElement(id: UUID(), name: "Purple Tree", type: .png("purpletree"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
-//                //                GardenElement(id: UUID(), name: "Orange Butterfly", type: .png("orangebutterfly"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible:true),
-//                //                GardenElement(id: UUID(), name: "Treeseed", type: .png("treeseed"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
-//                //                GardenElement(id: UUID(), name: "Pink Flower", type: .png("pinkflower"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true)
-//            ],
-//            "Journaling": [
-//                //Do not delete
-//                //                GardenElement(id: UUID(), name: "Rose", type: .png("rose"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: getLessonCount(name: "Journaling") > 0),
-//                //                GardenElement(id: UUID(), name: "Cherry Blossom", type: .png("cherryblossom"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Journaling") > 0),
-//                //                GardenElement(id: UUID(), name: "Deer", type: .png("deer"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Journaling") > 0),
-//                //                GardenElement(id: UUID(), name: "Bouquet", type: .png("bouquet"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Journaling") > 0),
-//                //                GardenElement(id: UUID(), name: "Purple Rose", type: .png("purplerose"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Journaling") > 0),
-//                //                GardenElement(id: UUID(), name: "Christmastree", type: .png("christmastree"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Meditation") > 0),
-//                //                GardenElement(id: UUID(), name: "Mushroom", type: .png("mushroom"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Journaling") > 0),
-//                //                GardenElement(id: UUID(), name: "Mountains", type: .png("mountains"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Journaling") > 0)
-//                GardenElement(id: UUID(), name: "Rose", type: .png("rose"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: true),
-//                GardenElement(id: UUID(), name: "Cherry Blossom", type: .png("cherryblossom"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
-//                GardenElement(id: UUID(), name: "Deer", type: .png("deer"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
-//                GardenElement(id: UUID(), name: "Bouquet", type: .png("deer"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
-//                GardenElement(id: UUID(), name: "Purple Rose", type: .png("purplerose"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
-//                GardenElement(id: UUID(), name: "Christmastree", type: .png("christmastree"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
-//                GardenElement(id: UUID(), name: "Mushroom", type: .png("mushroom"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: true),
-//                GardenElement(id: UUID(), name: "Mountains", type: .png("mountains"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: true),
-//            ],
-//            "Digital Detox": [
-//                //Do not delete
-//                GardenElement(id: UUID(), name: "Turtle", type: .png("turtle"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: getLessonCount(name: "Digital Detox") > 1),
-//                GardenElement(id: UUID(), name: "Pine Tree", type: .png("pinetree"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Digital Detox") > 1),
-//                GardenElement(id: UUID(), name: "Snow Mountain", type: .png("snowmountain"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Meditation") > 4),
-//                GardenElement(id: UUID(), name: "Yellow Tree", type: .png("yellowtree"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Digital Detox") > 4),
-//                GardenElement(id: UUID(), name: "Rabbit", type: .gif("rabbit"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Digital Detox") > 12),
-//                GardenElement(id: UUID(), name: "Duck", type: .gif("duck"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Digital Detox") > 12),
-//                GardenElement(id: UUID(), name: "Cat", type: .gif("cat"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Digital Detox") > 20),
-//                GardenElement(id: UUID(), name: "Bird", type: .gif("bird"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Digital Detox") > 20)
-//            ]
-//        ]
-//    }
-//    var body: some View {
-//        NavigationStack {
-//            ScrollView(.vertical) { // Vertical scrollable list
-//                VStack(alignment: .leading, spacing: 16) {
-//                    ForEach(categorizedAssets.keys.sorted(), id: \.self) { category in
-//                        VStack(alignment: .leading) {
-//                            Text(category)
-//                                .font(.headline)
-//                                .padding(.bottom, 8)
-//                            LazyVGrid(columns: [GridItem(), GridItem(), GridItem()], spacing: 16) {
-//                                ForEach(categorizedAssets[category] ?? []) { element in
-//                                    Button(action: {
-//                                        gardenElements.append(element)
-//                                    }) {
-//                                        VStack {
-//                                            if case .png(let imageName) = element.type {
-//                                                Image(imageName)
-//                                                    .resizable()
-//                                                    .scaledToFit()
-//                                                    .frame(width: 80, height: 80)
-//                                            } else if case .gif(let gifName) = element.type {
-//                                                GIFView(gifName: gifName)
-//                                                    .frame(width: 80, height: 80)
-//                                            }
-//                                            Text(element.name)
-//                                                .font(.caption)
-//                                                .multilineTextAlignment(.center)
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//                .padding()
-//            }
-//            .navigationTitle("Add Elements")
-//            .navigationBarTitleDisplayMode(.inline)
-//        }
-//    }
-//}
-
 struct AddElementsView: View {
     @Binding var gardenElements: [GardenElement]
     @Query private var lessons: [LessonInfor]
     @Query private var elementForGarden: [ElementForGarden]
-
+    
     // This is a computed property to get the "Meditation" lesson count
     private var meditationLessonCount: Int {
         getLessonCount(name: "Meditation")
     }
-
+    
     // Helper function to get the lesson count
     private func getLessonCount(name: String) -> Int {
         lessons.first(where: { $0.name == name })?.count ?? 0
     }
-
+    
     // Function to check if an element is visible
     private func isElementVisible(elementName: String) -> Bool {
         return elementForGarden.first(where: { $0.elementName == elementName })?.isVisible ?? false
     }
-
+    
     // This function will return categorized garden elements based on the lesson count
     private func createCategorizedAssets() -> [String: [GardenElement]] {
         return [
@@ -333,12 +222,40 @@ struct AddElementsView: View {
                 GardenElement(id: UUID(), name: "Palm Tree", type: .png("palmtree"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: meditationLessonCount > 0),
                 GardenElement(id: UUID(), name: "Purple Tree", type: .png("purpletree"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: meditationLessonCount > 0),
                 GardenElement(id: UUID(), name: "Orange Butterfly", type: .png("orangebutterfly"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: meditationLessonCount > 0),
-                GardenElement(id: UUID(), name: "Treeseed", type: .png("treeseed"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: false)
-            ]
+                GardenElement(id: UUID(), name: "Treeseed", type: .png("treeseed"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: false)],
+            "Journaling": [
+                //Do not delete
+                //                GardenElement(id: UUID(), name: "Rose", type: .png("rose"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: getLessonCount(name: "Journaling") > 0),
+                //                GardenElement(id: UUID(), name: "Cherry Blossom", type: .png("cherryblossom"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Journaling") > 0),
+                //                GardenElement(id: UUID(), name: "Deer", type: .png("deer"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Journaling") > 0),
+                //                GardenElement(id: UUID(), name: "Bouquet", type: .png("bouquet"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Journaling") > 0),
+                //                GardenElement(id: UUID(), name: "Purple Rose", type: .png("purplerose"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Journaling") > 0),
+                //                GardenElement(id: UUID(), name: "Christmastree", type: .png("christmastree"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Meditation") > 0),
+                //                GardenElement(id: UUID(), name: "Mushroom", type: .png("mushroom"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Journaling") > 0),
+                //                GardenElement(id: UUID(), name: "Mountains", type: .png("mountains"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Journaling") > 0)
+                GardenElement(id: UUID(), name: "Rose", type: .png("rose"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: true),
+                GardenElement(id: UUID(), name: "Cherry Blossom", type: .png("cherryblossom"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
+                GardenElement(id: UUID(), name: "Deer", type: .png("deer"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
+                GardenElement(id: UUID(), name: "Bouquet", type: .png("deer"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
+                GardenElement(id: UUID(), name: "Purple Rose", type: .png("purplerose"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
+                GardenElement(id: UUID(), name: "Christmastree", type: .png("christmastree"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
+                GardenElement(id: UUID(), name: "Mushroom", type: .png("mushroom"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: true),
+                GardenElement(id: UUID(), name: "Mountains", type: .png("mountains"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: true),
+            ],
+            "Digital Detox": [
+                //Do not delete
+                GardenElement(id: UUID(), name: "Turtle", type: .png("turtle"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: getLessonCount(name: "Digital Detox") > 1),
+                GardenElement(id: UUID(), name: "Pine Tree", type: .png("pinetree"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Digital Detox") > 1),
+                GardenElement(id: UUID(), name: "Snow Mountain", type: .png("snowmountain"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Meditation") > 4),
+                GardenElement(id: UUID(), name: "Yellow Tree", type: .png("yellowtree"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Digital Detox") > 4),
+                GardenElement(id: UUID(), name: "Rabbit", type: .gif("rabbit"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Digital Detox") > 12),
+                GardenElement(id: UUID(), name: "Duck", type: .gif("duck"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Digital Detox") > 12),
+                GardenElement(id: UUID(), name: "Cat", type: .gif("cat"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Digital Detox") > 20),
+                GardenElement(id: UUID(), name: "Bird", type: .gif("bird"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: getLessonCount(name: "Digital Detox") > 20)]
         ]
-        .mapValues { $0.filter { $0.isVisible } } // Filter out elements with isVisible == false
+            .mapValues { $0.filter { $0.isVisible } } // Filter out elements with isVisible == false
     }
-
+    
     var body: some View {
         NavigationStack {
             ScrollView(.vertical) { // Vertical scrollable list
@@ -421,48 +338,49 @@ struct BottomNavigationBar: View {
     var body: some View {
         HStack {
             // Leaf Button
-            NavigationLink(destination: VirtualGardenView().navigationBarHidden(true),
-                           isActive: $navigateToGardenView) {
-                Button(action: { navigateToGardenView = true }) {
-                    Image("leaf")
-                        .resizable()
-                        .frame(width: 60, height: 60)
-                        .foregroundColor(.green)
-                }
+            Button(action: { navigateToGardenView = true }) {
+                Image("leaf")
+                    .resizable()
+                    .frame(width: 60, height: 60)
+                    .foregroundColor(.green)
             }
-            
+            .navigationDestination(isPresented: $navigateToGardenView) {
+                VirtualGardenView()
+                    .navigationBarHidden(true)
+            }            
             Spacer()
             
             // Play Button
-            NavigationLink(destination: ActivitiesView().navigationBarHidden(true),
-                           isActive: $navigateToActivitiesView) {
-                Button(action: { navigateToActivitiesView = true }) {
-                    Circle()
-                        .fill(Color.blue)
-                        .frame(width: 60, height: 60)
-                        .overlay(
-                            Image(systemName: "play.fill")
-                                .foregroundColor(.white)
-                                .font(.system(size: 30))
-                        )
-                }
+            Button(action: { navigateToActivitiesView = true }) {
+                Circle()
+                    .fill(Color.blue)
+                    .frame(width: 60, height: 60)
+                    .overlay(
+                        Image(systemName: "play.fill")
+                            .foregroundColor(.white)
+                            .font(.system(size: 30))
+                    )
             }
-            
+            .navigationDestination(isPresented: $navigateToActivitiesView)
+            {
+                ActivitiesView().navigationBarHidden(true)
+            }
             Spacer()
             
             // Pink Button
-            NavigationLink(destination: WeeklySummaryView().navigationBarHidden(true),
-                           isActive: $navigateToSummaryView) {
-                Button(action: { navigateToSummaryView = true }) {
-                    Circle()
-                        .fill(Color.pink)
-                        .frame(width: 50, height: 50)
-                        .overlay(
-                            Image(systemName: "chart.bar.fill")
-                                .foregroundColor(.white)
-                                .font(.system(size: 25))
-                        )
-                }
+            Button(action: { navigateToSummaryView = true }) {
+                Circle()
+                    .fill(Color.pink)
+                    .frame(width: 50, height: 50)
+                    .overlay(
+                        Image(systemName: "chart.bar.fill")
+                            .foregroundColor(.white)
+                            .font(.system(size: 25))
+                    )
+            }
+            .navigationDestination(isPresented: $navigateToSummaryView) {
+                WeeklySummaryView()
+                    .navigationBarHidden(true)
             }
         }
         .padding(.horizontal, 40)

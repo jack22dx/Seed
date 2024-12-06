@@ -6,86 +6,86 @@ struct MeditationActivitiesView: View {
     @State private var navigateToGardenView = false
     @State private var navigateToActivitiesView = false
     @State private var navigateToSummaryView = false
-
+    
     var body: some View {
         NavigationStack {
             ZStack {
                 // Background Color
                 PlayerView()
                     .ignoresSafeArea()
-
+                
                 VStack(spacing: 20) {
                     // Title
                     Text("Meditation")
                         .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 30))
                         .foregroundColor(.white)
                         .shadow(radius: 5)
-
+                    
                     // Meditation Cards in a ScrollView
-                  
-                        VStack(spacing: 8) {
-                            MeditationCard(
-                                index: 0,
-                                expandedCardIndex: $expandedCardIndex,
-                                title: "Breath Work",
-                                imageName: "treeseed",
-                                description: "Breath Work helps you calm your mind and stay focused.",
-                                color: Color.cyan,
-                                isCompleted: false,
-                                times: ["1 min", "3 min", "5 min"]
-                            )
-                            .padding(.horizontal, 20)
-
-                            MeditationCard(
-                                index: 1,
-                                expandedCardIndex: $expandedCardIndex,
-                                title: "Guided Session",
-                                imageName: "palmIcon",
-                                description: "This guided meditation incorporates awareness of sounds, bodily sensations, thoughts, or feelings.",
-                                color: Color.red.opacity(0.6),
-                                isCompleted: false,
-                                times: ["3 min", "5 min", "10 min"]
-                            )
-                            .padding(.horizontal, 20)
-
-                            MeditationCard(
-                                index: 2,
-                                expandedCardIndex: $expandedCardIndex,
-                                title: "Mindful Imagery",
-                                imageName: "pineIcon",
-                                description: "Visualize calming and peaceful scenes to enhance mindfulness.",
-                                color: Color.green.opacity(0.7),
-                                isCompleted: false,
-                                times: ["5 min", "10 min", "15 min"]
-                            )
-                            .padding(.horizontal, 20)
-
-                            MeditationCard(
-                                index: 3,
-                                expandedCardIndex: $expandedCardIndex,
-                                title: "Body Scan",
-                                imageName: "treeIcon",
-                                description: "Become aware of your body and release tension in this guided scan.",
-                                color: Color.orange.opacity(0.7),
-                                isCompleted: false,
-                                times: ["3 min", "7 min", "10 min"]
-                            )
+                    
+                    VStack(spacing: 8) {
+                        MeditationCard(
+                            index: 0,
+                            expandedCardIndex: $expandedCardIndex,
+                            title: "Breath Work",
+                            imageName: "treeseed",
+                            description: "Breath Work helps you calm your mind and stay focused.",
+                            color: Color.cyan,
+                            isCompleted: false,
+                            times: ["1 min", "3 min", "5 min"]
+                        )
+                        .padding(.horizontal, 20)
+                        
+                        MeditationCard(
+                            index: 1,
+                            expandedCardIndex: $expandedCardIndex,
+                            title: "Guided Session",
+                            imageName: "palmIcon",
+                            description: "This guided meditation incorporates awareness of sounds, bodily sensations, thoughts, or feelings.",
+                            color: Color.red.opacity(0.6),
+                            isCompleted: false,
+                            times: ["3 min", "5 min", "10 min"]
+                        )
+                        .padding(.horizontal, 20)
+                        
+                        MeditationCard(
+                            index: 2,
+                            expandedCardIndex: $expandedCardIndex,
+                            title: "Mindful Imagery",
+                            imageName: "pineIcon",
+                            description: "Visualize calming and peaceful scenes to enhance mindfulness.",
+                            color: Color.green.opacity(0.7),
+                            isCompleted: false,
+                            times: ["5 min", "10 min", "15 min"]
+                        )
+                        .padding(.horizontal, 20)
+                        
+                        MeditationCard(
+                            index: 3,
+                            expandedCardIndex: $expandedCardIndex,
+                            title: "Body Scan",
+                            imageName: "treeIcon",
+                            description: "Become aware of your body and release tension in this guided scan.",
+                            color: Color.orange.opacity(0.7),
+                            isCompleted: false,
+                            times: ["3 min", "7 min", "10 min"]
+                        )
                         
                         .padding(.horizontal, 20)
                         
                     }
-
+                    
                     Spacer()
                     
-                       
+                    
                     // Bottom Navigation Bar
                     BottomNavigationBar(
                         navigateToGardenView: $navigateToGardenView,
                         navigateToActivitiesView: $navigateToActivitiesView,
                         navigateToSummaryView: $navigateToSummaryView
                     )
-                  
-                  
+                    
+                    
                 }
             }
         }
@@ -158,31 +158,37 @@ struct MeditationCard: View {
                             HStack {
                                 ForEach(times, id: \.self) { time in
                                     let timeWithoutMin = time.replacingOccurrences(of: " min", with: "")
-                                    NavigationLink(destination: DidYouKnowView(selectedTime: selectedTime).navigationBarHidden(true), isActive: $navigateToDidYouKnow) {
-                                        Button(action: {
-                                            withAnimation {
-                                                selectedTime = timeWithoutMin
-                                                navigateToDidYouKnow = true
-//                                                if title == "Guided Session" && time == "3 min" {
-//                                                    navigateToDidYouKnow = true
-//                                                }
-                                            }
-                                        }) {
-                                            Text(time)
-                                                .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 14))
-                                                .padding()
-                                                .frame(minWidth: 70)
-                                                .background(selectedTime == time ? Color.white.opacity(0.8) : Color.clear)
-                                                .foregroundColor(selectedTime == time ? color : .white)
-                                                .clipShape(Capsule())
-                                                .overlay(
-                                                    Capsule()
-                                                        .stroke(Color.white, lineWidth: 1)
-                                                )
+                                    
+                                    Button(action: {
+                                        withAnimation {
+                                            selectedTime = timeWithoutMin
+                                            navigateToDidYouKnow = true
                                         }
+                                    }) {
+                                        Text(time)
+                                            .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 14))
+                                            .padding()
+                                            .frame(minWidth: 70)
+                                            .background(selectedTime == time ? Color.white.opacity(0.8) : Color.clear)
+                                            .foregroundColor(selectedTime == time ? color : .white)
+                                            .clipShape(Capsule())
+                                            .overlay(
+                                                Capsule()
+                                                    .stroke(Color.white, lineWidth: 1)
+                                            )
                                     }
+                                    .background(
+                                        NavigationLink(value: timeWithoutMin) {
+                                            EmptyView()
+                                        }
+                                            .opacity(0) // Hide the navigation link visual appearance
+                                    )
                                 }
                             }
+                        }
+                        .navigationDestination(for: String.self) { selectedTime in
+                            DidYouKnowView(selectedTime: selectedTime)
+                                .navigationBarHidden(true)
                         }
                         .padding(.top, 10)
                     }

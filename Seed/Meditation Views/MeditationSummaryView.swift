@@ -8,15 +8,16 @@ struct MeditationSummaryView: View {
     @State private var navigateToNextView = false
     @Query private var lessons: [LessonInfor]
     @Query private var elementForGarden: [ElementForGarden]
-
     @Environment(\.modelContext) private var modelContext
     var displayText: String {
-        let timeString = selectedTime ?? "3"
+        let timeString = selectedTime
         return timeString + " min 35 seconds"
     }
+    @State private var navigateToMeditationStreak = false
+    
     
     var body: some View {
-        let lightblue = Color(hue: 0.55, saturation: 0.6, brightness: 0.9, opacity: 1.0)
+//        let lightblue = Color(hue: 0.55, saturation: 0.6, brightness: 0.9, opacity: 1.0)
         let lightpink = Color(hue: 0.89, saturation: 0.4, brightness: 1, opacity: 0.7)
         let buttonColors = [
             LinearGradient(
@@ -128,22 +129,21 @@ struct MeditationSummaryView: View {
                         .padding(.bottom, 20)
                     
                     // Continue Button
-                    NavigationLink(destination: MeditationStreakView(selectedGardenElement: selectedElement, selectedTime:selectedTime)
-                        .navigationBarHidden(true),
-                                   isActive: $navigateToNextView) {
-                        Button(action: {
-                            navigateToNextView = true
-                            incrementCount(for: "Meditation", elementName:selectedElement.name)
-                        }) {
-                            Text("Continue")
-                                .font(.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
-                                .padding()
-                                .frame(minWidth: 150)
-                                .background(buttonColors[1])
-                                .foregroundColor(.white)
-                                .clipShape(Capsule())
-                                .shadow(radius: 5)
-                        }
+                    Button(action: {
+                        navigateToMeditationStreak = true
+                    }) {
+                        Text("Continue")
+                            .font(.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                            .padding()
+                            .frame(minWidth: 150)
+                            .background(buttonColors[1])
+                            .foregroundColor(.white)
+                            .clipShape(Capsule())
+                            .shadow(radius: 5)
+                        
+                    }
+                    .navigationDestination(isPresented: $navigateToMeditationStreak) {
+                        MeditationStreakView(selectedGardenElement: selectedElement, selectedTime:selectedTime)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -160,9 +160,9 @@ struct MeditationSummaryView: View {
         }
         
         // 修改 isVisible 為 true
-         if let element = elementForGarden.first(where: { $0.elementName == elementName }) {
-             element.isVisible = true
-         }
+        if let element = elementForGarden.first(where: { $0.elementName == elementName }) {
+            element.isVisible = true
+        }
         
         function.count += 1
         

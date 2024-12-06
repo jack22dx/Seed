@@ -2,15 +2,15 @@ import SwiftUI
 import NavigationTransitions
 
 struct SelfReflectionView: View {
+    var selectedGardenElement: GardenElementData
     @State private var reflectionText: String = "" // For the user input in the text area
     @State private var navigateToGoalSetting = false // Tracks navigation to GoalSettingView
-
     var body: some View {
-        let backgroundGradient = LinearGradient(
-            gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
+//        let backgroundGradient = LinearGradient(
+//            gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
+//            startPoint: .top,
+//            endPoint: .bottom
+//        )
         
         NavigationStack {
             ZStack {
@@ -18,8 +18,8 @@ struct SelfReflectionView: View {
                 PlayerView()
                     .ignoresSafeArea()
                 Color.yellow
-                        .opacity(0.2) // Adjust transparency as needed
-                        .ignoresSafeArea()
+                    .opacity(0.2) // Adjust transparency as needed
+                    .ignoresSafeArea()
                 
                 VStack {
                     Spacer()
@@ -30,12 +30,26 @@ struct SelfReflectionView: View {
                             .fill(Color.white.opacity(0.6))
                             .frame(width: 120, height: 120)
                             .shadow(radius: 5)
-                        
-                        Image("purplerose") // Replace with your flower asset if available
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 90, height: 90)
-                            .foregroundColor(Color.purple)
+                        switch selectedGardenElement.type {
+                        case .png(let imageName):
+                            Image(imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 200, height: 200)
+                                .clipShape(Circle())
+                                .shadow(radius: 10)
+                        case .gif(let gifName):
+                            GIFView(gifName: gifName)
+                                .scaledToFit()
+                                .frame(width: 200, height: 200)
+                                .clipShape(Circle())
+                                .shadow(radius: 10)
+                        }
+                        //                        Image("purplerose") // Replace with your flower asset if available
+                        //                            .resizable()
+                        //                            .scaledToFit()
+                        //                            .frame(width: 90, height: 90)
+                        //                            .foregroundColor(Color.purple)
                     }
                     .padding(.bottom, 30)
                     
@@ -82,10 +96,7 @@ struct SelfReflectionView: View {
                     Spacer()
                     
                     // Continue Button with Fade Transition
-                    NavigationLink(destination: GoalSettingView()
-                                    .navigationBarHidden(true)
-                                    , // Fade transition
-                                   isActive: $navigateToGoalSetting) {
+                    NavigationStack {
                         Button(action: {
                             navigateToGoalSetting = true
                         }) {
@@ -104,6 +115,13 @@ struct SelfReflectionView: View {
                                 .foregroundColor(.white)
                                 .shadow(radius: 5)
                         }
+                        .onTapGesture {
+                            navigateToGoalSetting = true
+                        }
+                        .navigationDestination(isPresented: $navigateToGoalSetting) {
+                            GoalSettingView(selectedGardenElement: selectedGardenElement)
+                                .navigationBarHidden(true)
+                        }
                     }
                     .padding(.bottom, 50)
                     .buttonStyle(PlainButtonStyle())
@@ -115,7 +133,10 @@ struct SelfReflectionView: View {
 }
 
 struct SelfReflectionView_Previews: PreviewProvider {
+    static var gardenElements: GardenElementData =
+    GardenElementData(name: "christmastree", type: .png("christmastree"))
+    
     static var previews: some View {
-        SelfReflectionView()
+        SelfReflectionView(selectedGardenElement:gardenElements)
     }
 }

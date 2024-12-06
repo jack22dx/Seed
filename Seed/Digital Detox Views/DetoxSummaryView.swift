@@ -12,7 +12,7 @@ struct DetoxSummaryView: View {
 
 
     var body: some View {
-        let lightblue = Color(hue: 0.55, saturation: 0.6, brightness: 0.9, opacity: 1.0)
+//        let lightblue = Color(hue: 0.55, saturation: 0.6, brightness: 0.9, opacity: 1.0)
         let lightgreen = Color(hue: 0.33, saturation: 0.5, brightness: 0.8, opacity: 0.7)
         let buttonColors = [
             LinearGradient(
@@ -124,23 +124,23 @@ struct DetoxSummaryView: View {
                         .padding(.bottom, 20)
 
                     // Continue Button
-                    NavigationLink(destination: DetoxStreakView() // Replace with your next view
-                        .navigationBarHidden(true),
-                                   isActive: $navigateToNextView) {
-                        Button(action: {
-                            navigateToNextView = true
-                            incrementCount(for: "Meditation")
-                            
-                        }) {
-                            Text("Continue")
-                                .font(Font.custom("Visby", size: 18))
-                                .padding()
-                                .frame(minWidth: 150)
-                                .background(buttonColors[1])
-                                .foregroundColor(.white)
-                                .clipShape(Capsule())
-                                .shadow(radius: 5)
-                        }
+                    Button(action: {
+                        navigateToNextView = true
+                        incrementCount(for: "Meditation")
+                        
+                    }) {
+                        Text("Continue")
+                            .font(Font.custom("Visby", size: 18))
+                            .padding()
+                            .frame(minWidth: 150)
+                            .background(buttonColors[1])
+                            .foregroundColor(.white)
+                            .clipShape(Capsule())
+                            .shadow(radius: 5)
+                    }
+                    .navigationDestination(isPresented: $navigateToNextView)
+                    {
+                        DetoxStreakView()
                     }
                 }
                 .padding(.horizontal, 20)

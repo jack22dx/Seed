@@ -7,19 +7,25 @@ import SwiftUI
 
 
 struct MoodSelectionView: View {
-    let activity: JournalingActivity // Receives the selected activity
+    var selectedGardenElement: GardenElementData
     @State private var moodValue: Double = 1.0 // Slider value to represent mood
     @State private var navigateToQuestionsView = false // Tracks navigation to QuestionsView
 
     var body: some View {
+//        let backgroundGradient = LinearGradient(
+//            gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
+//            startPoint: .top,
+//            endPoint: .bottom
+//        )
+        
         NavigationStack {
             ZStack {
                 PlayerView()
                     .ignoresSafeArea()
                 Color.yellow
-                    .opacity(0.2)
+                    .opacity(0.2) // Adjust transparency as needed
                     .ignoresSafeArea()
-
+                
                 VStack {
                     Spacer()
 
@@ -29,12 +35,26 @@ struct MoodSelectionView: View {
                             .fill(Color.white.opacity(0.6))
                             .frame(width: 120, height: 120)
                             .shadow(radius: 5)
-
-                        Image("purplerose") // Replace with your custom asset
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 80, height: 80)
-                            .foregroundColor(Color.purple)
+                        switch selectedGardenElement.type {
+                        case .png(let imageName):
+                            Image(imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 200, height: 200)
+                                .clipShape(Circle())
+                                .shadow(radius: 10)
+                        case .gif(let gifName):
+                            GIFView(gifName: gifName)
+                                .scaledToFit()
+                                .frame(width: 200, height: 200)
+                                .clipShape(Circle())
+                                .shadow(radius: 10)
+                        }
+//                        Image("purplerose") // Replace with your flower asset if available
+//                            .resizable()
+//                            .scaledToFit()
+//                            .frame(width: 80, height: 80)
+//                            .foregroundColor(Color.purple)
                     }
                     .padding(.bottom, 30)
 
@@ -82,16 +102,12 @@ struct MoodSelectionView: View {
                     .padding(.bottom, 50)
 
                     Spacer()
-
-                    // Continue Button with Navigation
-                    NavigationLink(
-                        destination: QuestionsView(activity: activity)
-                            .navigationBarHidden(true),
-                        isActive: $navigateToQuestionsView
-                    ) {
+                    
+                    // Continue Button with Fade Transition
+                    NavigationStack{
                         Button(action: {
-                            navigateToQuestionsView = true
-                        }) {
+                            navigateToGratitudeView = true
+                        }){
                             Text("Continue")
                                 .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
                                 .padding()
@@ -107,6 +123,13 @@ struct MoodSelectionView: View {
                                 .foregroundColor(.white)
                                 .shadow(radius: 5)
                         }
+                        .onTapGesture {
+                            navigateToGratitudeView = true
+                        }
+                        .navigationDestination(isPresented: $navigateToGratitudeView) {
+                            GratitudeView()
+                                .navigationBarHidden(true)
+                        }
                     }
                     .padding(.bottom, 50)
                     .buttonStyle(PlainButtonStyle())
@@ -114,13 +137,56 @@ struct MoodSelectionView: View {
             }
         }
     }
+    private func incrementCount(for name: String) {
+        // Increment count logic
+        if let function = lessons.first(where: { $0.name == name }) {
+            function.count += 1 // Increment count
+            // Update current day's attendance
+            let calendar = Calendar.current
+            let currentDay = calendar.component(.weekday, from: Date())
+            var currentDayEnglish = ""
+            switch currentDay {
+            case 1:
+                function.Sunday = true
+                currentDayEnglish = "Sunday"
+            case 2:
+                function.Monday = true
+                currentDayEnglish = "Monday"
+            case 3:
+                function.Tuesday = true
+                currentDayEnglish = "Tuesday"
+            case 4:
+                function.Wednesday = true
+                currentDayEnglish = "Wednesday"
+            case 5:
+                function.Thursday = true
+                currentDayEnglish = "Thursday"
+            case 6:
+                function.Friday = true
+                currentDayEnglish = "Friday"
+            case 7:
+                function.Saturday = true
+                currentDayEnglish = "Saturday"
+            default:
+                print("Unexpected day of the week encountered.")
+            }
+            
+            // Save the updated model context
+            do {
+                try modelContext.save() // Save changes to the model context
+                print("\(currentDayEnglish)'s Mission Complete:")
+            } catch {
+                print("Failed to save context: \(error)")
+            }
+        }
+    }
+    
 }
 
 struct MoodSelectionView_Previews: PreviewProvider {
+    static var gardenElements: GardenElementData =
+    GardenElementData(name: "christmastree", type: .png("christmastree"))
     static var previews: some View {
-        MoodSelectionView(activity: JournalingActivity(
-            name: "Gratitude",
-            questions: ["What is one thing you are grateful for today?", "What’s one thing you enjoyed today?"]
-        ))
+        MoodSelectionView(selectedGardenElement: gardenElements)
     }
 }

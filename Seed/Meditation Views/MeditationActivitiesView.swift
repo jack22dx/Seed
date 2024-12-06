@@ -94,8 +94,6 @@ struct MeditationActivitiesView: View {
     }
 }
 
-
-
 struct MeditationCard: View {
     let index: Int
     @Binding var expandedCardIndex: Int? // Tracks which card is expanded
@@ -159,13 +157,15 @@ struct MeditationCard: View {
                             // Time Buttons
                             HStack {
                                 ForEach(times, id: \.self) { time in
-                                    NavigationLink(destination: DidYouKnowView().navigationBarHidden(true), isActive: $navigateToDidYouKnow) {
+                                    let timeWithoutMin = time.replacingOccurrences(of: " min", with: "")
+                                    NavigationLink(destination: DidYouKnowView(selectedTime: selectedTime).navigationBarHidden(true), isActive: $navigateToDidYouKnow) {
                                         Button(action: {
                                             withAnimation {
-                                                selectedTime = time
-                                                if title == "Guided Session" && time == "3 min" {
-                                                    navigateToDidYouKnow = true
-                                                }
+                                                selectedTime = timeWithoutMin
+                                                navigateToDidYouKnow = true
+//                                                if title == "Guided Session" && time == "3 min" {
+//                                                    navigateToDidYouKnow = true
+//                                                }
                                             }
                                         }) {
                                             Text(time)

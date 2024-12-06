@@ -2,8 +2,9 @@ import SwiftUI
 import AVFoundation
 import SwiftData
 
-
 struct MeditationStartView: View {
+    
+    var selectedGardenElement: GardenElementData    
     @State private var timeRemaining: Int = 0 // Timer will dynamically reflect the audio duration
     @State private var isPlaying: Bool = false
     @State private var player: AVAudioPlayer?
@@ -20,6 +21,9 @@ struct MeditationStartView: View {
 
 
     var body: some View {
+        
+        let selectedElement = selectedGardenElement
+        
         let lightpink = Color(hue: 0.89, saturation: 0.4, brightness: 1, opacity: 1.0)
         let buttonColors = [
             LinearGradient(
@@ -44,7 +48,7 @@ struct MeditationStartView: View {
                 
                 VStack(spacing: 30) {
                     // Title
-                    Text("Crimson Oak Tree")
+                    Text(selectedElement.name ?? "sunflower")
                         .font(Font.custom("Visby", size: 30))
                         .foregroundColor(.white)
                         .shadow(radius: 5)
@@ -56,11 +60,25 @@ struct MeditationStartView: View {
                             .frame(width: 100, height: 100)
                             .shadow(radius: 10)
                         
-                        Image("treeseed") // Replace with your tree icon
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 80, height: 80)
-                            .clipShape(Circle())
+                        switch selectedElement.type ?? .png("flower") {
+                        case .png(let imageName):
+                            Image(imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 80, height: 80)
+                                .clipShape(Circle())
+                        case .gif(let gifName):
+                            GIFView(gifName: gifName)
+                                .scaledToFit()
+                                .frame(width: 80, height: 80)
+                                .clipShape(Circle())
+                        }
+                        
+//                        Image("treeseed") // Replace with your tree icon
+//                            .resizable()
+//                            .scaledToFit()
+//                            .frame(width: 80, height: 80)
+//                            .clipShape(Circle())
                     }
                     .padding(.bottom, 10)
                     
@@ -116,8 +134,10 @@ struct MeditationStartView: View {
                     // Playback Controls or Continue Button
                     if showContinueButton {
                         // Continue Button (Fades in)
-                        NavigationLink(destination: MeditationSummaryView()
-                                        .navigationBarHidden(true), isActive: $navigateToSummary) {
+                        NavigationLink(destination: MeditationSummaryView(selectedGardenElement: selectedElement)
+                                        .navigationBarHidden(true), isActive: $navigateToSummary)
+                        
+                        {
                             Text("Continue")
                             .font(Font.custom("Visby", size: 18))
                             .padding()
@@ -336,8 +356,11 @@ struct MeditationOracleTipsView: View {
     }
 }
 
-//struct MeditationStartView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        MeditationStartView()
-//    }
-//}
+struct MeditationStartView_Previews: PreviewProvider {
+    static var gardenElements: GardenElementData =
+            GardenElementData(name: "Flower", type: .png("flower"))
+
+    static var previews: some View {
+        MeditationStartView(selectedGardenElement: gardenElements)
+    }
+}

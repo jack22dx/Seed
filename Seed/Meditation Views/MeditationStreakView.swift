@@ -3,13 +3,16 @@ import SwiftData
 
 
 struct MeditationStreakView: View {
+    var selectedGardenElement: GardenElementData
+    var selectedTime : String
+    
     @State private var navigateToMeditations = false
     @State private var navigateToGarden = false
     @Environment(\.modelContext) private var modelContext
     @Query private var lessons: [LessonInfor]
     
     var body: some View {
-        
+        let selectedElement = selectedGardenElement
         let completedDays = getCompletedData(name: "Meditation") // Replace "Lesson Name" with actual name
         let dayLabels = ["M", "T", "W", "T", "F", "S", "S"]
         
@@ -35,7 +38,7 @@ struct MeditationStreakView: View {
                 
                 VStack(spacing: 30) {
                     // Title
-                    Text("Crimson Oak Tree")
+                    Text(selectedElement.name)
                         .font(Font.custom("Visby", size: 30))
                         .foregroundColor(.white)
                         .shadow(radius: 5)
@@ -47,11 +50,26 @@ struct MeditationStreakView: View {
                             .frame(width: 120, height: 120)
                             .shadow(radius: 10)
                         
-                        Image("treeseed") // Replace with your tree icon
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 100, height: 100)
-                            .clipShape(Circle())
+                        
+                        switch selectedGardenElement.type {
+                        case .png(let imageName):
+                            Image(imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 100, height: 100)
+                                .clipShape(Circle())
+                        case .gif(let gifName):
+                            GIFView(gifName: gifName)
+                                .scaledToFit()
+                                .frame(width: 100, height: 100)
+                                .clipShape(Circle())
+                        }
+//                        
+//                        Image("treeseed") // Replace with your tree icon
+//                            .resizable()
+//                            .scaledToFit()
+//                            .frame(width: 100, height: 100)
+//                            .clipShape(Circle())
                     }
                     
                     // Congratulatory Text
@@ -169,7 +187,9 @@ struct MyGardenView: View {
 }
 
 struct MeditationStreakView_Previews: PreviewProvider {
+    static var gardenElement = GardenElementData(name: "flower", type: .png("flower"))
+
     static var previews: some View {
-        MeditationStreakView()
+        MeditationStreakView(selectedGardenElement: gardenElement, selectedTime:"3 min 35 sec")
     }
 }

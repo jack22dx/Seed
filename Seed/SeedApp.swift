@@ -15,7 +15,7 @@ struct SeedApp: App {
     private let context: ModelContext // Data context / 数据上下文
     private var resetService: ResetService? // Reset service / 重置服务
     init() {
-        container = try! ModelContainer(for: LessonInfor.self,  OracleTip.self, OracleFact.self, OraclePrompt.self, OraclePromptAnswer.self  )
+        container = try! ModelContainer(for: LessonInfor.self, ElementForGarden.self,  OracleTip.self, OracleFact.self, OraclePrompt.self, OraclePromptAnswer.self  )
         context = container.mainContext // Get main context /获取主上下文
         initializeFunctionsIfNeeded() // Initialize data when the app starts / 在应用启动时初始化数据
         resetService = ResetService(context: context) // Set up the weekly reset service / 设置每周重置服务
@@ -24,15 +24,14 @@ struct SeedApp: App {
     let persistenceController = PersistenceController.shared
     var body: some Scene {
         WindowGroup {
-        
+//                        VirtualGardenView()
             WelcomeView()
-     
-            
+            //            MeditationActivitiesView()
             //.environment(\.managedObjectContext, persistenceController.container.viewContext)
-//            ActivitiesView()
+            //            ActivitiesView()
                 .environment(\.modelContext, container.mainContext)
         }
-        .modelContainer(for: [LessonInfor.self,  OracleTip.self, OracleFact.self,  OraclePrompt.self ]) // Configure data model / 配置数据模型
+        .modelContainer(for: [LessonInfor.self,  ElementForGarden.self, OracleTip.self, OracleFact.self,  OraclePrompt.self ]) // Configure data model / 配置数据模型
     }
     private func initializeFunctionsIfNeeded() {
         let functionNames = ["Meditation", "Journaling", "Digital Detox"] // Course names / 课程名称
@@ -46,9 +45,20 @@ struct SeedApp: App {
             }
         }
         
+        let elementNames = ["sunflower", "butterfly", "bonsaitree", "palmtree", "purpletree", "orangebutterfly", "treeseed", "rose", "cherryblossom", "deer", "deer", "purplerose", "christmastree", "mushroom", "mountains", "turtle", "pinetree", "snowmountain", "yellowtree", "rabbit", "duck", "cat", "bird"]
+        
+        for name in elementNames {
+            let fetchRequest = FetchDescriptor<ElementForGarden>(predicate: #Predicate { $0.elementName == name })
+            let existing = try? context.fetch(fetchRequest)
+            if existing?.isEmpty ?? true {
+                let newElement = ElementForGarden(elementName: name, isVisible: false)
+                context.insert(newElement) // Insert new course / 插入新课程
+            }
+        }
+        
         //oracle_tip
         if isOracleTipRecordExist(for: 1, in: context) { // check oracle_tip data
-        
+            
             let oracleTips = [
                 
                 //meditation
@@ -81,7 +91,7 @@ struct SeedApp: App {
                 OracleTip(type: "detox", level: 1, seq: 7, text: "Try deleting any apps you find to be too distracting."),
                 OracleTip(type: "detox", level: 1, seq: 8, text: "Changing your phone to grayscale mode can help reduce your screentime.")
             ]
-
+            
             // 按照 level 和 seq 屬性進行排序
             let sortedOracleTips = oracleTips.sorted {
                 if $0.level == $1.level {
@@ -89,23 +99,23 @@ struct SeedApp: App {
                 }
                 return $0.level < $1.level
             }
-
+            
             sortedOracleTips.forEach { tip in
                 context.insert(tip)
             }
             
-//            for tip in sortedOracleTips {
-//                print("Level: \(tip.level), Seq: \(tip.seq), Text: \(tip.text)")
-//            }
-
+            //            for tip in sortedOracleTips {
+            //                print("Level: \(tip.level), Seq: \(tip.seq), Text: \(tip.text)")
+            //            }
+            
         }else{
             
             print("has oracle_tip data");
         }
-      
+        
         //oracle_fact
         if isOracleFactRecordExist(for: 1, in: context) { // check oracle_fact data
-        
+            
             let oracleFacts = [
                 
                 //meditation
@@ -129,7 +139,7 @@ struct SeedApp: App {
                 OracleFact(type: "journaling", id: 6, text: "Expressive writing engages both analytical and artistic parts of the brain, enhancing self-expression."),
                 OracleFact(type: "journaling", id: 7, text: "Regular journaling can improve problem-solving skills by encouraging deeper reflection on challenges."),
                 OracleFact(type: "journaling", id: 8, text: "Regular journaling can help develop your introspective skills, and help you better understand your emotions."),
-
+                
                 
                 //detox
                 OracleFact(type: "detox", id: 1, text: "Digital detoxing can help improve sleep quality by reducing blue light exposure before bedtime."),
@@ -139,17 +149,17 @@ struct SeedApp: App {
                 OracleFact(type: "detox", id: 5, text: "Less screen time can help prevent eye strain and improve overall eye health."),
                 OracleFact(type: "detox", id: 6, text: "Digital detoxing can help improve your mood."),
                 OracleFact(type: "detox", id: 7, text: "Studies have found a strong and significant assosciation between social media use and depression."),
-
+                
             ]
-
+            
             oracleFacts.forEach { fact in
                 context.insert(fact)
             }
             
-//            for fact in oracleFacts {
-//                print("type: \(fact.type), id: \(fact.id), Text: \(fact.text)")
-//            }
-
+            //            for fact in oracleFacts {
+            //                print("type: \(fact.type), id: \(fact.id), Text: \(fact.text)")
+            //            }
+            
         }else{
             
             print("has oracle_fact data");
@@ -157,7 +167,7 @@ struct SeedApp: App {
         
         //oracle_prompt
         if isOraclePromptRecordExist(for: 1, in: context) { // check oracle_fact data
-        
+            
             let oraclePrompts = [
                 
                 //journaling
@@ -181,17 +191,17 @@ struct SeedApp: App {
                 OraclePrompt(type: "journaling", id: 18, text: "How do you respond to difficult emotions, and how could you improve?"),
                 OraclePrompt(type: "journaling", id: 19, text: "What does mindfulness mean to you, and how do you like to practice it?"),
                 OraclePrompt(type: "journaling", id: 20, text: "Write a short poem about something you have experienced in the last week.")
-
+                
             ]
-
+            
             oraclePrompts.forEach { prompt in
                 context.insert(prompt)
             }
             
-//            for prompt in oraclePrompts {
-//                print("id: \(prompt.id), Text: \(prompt.text)")
-//            }
-
+            //            for prompt in oraclePrompts {
+            //                print("id: \(prompt.id), Text: \(prompt.text)")
+            //            }
+            
         }else{
             
             print("has oracle_prompt data");
@@ -199,9 +209,9 @@ struct SeedApp: App {
         
         do {
             try context.save() // Save context / 保存上下文
-//            printDatabaseLocation(container: container);
-
-
+            //            printDatabaseLocation(container: container);
+            
+            
         } catch {
             print("Failed to save during initialization: \(error)") // Initialization save failed / 初始化保存失败
         }
@@ -230,7 +240,7 @@ struct SeedApp: App {
             return false
         }
     }
-
+    
     // Overloaded helper method for checking `OraclePrompt` records by id
     private func isOraclePromptRecordExist(for id: Int, in context: ModelContext) -> Bool {
         let fetchRequest_oracle = FetchDescriptor<OraclePrompt>(predicate: #Predicate { $0.id == id })

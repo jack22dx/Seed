@@ -10,6 +10,7 @@ struct DidYouKnowView: View {
     @State private var innerCircleScale: CGFloat = 1.0
     @State private var isAnimatingText = false
     @State private var navigateToMeditationView = false // Tracks navigation to MeditationView
+    var selectedTime: String? // 接收傳遞的時間
 
     @Environment(\.modelContext) private var modelContext
     @State private var oracleFacts_meditation: [OracleFact] = []
@@ -114,7 +115,7 @@ struct DidYouKnowView: View {
                         }
 
                         // Continue Button with Navigation
-                        NavigationLink(destination: MeditationView().navigationBarHidden(true), isActive: $navigateToMeditationView) {
+                        NavigationLink(destination: MeditationView(selectedTime: selectedTime).navigationBarHidden(true), isActive: $navigateToMeditationView) {
                             Button(action: {
                                 navigateToMeditationView = true
                             }) {
@@ -191,8 +192,8 @@ struct DidYouKnowView: View {
 
 }
 
-//struct DidYouKnowView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        DidYouKnowView()
-//    }
-//}
+struct DidYouKnowView_Previews: PreviewProvider {
+    static var previews: some View {
+        DidYouKnowView()
+    }
+}

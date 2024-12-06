@@ -2,11 +2,18 @@ import SwiftUI
 import Charts
 import SwiftData
 
-
 struct MeditationSummaryView: View {
+    var selectedGardenElement: GardenElementData
+    var selectedTime : String
     @State private var navigateToNextView = false
-    @Query private var lessons: [LessonInfor]// Automatically query all lessons from the model context
+    @Query private var lessons: [LessonInfor]
+    @Query private var elementForGarden: [ElementForGarden]
+
     @Environment(\.modelContext) private var modelContext
+    var displayText: String {
+        let timeString = selectedTime ?? "3"
+        return timeString + " min 35 seconds"
+    }
     
     var body: some View {
         let lightblue = Color(hue: 0.55, saturation: 0.6, brightness: 0.9, opacity: 1.0)
@@ -23,18 +30,22 @@ struct MeditationSummaryView: View {
                 endPoint: .bottomTrailing
             )
         ]
+        
         NavigationStack {
+            
+            let selectedElement = selectedGardenElement
             ZStack {
                 PlayerView()
                     .ignoresSafeArea()
+                
                 Color.blue
-                        .opacity(0.2) // Adjust transparency as needed
-                        .ignoresSafeArea()
+                    .opacity(0.2)
+                    .ignoresSafeArea()
                 
                 VStack(spacing: 20) {
                     // Title
-                    Text("Crimson Oak Tree")
-                        .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 30))
+                    Text(selectedGardenElement.name.capitalized)
+                        .font(.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 30))
                         .foregroundColor(.white)
                         .shadow(radius: 5)
                     
@@ -45,26 +56,34 @@ struct MeditationSummaryView: View {
                             .frame(width: 120, height: 120)
                             .shadow(radius: 10)
                         
-                        Image("treeseed") // Replace with your tree icon
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 100, height: 100)
-                            .clipShape(Circle())
+                        switch selectedGardenElement.type {
+                        case .png(let imageName):
+                            Image(imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 100, height: 100)
+                                .clipShape(Circle())
+                        case .gif(let gifName):
+                            GIFView(gifName: gifName)
+                                .scaledToFit()
+                                .frame(width: 100, height: 100)
+                                .clipShape(Circle())
+                        }
                     }
                     
                     // Time Trained
                     VStack(spacing: 5) {
                         Text("Time Trained")
-                            .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                            .font(.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
                             .foregroundColor(.white)
                             .shadow(radius: 5)
                         
-                        Text("3 min 35 sec")
-                            .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 20))
+                        Text(displayText)
+                            .font(.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 20))
                             .foregroundColor(.white)
                             .shadow(radius: 5)
                     }
-                    .padding(.bottom,20)
+                    .padding(.bottom, 20)
                     
                     // Level Progress
                     ZStack {
@@ -73,18 +92,17 @@ struct MeditationSummaryView: View {
                             .frame(width: 80, height: 80)
                         
                         Text("Level 1")
-                            .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                            .font(.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
                             .foregroundColor(.white)
                     }
-                    
                     
                     // Meditation Graph
                     VStack(spacing: 10) {
                         Text("Meditation")
-                            .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                            .font(.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
                             .foregroundColor(.white)
                             .shadow(radius: 5)
-                            .padding(.bottom,20)
+                            .padding(.bottom, 20)
                         
                         Chart {
                             ForEach(0..<5, id: \.self) { index in
@@ -95,33 +113,30 @@ struct MeditationSummaryView: View {
                                 .foregroundStyle(lightpink)
                             }
                         }
-                        .padding(.horizontal,40)
+                        .padding(.horizontal, 40)
                         .frame(height: 120)
                         .chartXAxis {
                             AxisMarks(position: .bottom)
-                            
                         }
                     }
                     
                     // Heart Rate Label
                     Text("Heart Rate")
-                        .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                        .font(.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
                         .foregroundColor(.white)
                         .shadow(radius: 5)
-                        .padding(.bottom,20)
-                    
-                    
+                        .padding(.bottom, 20)
                     
                     // Continue Button
-                    NavigationLink(destination: MeditationStreakView() // Replace with your next view
+                    NavigationLink(destination: MeditationStreakView(selectedGardenElement: selectedElement, selectedTime:selectedTime)
                         .navigationBarHidden(true),
                                    isActive: $navigateToNextView) {
                         Button(action: {
                             navigateToNextView = true
-                            incrementCount(for: "Meditation") // Increment course count
+                            incrementCount(for: "Meditation", elementName:selectedElement.name)
                         }) {
                             Text("Continue")
-                                .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                                .font(.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
                                 .padding()
                                 .frame(minWidth: 150)
                                 .background(buttonColors[1])
@@ -133,59 +148,65 @@ struct MeditationSummaryView: View {
                 }
                 .padding(.horizontal, 20)
             }
-            
         }
         .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 2.0)))
         .navigationBarHidden(true)
     }
-    private func incrementCount(for name: String) {
-        // Increment count logic
-        if let function = lessons.first(where: { $0.name == name }) {
-            function.count += 1 // Increment count
-            // Update current day's attendance
-            let calendar = Calendar.current
-            let currentDay = calendar.component(.weekday, from: Date())
-            var currentDayEnglish = ""
-            switch currentDay {
-            case 1:
-                function.Sunday = true
-                currentDayEnglish = "Sunday"
-            case 2:
-                function.Monday = true
-                currentDayEnglish = "Monday"
-            case 3:
-                function.Tuesday = true
-                currentDayEnglish = "Tuesday"
-            case 4:
-                function.Wednesday = true
-                currentDayEnglish = "Wednesday"
-            case 5:
-                function.Thursday = true
-                currentDayEnglish = "Thursday"
-            case 6:
-                function.Friday = true
-                currentDayEnglish = "Friday"
-            case 7:
-                function.Saturday = true
-                currentDayEnglish = "Saturday"
-            default:
-                print("Unexpected day of the week encountered.")
-            }
-            
-            // Save the updated model context
-            do {
-                try modelContext.save() // Save changes to the model context
-                print("\(currentDayEnglish)'s Mission Complete:")
-            } catch {
-                print("Failed to save context: \(error)")
-            }
+    
+    private func incrementCount(for name: String,elementName: String) {
+        guard let function = lessons.first(where: { $0.name == name }) else {
+            print("No lesson found with name: \(name)")
+            return
+        }
+        
+        // 修改 isVisible 為 true
+         if let element = elementForGarden.first(where: { $0.elementName == elementName }) {
+             element.isVisible = true
+         }
+        
+        function.count += 1
+        
+        let calendar = Calendar.current
+        let currentDay = calendar.component(.weekday, from: Date())
+        
+        switch currentDay {
+        case 1: function.Sunday = true
+        case 2: function.Monday = true
+        case 3: function.Tuesday = true
+        case 4: function.Wednesday = true
+        case 5: function.Thursday = true
+        case 6: function.Friday = true
+        case 7: function.Saturday = true
+        default:
+            print("Unexpected day of the week encountered.")
+            return
+        }
+        
+        do {
+            try modelContext.save()
+            print("Mission Complete for \(getDayName(for: currentDay))")
+        } catch {
+            print("Failed to save context: \(error)")
         }
     }
-
+    private func getDayName(for dayNumber: Int) -> String {
+        switch dayNumber {
+        case 1: return "Sunday"
+        case 2: return "Monday"
+        case 3: return "Tuesday"
+        case 4: return "Wednesday"
+        case 5: return "Thursday"
+        case 6: return "Friday"
+        case 7: return "Saturday"
+        default: return "Unknown Day"
+        }
+    }
 }
 
 struct MeditationSummaryView_Previews: PreviewProvider {
+    static var gardenElement = GardenElementData(name: "flower", type: .png("flower"))
+    
     static var previews: some View {
-        MeditationSummaryView()
+        MeditationSummaryView(selectedGardenElement: gardenElement, selectedTime:"3 min 35 sec")
     }
 }

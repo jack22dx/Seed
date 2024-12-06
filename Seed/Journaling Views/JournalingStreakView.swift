@@ -65,7 +65,7 @@ struct JournalingStreakView: View {
                                         .foregroundColor(.white)
                                 }
                             }
-                            Spacer()
+                            Spacer() 
                         }
                         .padding(.horizontal, 20)
 

@@ -4,15 +4,17 @@ import SwiftData
 
 
 struct GoalSettingView: View {
+    var selectedGardenElement: GardenElementData
     @State private var goalText: String = "" // For the user input in the text area
     @State private var navigateToStreakView = false // State to track navigation
     @Query private var lessons: [LessonInfor]
     @Query private var elementForGarden: [ElementForGarden]
     @Environment(\.modelContext) private var modelContext
-
+    
     
     var body: some View {
         NavigationStack { // Ensure NavigationStack wraps the view hierarchy
+            let selectedElement = selectedGardenElement
             ZStack {
                 // Background gradient and overlay
                 PlayerView()
@@ -30,12 +32,28 @@ struct GoalSettingView: View {
                             .fill(Color.white.opacity(0.6))
                             .frame(width: 120, height: 120)
                             .shadow(radius: 5)
+                        switch selectedGardenElement.type {
+                        case .png(let imageName):
+                            Image(imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 200, height: 200)
+                                .clipShape(Circle())
+                                .shadow(radius: 10)
+                        case .gif(let gifName):
+                            GIFView(gifName: gifName)
+                                .scaledToFit()
+                                .frame(width: 200, height: 200)
+                                .clipShape(Circle())
+                                .shadow(radius: 10)
+                        }
                         
-                        Image("purplerose") // Replace with your flower asset if available
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 90, height: 90)
-                            .foregroundColor(Color.purple)
+                        
+                        //                        Image("purplerose") // Replace with your flower asset if available
+                        //                            .resizable()
+                        //                            .scaledToFit()
+                        //                            .frame(width: 90, height: 90)
+                        //                            .foregroundColor(Color.purple)
                     }
                     .padding(.bottom, 30)
                     
@@ -80,12 +98,34 @@ struct GoalSettingView: View {
                         .padding(.bottom, 20)
                     
                     Spacer()
-                    
+                    //                    NavigationLink(destination: JournalingStreakView(selectedGardenElement: selectedElement)
+                    //                        .navigationBarHidden(true),
+                    //                                   isActive: $navigateToStreakView) {
+                    //                        Button(action: {
+                    //                            navigateToStreakView = true
+                    ////                            incrementCount(for: "Meditation", elementName:selectedElement.name)
+                    //                        }) {
+                    //                            Text("Continue")
+                    //                                .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                    //                                .padding()
+                    //                                .frame(minWidth: 150)
+                    //                                .background(
+                    //                                    RoundedRectangle(cornerRadius: 40)
+                    //                                        .fill(LinearGradient(
+                    //                                            gradient: Gradient(colors: [Color.green, Color.teal]),
+                    //                                            startPoint: .topLeading,
+                    //                                            endPoint: .bottomTrailing
+                    //                                        ))
+                    //                                )
+                    //                                .foregroundColor(.white)
+                    //                                .shadow(radius: 5)
+                    //                        }
+                    //                    }
                     // Continue Button
                     Button(action: {
                         navigateToStreakView = true // Trigger navigation
-//                        incrementCount(for: "Meditation", elementName:selectedElement.name)
-                        incrementCount(for: "Journaling")
+                        incrementCount(for: "Journaling", elementName:selectedElement.name)
+                        //                        incrementCount(for: "Journaling")
                     }) {
                         Text("Continue")
                             .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
@@ -104,26 +144,27 @@ struct GoalSettingView: View {
                     }
                     .padding(.bottom, 50)
                     .background(
-                        NavigationLink("", destination: JournalingStreakView().navigationBarHidden(true), isActive: $navigateToStreakView)
+                        NavigationLink("", destination: JournalingStreakView(selectedGardenElement: selectedElement).navigationBarHidden(true), isActive: $navigateToStreakView)
                             .hidden() // Make the NavigationLink invisible
                     )
                 }
             }
             .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.0)))// Avoid default NavigationLink styling
-        
+            
         }
     }
-//    private func incrementCount(for name: String,elementName: String)
-    private func incrementCount(for name: String) {
+    //    private func incrementCount(for name: String)
+    private func incrementCount(for name: String,elementName: String)
+    {
         guard let function = lessons.first(where: { $0.name == name }) else {
             print("No lesson found with name: \(name)")
             return
         }
         
-//        // 修改 isVisible 為 true
-//         if let element = elementForGarden.first(where: { $0.elementName == elementName }) {
-//             element.isVisible = true
-//         }
+        // 修改 isVisible 為 true
+        if let element = elementForGarden.first(where: { $0.elementName == elementName }) {
+            element.isVisible = true
+        }
         
         function.count += 1
         
@@ -165,7 +206,10 @@ struct GoalSettingView: View {
 }
 
 struct GoalSettingView_Previews: PreviewProvider {
+    static var gardenElements: GardenElementData =
+    GardenElementData(name: "christmastree", type: .png("christmastree"))
+    
     static var previews: some View {
-        GoalSettingView()
+        GoalSettingView(selectedGardenElement:gardenElements)
     }
 }

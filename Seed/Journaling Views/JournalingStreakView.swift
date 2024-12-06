@@ -3,6 +3,7 @@ import NavigationTransitions
 import SwiftData
 
 struct JournalingStreakView: View {
+    var selectedGardenElement: GardenElementData
     @State private var navigateToActivities = false
     @State private var navigateToGarden = false
     @Query private var lessons: [LessonInfor]  // Automatically query all lessons from the model context
@@ -45,12 +46,26 @@ struct JournalingStreakView: View {
                             .fill(Color.white.opacity(0.7))
                             .frame(width: 120, height: 120)
                             .shadow(radius: 10)
-                        
-                        Image("purplerose") // Replace with your tree icon for journaling
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 100, height: 100)
-                            .clipShape(Circle())
+                        switch selectedGardenElement.type {
+                        case .png(let imageName):
+                            Image(imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 200, height: 200)
+                                .clipShape(Circle())
+                                .shadow(radius: 10)
+                        case .gif(let gifName):
+                            GIFView(gifName: gifName)
+                                .scaledToFit()
+                                .frame(width: 200, height: 200)
+                                .clipShape(Circle())
+                                .shadow(radius: 10)
+                        }
+                        //                        Image("purplerose") // Replace with your tree icon for journaling
+                        //                            .resizable()
+                        //                            .scaledToFit()
+                        //                            .frame(width: 100, height: 100)
+                        //                            .clipShape(Circle())
                     }
                     
                     // Congratulatory Text
@@ -151,8 +166,9 @@ struct JournalingStreakView: View {
 }
 
 struct JournalingStreakView_Previews: PreviewProvider {
+    static var gardenElements: GardenElementData =
+    GardenElementData(name: "christmastree", type: .png("christmastree"))
     static var previews: some View {
-        JournalingStreakView()
-        
+        JournalingStreakView(selectedGardenElement:gardenElements)
     }
 }

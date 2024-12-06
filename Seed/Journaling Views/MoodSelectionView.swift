@@ -21,8 +21,8 @@ struct MoodSelectionView: View {
                 PlayerView()
                     .ignoresSafeArea()
                 Color.yellow
-                        .opacity(0.2) // Adjust transparency as needed
-                        .ignoresSafeArea()
+                    .opacity(0.2) // Adjust transparency as needed
+                    .ignoresSafeArea()
                 
                 VStack {
                     Spacer()
@@ -95,12 +95,12 @@ struct MoodSelectionView: View {
                     
                     // Continue Button with Fade Transition
                     NavigationLink(destination: GratitudeView()
-                                    .navigationBarHidden(true),
+                        .navigationBarHidden(true),
                                    
                                    isActive: $navigateToGratitudeView) {
                         Button(action: {
                             navigateToGratitudeView = true
-                            incrementCount(for:"Journaling")
+                            //                            incrementCount(for:"Journaling")incrementCount
                         }) {
                             Text("Continue")
                                 .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
@@ -118,9 +118,9 @@ struct MoodSelectionView: View {
                                 .shadow(radius: 5)
                         }
                     }
-                    .padding(.bottom, 50)
-                    .buttonStyle(PlainButtonStyle())
-                    .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.0)))// Fade transition// Avoid default NavigationLink styling
+                                   .padding(.bottom, 50)
+                                   .buttonStyle(PlainButtonStyle())
+                                   .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.0)))// Fade transition// Avoid default NavigationLink styling
                 }
             }
         }
@@ -168,7 +168,7 @@ struct MoodSelectionView: View {
             }
         }
     }
-
+    
 }
 
 struct MoodSelectionView_Previews: PreviewProvider {

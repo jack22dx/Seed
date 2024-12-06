@@ -186,8 +186,8 @@ struct JournalingView: View {
     }
 }
 
-//struct JournalingView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        JournalingView()
-//    }
-//}
+struct JournalingView_Previews: PreviewProvider {
+    static var previews: some View {
+        JournalingView()
+    }
+}

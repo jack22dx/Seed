@@ -1,7 +1,41 @@
 import SwiftUI
 import NavigationTransitions
+import SwiftData
 
 struct GratitudeView: View {
+    static let gardenElements: [GardenElementData] = [
+        GardenElementData(name: "mountains", type: .png("mountains")),
+        GardenElementData(name: "mushroom", type: .gif("mushroom")),
+        GardenElementData(name: "christmastree", type: .png("christmastree")),
+        GardenElementData(name: "purplerose", type: .png("purplerose")),
+        GardenElementData(name: "deer", type: .png("deer")),
+        GardenElementData(name: "cherryblossom", type: .png("cherryblossom")),
+        GardenElementData(name: "rose", type: .png("rose"))
+    ]
+    @Query private var lessons: [LessonInfor]  // Automatically query all lessons from the model context
+    var journalingLessonCount: Int {
+        lessons.first(where: { $0.name == "Journaling" })?.count ?? 0
+    }
+    
+    // Compute selected garden element based on time
+    var selectedGardenElement: GardenElementData {
+        let filteredElements: [GardenElementData]
+        switch journalingLessonCount {
+        case ...3:
+            filteredElements = Self.gardenElements.filter { ["rose", "cherryblossom"].contains($0.name) }
+        case 3...6:
+            filteredElements = Self.gardenElements.filter { ["deer", "purplerose"].contains($0.name) }
+        case 7...:
+            filteredElements = Self.gardenElements.filter { ["christmastree", "mushroom", "mountains"].contains($0.name) }
+        default:
+            filteredElements = []
+        }
+        
+        return filteredElements.randomElement() ?? Self.gardenElements.first { $0.name == "sunflower" }!
+    }
+    
+    
+    
     @State private var gratitudeText: String = "" // For the user input in the text area
     @State private var navigateToSelfReflection = false // Tracks navigation to SelfReflectionView
 
@@ -31,11 +65,27 @@ struct GratitudeView: View {
                             .frame(width: 120, height: 120)
                             .shadow(radius: 5)
                         
-                        Image("purplerose") // Replace with your flower asset if available
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 90, height: 90)
-                            .foregroundColor(Color.purple)
+                        // Render image based on type
+                        switch selectedGardenElement.type {
+                        case .png(let imageName):
+                            Image(imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 200, height: 200)
+                                .clipShape(Circle())
+                                .shadow(radius: 10)
+                        case .gif(let gifName):
+                            GIFView(gifName: gifName)
+                                .scaledToFit()
+                                .frame(width: 200, height: 200)
+                                .clipShape(Circle())
+                                .shadow(radius: 10)
+                        }
+//                        Image("purplerose") // Replace with your flower asset if available
+//                            .resizable()
+//                            .scaledToFit()
+//                            .frame(width: 90, height: 90)
+//                            .foregroundColor(Color.purple)
                     }
                     .padding(.bottom, 30)
                     
@@ -82,7 +132,7 @@ struct GratitudeView: View {
                     Spacer()
                     
                     // Continue Button with Fade Transition
-                    NavigationLink(destination: SelfReflectionView()
+                    NavigationLink(destination: SelfReflectionView( selectedGardenElement: selectedGardenElement)
                                     .navigationBarHidden(true),
                                      // Fade transition
                                    isActive: $navigateToSelfReflection) {

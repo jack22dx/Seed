@@ -24,12 +24,11 @@ struct SeedApp: App {
     let persistenceController = PersistenceController.shared
     var body: some Scene {
         WindowGroup {
-            MeditationView(selectedTime: "3")
-            //                        VirtualGardenView()
-            //            WelcomeView()
-            //            MeditationActivitiesView()
-            //.environment(\.managedObjectContext, persistenceController.container.viewContext)
-            //            ActivitiesView()
+            WelcomeView()
+//            MeditationView(selectedTime: "3")
+//            VirtualGardenView()
+//            MeditationActivitiesView()
+//            ActivitiesView()
                 .environment(\.modelContext, container.mainContext)
         }
         .modelContainer(for: [LessonInfor.self,  ElementForGarden.self, OracleTip.self, OracleFact.self,  OraclePrompt.self ]) // Configure data model / 配置数据模型
@@ -104,10 +103,6 @@ struct SeedApp: App {
             sortedOracleTips.forEach { tip in
                 context.insert(tip)
             }
-            
-            //            for tip in sortedOracleTips {
-            //                print("Level: \(tip.level), Seq: \(tip.seq), Text: \(tip.text)")
-            //            }
             
         }else{
             
@@ -199,10 +194,6 @@ struct SeedApp: App {
                 context.insert(prompt)
             }
             
-            //            for prompt in oraclePrompts {
-            //                print("id: \(prompt.id), Text: \(prompt.text)")
-            //            }
-            
         }else{
             
             print("has oracle_prompt data");
@@ -210,9 +201,6 @@ struct SeedApp: App {
         
         do {
             try context.save() // Save context / 保存上下文
-            //            printDatabaseLocation(container: container);
-            
-            
         } catch {
             print("Failed to save during initialization: \(error)") // Initialization save failed / 初始化保存失败
         }

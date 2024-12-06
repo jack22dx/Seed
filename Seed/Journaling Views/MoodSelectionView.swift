@@ -1,16 +1,14 @@
 import SwiftUI
-
-// JournalingData.swift
-import SwiftUI
-
-
+import NavigationTransitions
+import SwiftData
 
 
 struct MoodSelectionView: View {
     var selectedGardenElement: GardenElementData
     @State private var moodValue: Double = 1.0 // Slider value to represent mood
-    @State private var navigateToQuestionsView = false // Tracks navigation to QuestionsView
-
+    @State private var navigateToGratitudeView = false // Tracks navigation to GratitudeView
+    @Query private var lessons: [LessonInfor]// Automatically query all lessons from the model context
+    @Environment(\.modelContext) private var modelContext
     var body: some View {
 //        let backgroundGradient = LinearGradient(
 //            gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
@@ -20,6 +18,7 @@ struct MoodSelectionView: View {
         
         NavigationStack {
             ZStack {
+                // Background gradient
                 PlayerView()
                     .ignoresSafeArea()
                 Color.yellow
@@ -28,7 +27,7 @@ struct MoodSelectionView: View {
                 
                 VStack {
                     Spacer()
-
+                    
                     // Decorative Circle with Image
                     ZStack {
                         Circle()
@@ -57,7 +56,7 @@ struct MoodSelectionView: View {
 //                            .foregroundColor(Color.purple)
                     }
                     .padding(.bottom, 30)
-
+                    
                     // Title Text
                     Text("How do you feel today?")
                         .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 25))
@@ -66,41 +65,47 @@ struct MoodSelectionView: View {
                         .padding(.horizontal, 20)
                         .padding(.bottom, 40)
                         .shadow(radius: 5)
-
-                    // Mood Slider with Icons
+                    
+                    // Mood Icons and Slider
                     VStack {
                         HStack {
-                            Image("sad") // Replace with a sad face asset
+                            // Mood Faces
+                            Image("sad") // Replace with custom sad face asset
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 90, height: 90)
                                 .foregroundColor(Color.blue.opacity(0.8))
-
+                            
                             Spacer()
-
-                            Image("middle") // Replace with a neutral face asset
+                            
+                            Image("middle") // Replace with custom neutral face asset
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 90, height: 90)
                                 .foregroundColor(Color.orange.opacity(0.8))
-
+                            
                             Spacer()
-
-                            Image("smile") // Replace with a happy face asset
+                            
+                            Image("smile") // Replace with custom happy face asset
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 90, height: 90)
                                 .foregroundColor(Color.green.opacity(0.8))
                         }
                         .padding(.horizontal, 30)
-
-                        Slider(value: $moodValue, in: 1...3, step: 1)
-                            .accentColor(.white)
-                            .padding(.horizontal, 50)
-                            .padding(.top, 20)
+                        
+                        // Slider
+                        Slider(
+                            value: $moodValue,
+                            in: 1...3,
+                            step: 1
+                        )
+                        .accentColor(.white)
+                        .padding(.horizontal, 50)
+                        .padding(.top, 20)
                     }
                     .padding(.bottom, 50)
-
+                    
                     Spacer()
                     
                     // Continue Button with Fade Transition
@@ -133,6 +138,7 @@ struct MoodSelectionView: View {
                     }
                     .padding(.bottom, 50)
                     .buttonStyle(PlainButtonStyle())
+                    .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.0)))// Fade transition// Avoid default NavigationLink styling
                 }
             }
         }

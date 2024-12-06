@@ -37,7 +37,10 @@ struct JournalingView: View {
     @State private var innerCircleScale: CGFloat = 1.0
     @State private var showWelcomeText = true
     @State private var displayedText = ""
-    @State private var navigateToTabs = false
+    @State private var isComplete = false
+    @State private var isLearnMorePressed = false // Tracks whether "Learn More" has been pressed
+    @State private var animationTaskID = UUID()  // Unique ID for tracking animation tasks
+    @State private var navigateToMoodSelection = false // Tracks navigation to MoodSelectionView
 
     var body: some View {
         
@@ -54,17 +57,19 @@ struct JournalingView: View {
 
         NavigationStack {
             ZStack {
+                // Background gradient
+            
                 PlayerView()
                     .ignoresSafeArea()
                 Color.yellow
-                    .opacity(0.2)
-                    .ignoresSafeArea()
-
+                        .opacity(0.2) // Adjust transparency as needed
+                        .ignoresSafeArea()
+                
                 VStack {
-                    // Pulsating circle at the top
+                    // Pulsing circle at the top
                     ZStack {
                         Circle()
-                            .stroke(Color.pink.opacity(0.3), lineWidth: 2)
+                            .stroke(lightPink.opacity(0.3), lineWidth: 2)
                             .frame(width: 60, height: 60)
                             .scaleEffect(outerCircleScale)
                             .onAppear {
@@ -72,9 +77,9 @@ struct JournalingView: View {
                                     outerCircleScale = 1.2
                                 }
                             }
-
+                        
                         Circle()
-                            .fill(Color.pink.opacity(0.6))
+                            .fill(lightPink.opacity(0.6))
                             .frame(width: 40, height: 40)
                             .scaleEffect(innerCircleScale)
                             .onAppear {
@@ -84,9 +89,9 @@ struct JournalingView: View {
                             }
                     }
                     .padding(.top, 60)
-
+                    
                     Spacer()
-
+                    
                     // Main content area
                     if showWelcomeText {
                         Text("Welcome to your Journaling Area")
@@ -94,27 +99,64 @@ struct JournalingView: View {
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 20)
+                            .opacity(showWelcomeText ? 1 : 0)
+                            .padding(.top, -60)
                             .shadow(radius: 5)
                             .onAppear {
-                                withAnimation(.easeInOut(duration: 5)) {
-                                    showWelcomeText = false
+                                withAnimation(.easeInOut(duration: 1.5)) {
+                                    showWelcomeText = true
                                 }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                                    startTextAnimation("Journaling helps process emotions, reduce stress, and reflect on experiences.")
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                                    withAnimation(.easeInOut(duration: 1.5)) {
+                                        showWelcomeText = false
+                                    }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                        startTextAnimation(fullText: fullText)
+                                    }
                                 }
                             }
                     } else {
                         Text(displayedText)
-                            .font(Font.custom("Visby", size: 20))
+                            .font(Font.custom("Visby", size: 22))
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
-                            .padding(.horizontal, 20)
-                            .lineSpacing(8)
+                            .padding(.horizontal, 30)
+                            .lineSpacing(10)
                             .shadow(radius: 5)
-                            .frame(width: UIScreen.main.bounds.width * 0.9, alignment: .top)
+                            .frame(width: UIScreen.main.bounds.width * 0.9, height: 300, alignment: .top)
+                            .opacity(displayedText.isEmpty ? 0 : 1)
                     }
 
                     Spacer()
+                    
+                    // Action buttons
+                    HStack(spacing: isLearnMorePressed ? 0 : 40) {
+                        // Learn More Button (fades out when pressed)
+                        if !isLearnMorePressed {
+                            Button(action: {
+                                withAnimation(.easeInOut(duration: 1.5)) {
+                                    isLearnMorePressed = true // Trigger fade-out
+                                }
+                                cancelTextAnimation() // Cancel any running animation
+                                startTextAnimation(fullText: learnMoreText) // Start new text animation
+                            }) {
+                                Text("Learn More")
+                                    .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                                    .padding()
+                                    .frame(minWidth: 150)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 40)
+                                            .fill(LinearGradient(
+                                                gradient: Gradient(colors: [Color.orange, Color.red]),
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            ))
+                                    )
+                                    .foregroundColor(.white)
+                                    .shadow(radius: 5)
+                            }
+                            .transition(.opacity) // Smooth fade-out
+                        }
 
                         // Start Button (fades in and moves to center)
                         Button(action: {
@@ -139,33 +181,42 @@ struct JournalingView: View {
                             MoodSelectionView(selectedGardenElement:selectedElement)
                                 .navigationBarHidden(true)
                         }
-                        .padding()
-                        .frame(minWidth: 150)
-                        .background(LinearGradient(
-                            gradient: Gradient(colors: [Color.green, Color.teal]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ))
-                        .foregroundColor(.white)
-                        .cornerRadius(20)
-                        .shadow(radius: 5)
                     }
+                    .frame(maxWidth: .infinity) // Ensures proper centering
                     .padding(.bottom, 50)
+                    .animation(.easeInOut(duration: 1.5), value: isLearnMorePressed) // Animates position changes
                 }
             }
+            .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.5))) // Fade transition between views
         }
     }
-
-    private func startTextAnimation(_ fullText: String) {
-        displayedText = ""
+    
+    /// Starts a word-by-word text animation.
+    func startTextAnimation(fullText: String) {
+        cancelTextAnimation() // Ensure no overlapping animations
+        animationTaskID = UUID() // Create a new task identifier
+        displayedText = "" // Clear any existing text
+        
         let words = fullText.split(separator: " ").map(String.init)
         var delay: Double = 0.1
-        for word in words {
+        let currentTaskID = animationTaskID // Capture the task ID for this animation
+
+        for (index, word) in words.enumerated() {
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                displayedText += word + " "
+                if currentTaskID == animationTaskID { // Ensure this is the latest animation
+                    withAnimation(.easeInOut(duration: 0.6)) {
+                        displayedText += word + " "
+                    }
+                }
             }
-            delay += 0.2
+            delay += (index == 0 ? 1.2 : 0.4)
         }
+    }
+    
+    /// Cancels any ongoing text animation.
+    func cancelTextAnimation() {
+        animationTaskID = UUID() // Invalidate any pending tasks
+        displayedText = "" // Clear the text immediately
     }
 }
 

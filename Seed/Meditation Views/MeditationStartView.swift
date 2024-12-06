@@ -19,7 +19,7 @@ struct MeditationStartView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var oracleTips_meditation: [OracleTip] = []
     @State private var clickTipBtn: Bool = false
-    
+
     
     var body: some View {
         
@@ -114,7 +114,7 @@ struct MeditationStartView: View {
                         self.clickTipBtn = true
                     }) {
                         Text("Tips")
-                            .font(Font.custom("Visby", size: 14))
+                            .font(Font.custom("Visby", size: 23))
                             .foregroundColor(.white)
                             .padding(.horizontal, 20)
                             .padding(.vertical, 5)
@@ -125,7 +125,7 @@ struct MeditationStartView: View {
                     .navigationDestination(isPresented: $clickTipBtn) {
                         MeditationOracleTipsView(oracleTips: oracleTips_meditation)
                     }
-                                        
+                    
                     // Timer Display
                     Text(timeFormatted(timeRemaining))
                         .font(Font.custom("Visby", size: 24))
@@ -134,33 +134,9 @@ struct MeditationStartView: View {
                     
                     // Playback Controls or Continue Button
                     if showContinueButton {
-                        
-//                        // Continue Button (Fades in)
-//                        Button(action: {
-//                            withAnimation {
-//                                navigateToSummary = true
-//                            }
-//                        }) {
-//                            Text("Continue")
-//                                .font(Font.custom("Visby", size: 18))
-//                                .padding()
-//                                .frame(minWidth: 150)
-//                                .background(buttonColors[1])
-//                                .foregroundColor(.white)
-//                                .clipShape(Capsule())
-//                                .shadow(radius: 5)
-//                                .opacity(showContinueButton ? 1 : 0) // Fade effect
-//                                .animation(.easeInOut(duration: 3), value: showContinueButton) // Smooth fade
-//                        }
-//                        .navigationDestination(isPresented: $navigateToSummary) {
-//                            MeditationSummaryView(selectedGardenElement: selectedElement, selectedTime:selectedTime)
-//                        }
-                        
-                        // Continue Button (Fades in)
-                        NavigationLink(destination: MeditationSummaryView(selectedGardenElement: selectedElement, selectedTime:selectedTime)
-                            .navigationBarHidden(true), isActive: $navigateToSummary)
-                        
-                        {
+                        Button(action: {
+                            navigateToSummary = true // Set the state to trigger navigation
+                        }) {
                             Text("Continue")
                                 .font(Font.custom("Visby", size: 18))
                                 .padding()
@@ -171,6 +147,14 @@ struct MeditationStartView: View {
                                 .shadow(radius: 5)
                                 .opacity(showContinueButton ? 1 : 0) // Fade effect
                                 .animation(.easeInOut(duration: 3), value: showContinueButton) // Smooth fade
+                        }
+                        // Navigation Destination
+                        .navigationDestination(isPresented: $navigateToSummary) {
+                            MeditationSummaryView(
+                                selectedGardenElement: selectedElement,
+                                selectedTime: selectedTime
+                            )
+                            .navigationBarHidden(true)
                         }
                         .padding(.top, 30)
                     } else {
@@ -382,7 +366,7 @@ struct MeditationOracleTipsView: View {
 struct MeditationStartView_Previews: PreviewProvider {
     static var gardenElements: GardenElementData =
     GardenElementData(name: "Flower", type: .png("flower"))
-    
+
     static var previews: some View {
         MeditationStartView(selectedTime: "3",selectedGardenElement: gardenElements)
     }

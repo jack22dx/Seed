@@ -338,48 +338,49 @@ struct BottomNavigationBar: View {
     var body: some View {
         HStack {
             // Leaf Button
-            NavigationLink(destination: VirtualGardenView().navigationBarHidden(true),
-                           isActive: $navigateToGardenView) {
-                Button(action: { navigateToGardenView = true }) {
-                    Image("leaf")
-                        .resizable()
-                        .frame(width: 60, height: 60)
-                        .foregroundColor(.green)
-                }
+            Button(action: { navigateToGardenView = true }) {
+                Image("leaf")
+                    .resizable()
+                    .frame(width: 60, height: 60)
+                    .foregroundColor(.green)
             }
-            
+            .navigationDestination(isPresented: $navigateToGardenView) {
+                VirtualGardenView()
+                    .navigationBarHidden(true)
+            }            
             Spacer()
             
             // Play Button
-            NavigationLink(destination: ActivitiesView().navigationBarHidden(true),
-                           isActive: $navigateToActivitiesView) {
-                Button(action: { navigateToActivitiesView = true }) {
-                    Circle()
-                        .fill(Color.blue)
-                        .frame(width: 60, height: 60)
-                        .overlay(
-                            Image(systemName: "play.fill")
-                                .foregroundColor(.white)
-                                .font(.system(size: 30))
-                        )
-                }
+            Button(action: { navigateToActivitiesView = true }) {
+                Circle()
+                    .fill(Color.blue)
+                    .frame(width: 60, height: 60)
+                    .overlay(
+                        Image(systemName: "play.fill")
+                            .foregroundColor(.white)
+                            .font(.system(size: 30))
+                    )
             }
-            
+            .navigationDestination(isPresented: $navigateToActivitiesView)
+            {
+                ActivitiesView().navigationBarHidden(true)
+            }
             Spacer()
             
             // Pink Button
-            NavigationLink(destination: WeeklySummaryView().navigationBarHidden(true),
-                           isActive: $navigateToSummaryView) {
-                Button(action: { navigateToSummaryView = true }) {
-                    Circle()
-                        .fill(Color.pink)
-                        .frame(width: 50, height: 50)
-                        .overlay(
-                            Image(systemName: "chart.bar.fill")
-                                .foregroundColor(.white)
-                                .font(.system(size: 25))
-                        )
-                }
+            Button(action: { navigateToSummaryView = true }) {
+                Circle()
+                    .fill(Color.pink)
+                    .frame(width: 50, height: 50)
+                    .overlay(
+                        Image(systemName: "chart.bar.fill")
+                            .foregroundColor(.white)
+                            .font(.system(size: 25))
+                    )
+            }
+            .navigationDestination(isPresented: $navigateToSummaryView) {
+                WeeklySummaryView()
+                    .navigationBarHidden(true)
             }
         }
         .padding(.horizontal, 40)

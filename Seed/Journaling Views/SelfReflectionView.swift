@@ -6,11 +6,11 @@ struct SelfReflectionView: View {
     @State private var reflectionText: String = "" // For the user input in the text area
     @State private var navigateToGoalSetting = false // Tracks navigation to GoalSettingView
     var body: some View {
-        let backgroundGradient = LinearGradient(
-            gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
+//        let backgroundGradient = LinearGradient(
+//            gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
+//            startPoint: .top,
+//            endPoint: .bottom
+//        )
         
         NavigationStack {
             ZStack {
@@ -96,10 +96,7 @@ struct SelfReflectionView: View {
                     Spacer()
                     
                     // Continue Button with Fade Transition
-                    NavigationLink(destination: GoalSettingView(selectedGardenElement: selectedGardenElement)
-                        .navigationBarHidden(true)
-                                   , // Fade transition
-                                   isActive: $navigateToGoalSetting) {
+                    NavigationStack {
                         Button(action: {
                             navigateToGoalSetting = true
                         }) {
@@ -118,10 +115,17 @@ struct SelfReflectionView: View {
                                 .foregroundColor(.white)
                                 .shadow(radius: 5)
                         }
+                        .onTapGesture {
+                            navigateToGoalSetting = true
+                        }
+                        .navigationDestination(isPresented: $navigateToGoalSetting) {
+                            GoalSettingView(selectedGardenElement: selectedGardenElement)
+                                .navigationBarHidden(true)
+                        }
                     }
-                                   .padding(.bottom, 50)
-                                   .buttonStyle(PlainButtonStyle())
-                                   .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.0)))// Avoid default NavigationLink styling
+                    .padding(.bottom, 50)
+                    .buttonStyle(PlainButtonStyle())
+                    .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.0)))// Avoid default NavigationLink styling
                 }
             }
         }

@@ -123,9 +123,10 @@ struct JournalingStreakView: View {
                                 .clipShape(Capsule())
                                 .shadow(radius: 5)
                         }
-                        .background(
-                            NavigationLink("", destination: ActivitiesView().navigationBarHidden(true), isActive: $navigateToActivities)
-                        )
+                        .navigationDestination(isPresented: $navigateToActivities) {
+                            ActivitiesView()
+                                .navigationBarHidden(true)
+                        }
                         
                         // My Garden Button
                         Button(action: {
@@ -140,9 +141,10 @@ struct JournalingStreakView: View {
                                 .clipShape(Capsule())
                                 .shadow(radius: 5)
                         }
-                        .background(
-                            NavigationLink("", destination: VirtualGardenView().navigationBarHidden(true), isActive: $navigateToGarden)
-                        )
+                        .navigationDestination(isPresented: $navigateToGarden) {
+                            VirtualGardenView()
+                                .navigationBarHidden(true)
+                        }
                     }
                 }
                 .padding(.horizontal, 20)

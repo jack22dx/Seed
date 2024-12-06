@@ -18,6 +18,7 @@ struct DetoxStartView: View {
                 Color.red.opacity(0.2).ignoresSafeArea()
                 
                 VStack(spacing: 40) {
+                    // 標題與鹿的頭像
                     VStack(spacing: 10) {
                         Text("Daphne the Deer")
                             .font(Font.custom("Visby", size: 25))
@@ -45,6 +46,7 @@ struct DetoxStartView: View {
                             .shadow(radius: 5)
                     }
                     
+                    // 倒數計時器
                     ZStack {
                         Circle()
                             .stroke(Color.white.opacity(0.3), lineWidth: 10)
@@ -62,6 +64,7 @@ struct DetoxStartView: View {
                             .shadow(radius: 5)
                     }
                     
+                    // 提示按鈕
                     Button(action: {
                         withAnimation(.easeInOut(duration: 0.5)) {
                             showTipsPopup.toggle()
@@ -84,6 +87,7 @@ struct DetoxStartView: View {
                     }
                     .padding(.bottom, 20)
                     
+                    // 控制按鈕 (播放/暫停，停止)
                     HStack(spacing: 40) {
                         Button(action: isRunning ? stopTimer : startTimer) {
                             Image(systemName: isRunning ? "pause.fill" : "play.fill")
@@ -112,10 +116,10 @@ struct DetoxStartView: View {
                 }
                 .padding()
                 
-                // Tips Popup
+                // 彈出視窗
                 if showTipsPopup {
                     ZStack {
-                        Color.black.opacity(0.5) // Semi-transparent background
+                        Color.black.opacity(0.5)
                             .ignoresSafeArea()
                             .onTapGesture {
                                 withAnimation(.easeInOut(duration: 0.5)) {
@@ -128,10 +132,7 @@ struct DetoxStartView: View {
                                 .font(Font.custom("Visby", size: 24))
                                 .foregroundColor(.white)
                                 .padding()
-                                .background(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .fill(Color.black.opacity(0.8))
-                                )
+                                .background(RoundedRectangle(cornerRadius: 20).fill(Color.black.opacity(0.8)))
                                 .shadow(radius: 10)
                             
                             Text("""
@@ -144,45 +145,36 @@ struct DetoxStartView: View {
                                 .foregroundColor(.white.opacity(0.9))
                                 .multilineTextAlignment(.leading)
                                 .padding()
-                                .background(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .fill(Color.white.opacity(0.2))
-                                )
+                                .background(RoundedRectangle(cornerRadius: 20).fill(Color.white.opacity(0.2)))
                             
-                            Button(action: {
+                            Button("Close") {
                                 withAnimation(.easeInOut(duration: 0.5)) {
                                     showTipsPopup = false
                                 }
-                            }) {
-                                Text("Close")
-                                    .font(Font.custom("Visby", size: 18))
-                                    .padding()
-                                    .frame(width: 120)
-                                    .background(Color.gray.opacity(0.7))
-                                    .foregroundColor(.white)
-                                    .cornerRadius(40)
                             }
+                            .font(Font.custom("Visby", size: 18))
+                            .padding()
+                            .frame(width: 120)
+                            .background(Color.gray.opacity(0.7))
+                            .foregroundColor(.white)
+                            .cornerRadius(40)
                         }
                         .padding()
                         .background(Color.black.opacity(0.9))
                         .cornerRadius(20)
                         .shadow(radius: 10)
                         .frame(width: UIScreen.main.bounds.width * 0.8)
-                        .transition(.opacity) // Fade in/out transition
+                        .transition(.opacity)
                     }
-                }
-                
-                NavigationLink(
-                    destination: DetoxSummaryView(elapsedTime: elapsedTime),
-                    isActive: $navigateToSummary
-                ) {
-                    EmptyView()
                 }
             }
             .onAppear {
                 if !isRunning {
                     startTimer()
                 }
+            }
+            .navigationDestination(isPresented: $navigateToSummary) {
+                DetoxSummaryView(elapsedTime: elapsedTime)
             }
         }
     }

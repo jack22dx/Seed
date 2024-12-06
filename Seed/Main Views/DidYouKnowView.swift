@@ -188,7 +188,7 @@ struct DidYouKnowView: View {
     
     private func  changeOracleFacts(){
         
-        var changeOracleId = Int.random(in: 1...10)
+        let changeOracleId = Int.random(in: 1...10)
         fetchOracleFacts(randomOracleId: changeOracleId)
         animateDescriptionText()
         

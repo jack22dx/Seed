@@ -38,13 +38,13 @@ struct GratitudeView: View {
     
     @State private var gratitudeText: String = "" // For the user input in the text area
     @State private var navigateToSelfReflection = false // Tracks navigation to SelfReflectionView
-
+    
     var body: some View {
-        let backgroundGradient = LinearGradient(
-            gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
+//        let backgroundGradient = LinearGradient(
+//            gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
+//            startPoint: .top,
+//            endPoint: .bottom
+//        )
         
         NavigationStack {
             ZStack {
@@ -52,8 +52,8 @@ struct GratitudeView: View {
                 PlayerView()
                     .ignoresSafeArea()
                 Color.yellow
-                        .opacity(0.2) // Adjust transparency as needed
-                        .ignoresSafeArea()
+                    .opacity(0.2) // Adjust transparency as needed
+                    .ignoresSafeArea()
                 
                 VStack {
                     Spacer()
@@ -81,11 +81,11 @@ struct GratitudeView: View {
                                 .clipShape(Circle())
                                 .shadow(radius: 10)
                         }
-//                        Image("purplerose") // Replace with your flower asset if available
-//                            .resizable()
-//                            .scaledToFit()
-//                            .frame(width: 90, height: 90)
-//                            .foregroundColor(Color.purple)
+                        //                        Image("purplerose") // Replace with your flower asset if available
+                        //                            .resizable()
+                        //                            .scaledToFit()
+                        //                            .frame(width: 90, height: 90)
+                        //                            .foregroundColor(Color.purple)
                     }
                     .padding(.bottom, 30)
                     
@@ -132,28 +132,28 @@ struct GratitudeView: View {
                     Spacer()
                     
                     // Continue Button with Fade Transition
-                    NavigationLink(destination: SelfReflectionView( selectedGardenElement: selectedGardenElement)
-                                    .navigationBarHidden(true),
-                                     // Fade transition
-                                   isActive: $navigateToSelfReflection) {
-                        Button(action: {
-                            navigateToSelfReflection = true
-                        }) {
-                            Text("Continue")
-                                .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
-                                .padding()
-                                .frame(minWidth: 150)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 40)
-                                        .fill(LinearGradient(
-                                            gradient: Gradient(colors: [Color.green, Color.teal]),
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        ))
-                                )
-                                .foregroundColor(.white)
-                                .shadow(radius: 5)
-                        }
+                    Button(action: {
+                        navigateToSelfReflection = true // Set the state to trigger navigation
+                    }) {
+                        Text("Continue")
+                            .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
+                            .padding()
+                            .frame(minWidth: 150)
+                            .background(
+                                RoundedRectangle(cornerRadius: 40)
+                                    .fill(LinearGradient(
+                                        gradient: Gradient(colors: [Color.green, Color.teal]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ))
+                            )
+                            .foregroundColor(.white)
+                            .shadow(radius: 5)// Smooth fade
+                    }
+                    // Navigation Destination
+                    .navigationDestination(isPresented: $navigateToSelfReflection) {
+                        SelfReflectionView( selectedGardenElement: selectedGardenElement)
+                            .navigationBarHidden(true)
                     }
                     .padding(.bottom, 50)
                     .buttonStyle(PlainButtonStyle()).navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.0))) // Avoid default NavigationLink styling

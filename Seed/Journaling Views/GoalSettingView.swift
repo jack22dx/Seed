@@ -98,34 +98,10 @@ struct GoalSettingView: View {
                         .padding(.bottom, 20)
                     
                     Spacer()
-                    //                    NavigationLink(destination: JournalingStreakView(selectedGardenElement: selectedElement)
-                    //                        .navigationBarHidden(true),
-                    //                                   isActive: $navigateToStreakView) {
-                    //                        Button(action: {
-                    //                            navigateToStreakView = true
-                    ////                            incrementCount(for: "Meditation", elementName:selectedElement.name)
-                    //                        }) {
-                    //                            Text("Continue")
-                    //                                .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
-                    //                                .padding()
-                    //                                .frame(minWidth: 150)
-                    //                                .background(
-                    //                                    RoundedRectangle(cornerRadius: 40)
-                    //                                        .fill(LinearGradient(
-                    //                                            gradient: Gradient(colors: [Color.green, Color.teal]),
-                    //                                            startPoint: .topLeading,
-                    //                                            endPoint: .bottomTrailing
-                    //                                        ))
-                    //                                )
-                    //                                .foregroundColor(.white)
-                    //                                .shadow(radius: 5)
-                    //                        }
-                    //                    }
                     // Continue Button
                     Button(action: {
                         navigateToStreakView = true // Trigger navigation
-                        incrementCount(for: "Journaling", elementName:selectedElement.name)
-                        //                        incrementCount(for: "Journaling")
+                        incrementCount(for: "Journaling", elementName: selectedElement.name)
                     }) {
                         Text("Continue")
                             .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
@@ -143,10 +119,10 @@ struct GoalSettingView: View {
                             .shadow(radius: 5)
                     }
                     .padding(.bottom, 50)
-                    .background(
-                        NavigationLink("", destination: JournalingStreakView(selectedGardenElement: selectedElement).navigationBarHidden(true), isActive: $navigateToStreakView)
-                            .hidden() // Make the NavigationLink invisible
-                    )
+                }
+                .navigationDestination(isPresented: $navigateToStreakView) {
+                    JournalingStreakView(selectedGardenElement: selectedElement)
+                        .navigationBarHidden(true)
                 }
             }
             .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.0)))// Avoid default NavigationLink styling

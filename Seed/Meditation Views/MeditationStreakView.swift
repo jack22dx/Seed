@@ -6,10 +6,25 @@ struct MeditationStreakView: View {
     var selectedGardenElement: GardenElementData
     var selectedTime : String
     
-    @State private var navigateToMeditations = false
+    @State private var navigateToMeditationActivities = false
     @State private var navigateToGarden = false
     @Environment(\.modelContext) private var modelContext
     @Query private var lessons: [LessonInfor]
+    
+    struct CustomButtonStyle: ButtonStyle {
+        let color: LinearGradient
+        
+        func makeBody(configuration: Configuration) -> some View {
+            configuration.label
+                .font(Font.custom("Visby", size: 18))
+                .padding()
+                .frame(minWidth: 150)
+                .background(color)
+                .foregroundColor(.white)
+                .clipShape(Capsule())
+                .shadow(radius: 5)
+        }
+    }
     
     var body: some View {
         let selectedElement = selectedGardenElement
@@ -64,7 +79,7 @@ struct MeditationStreakView: View {
                                 .frame(width: 100, height: 100)
                                 .clipShape(Circle())
                         }
-//                        
+//
 //                        Image("treeseed") // Replace with your tree icon
 //                            .resizable()
 //                            .scaledToFit()
@@ -114,37 +129,23 @@ struct MeditationStreakView: View {
                     
                     // Navigation Buttons
                     HStack(spacing: 30) {
-                        Button(action: {
-                            navigateToMeditations = true
-                        }) {
-                            Text("Meditations")
-                                .font(Font.custom("Visby", size: 18))
-                                .padding()
-                                .frame(minWidth: 150)
-                                .background(buttonColors[0])
-                                .foregroundColor(.white)
-                                .clipShape(Capsule())
-                                .shadow(radius: 5)
-                        }
-                        .background(
-                            NavigationLink("", destination: MeditationActivitiesView().navigationBarHidden(true), isActive: $navigateToMeditations)
-                        )
-                        
-                        Button(action: {
-                            navigateToGarden = true
-                        }) {
-                            Text("My Garden")
-                                .font(Font.custom("Visby", size: 18))
-                                .padding()
-                                .frame(minWidth: 150)
-                                .background(buttonColors[1])
-                                .foregroundColor(.white)
-                                .clipShape(Capsule())
-                                .shadow(radius: 5)
-                        }
-                        .background(
-                            NavigationLink("", destination: VirtualGardenView().navigationBarHidden(true), isActive: $navigateToGarden)
-                        )
+                            Button("Meditations") {
+                                navigateToMeditationActivities = true
+                            }
+                            .buttonStyle(CustomButtonStyle(color: buttonColors[0]))
+                            .navigationDestination(isPresented: $navigateToMeditationActivities) {
+                                MeditationActivitiesView()
+                                    .navigationBarHidden(true)
+                            }
+                            
+                            Button("My Garden") {
+                                navigateToGarden = true
+                            }
+                            .buttonStyle(CustomButtonStyle(color: buttonColors[1]))
+                            .navigationDestination(isPresented: $navigateToGarden) {
+                                VirtualGardenView()
+                                    .navigationBarHidden(true)
+                            }
                     }
                 }
                 .padding(.horizontal, 20)

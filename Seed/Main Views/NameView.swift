@@ -67,7 +67,7 @@ struct NameView: View {
                         .background(Color.white.opacity(1))
                         .cornerRadius(10)
                         .padding(.horizontal, 30)
-                        .onChange(of: name) { _ in
+                        .onChange(of: name) {
                             withAnimation(.easeInOut) {
                                 showContinueButton = !name.isEmpty
                             }

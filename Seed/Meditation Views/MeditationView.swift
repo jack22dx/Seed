@@ -17,7 +17,7 @@ struct MeditationView: View {
     ]
     
     // Compute selected garden element based on time
-    var selectedGardenElement: GardenElementData {
+    var RandomGardenElement: GardenElementData {
         guard let time = selectedTime, let timeInt = Int(time) else {
             return Self.gardenElements.first { $0.name == "sunflower" }!
         }
@@ -43,6 +43,7 @@ struct MeditationView: View {
     }
     
     var body: some View {
+        let selectedGardenElement = RandomGardenElement;
         NavigationStack {
             ZStack {
                 PlayerView().ignoresSafeArea()
@@ -83,22 +84,26 @@ struct MeditationView: View {
                         .padding()
                     
                     // Time display
-                    Text(displayText ?? "3 min 35 seconds")
+                    Text(displayText)
                         .font(.subheadline)
                         .foregroundColor(.white)
                     
                     Spacer()
                     
-                    // Navigation Link with Start Button
-                    NavigationLink(destination: MeditationStartView(selectedTime:selectedTime ?? "3", selectedGardenElement: selectedGardenElement),
-                                   isActive: $navigateToMeditationStart) {
-                        Button("Start") {
-                            navigateToMeditationStart = true
-                        }
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
+                    
+                    Button(action: {
+                        navigateToMeditationStart = true
+                    }) {
+                        Text("Start")
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
+                    .navigationDestination(isPresented: $navigateToMeditationStart) {
+                        MeditationStartView(
+                            selectedTime: selectedTime ?? "3",selectedGardenElement: selectedGardenElement
+                        )
                     }
                     
                     Spacer()

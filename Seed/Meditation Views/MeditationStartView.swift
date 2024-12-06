@@ -19,8 +19,8 @@ struct MeditationStartView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var oracleTips_meditation: [OracleTip] = []
     @State private var clickTipBtn: Bool = false
-
-
+    
+    
     var body: some View {
         
         let selectedElement = selectedGardenElement
@@ -40,16 +40,16 @@ struct MeditationStartView: View {
         ]
         NavigationStack {
             ZStack {
-            
+                
                 PlayerView()
                     .ignoresSafeArea()
                 Color.blue
-                        .opacity(0.2) // Adjust transparency as needed
-                        .ignoresSafeArea()
+                    .opacity(0.2) // Adjust transparency as needed
+                    .ignoresSafeArea()
                 
                 VStack(spacing: 30) {
                     // Title
-                    Text(selectedElement.name ?? "sunflower")
+                    Text(selectedElement.name)
                         .font(Font.custom("Visby", size: 30))
                         .foregroundColor(.white)
                         .shadow(radius: 5)
@@ -61,7 +61,7 @@ struct MeditationStartView: View {
                             .frame(width: 100, height: 100)
                             .shadow(radius: 10)
                         
-                        switch selectedElement.type ?? .png("flower") {
+                        switch selectedElement.type {
                         case .png(let imageName):
                             Image(imageName)
                                 .resizable()
@@ -75,11 +75,11 @@ struct MeditationStartView: View {
                                 .clipShape(Circle())
                         }
                         
-//                        Image("treeseed") // Replace with your tree icon
-//                            .resizable()
-//                            .scaledToFit()
-//                            .frame(width: 80, height: 80)
-//                            .clipShape(Circle())
+                        //                        Image("treeseed") // Replace with your tree icon
+                        //                            .resizable()
+                        //                            .scaledToFit()
+                        //                            .frame(width: 80, height: 80)
+                        //                            .clipShape(Circle())
                     }
                     .padding(.bottom, 10)
                     
@@ -106,26 +106,26 @@ struct MeditationStartView: View {
                             }
                     }
                     .padding(.bottom,10)
-
-                    // Tips Button in the center
-                    NavigationLink(destination: MeditationOracleTipsView(oracleTips: oracleTips_meditation), isActive: $clickTipBtn) {
-                        Button(action: {
-                            player?.pause()
-                            timer?.invalidate() // Pause the timer
-                            isPlaying = false
-                            self.clickTipBtn = true
-                        })
-                        {Text("Tips")
-                                .font(Font.custom("Visby", size: 14))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 20)
-                                .padding(.vertical, 5)
-                                .background(Color.purple)
-                                .cornerRadius(10)
-                                .shadow(radius: 5)
-                        }
-                    }
                     
+                    Button(action: {
+                        player?.pause()
+                        timer?.invalidate() // Pause the timer
+                        isPlaying = false
+                        self.clickTipBtn = true
+                    }) {
+                        Text("Tips")
+                            .font(Font.custom("Visby", size: 14))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 5)
+                            .background(Color.purple)
+                            .cornerRadius(10)
+                            .shadow(radius: 5)
+                    }
+                    .navigationDestination(isPresented: $clickTipBtn) {
+                        MeditationOracleTipsView(oracleTips: oracleTips_meditation)
+                    }
+                                        
                     // Timer Display
                     Text(timeFormatted(timeRemaining))
                         .font(Font.custom("Visby", size: 24))
@@ -134,21 +134,43 @@ struct MeditationStartView: View {
                     
                     // Playback Controls or Continue Button
                     if showContinueButton {
+                        
+//                        // Continue Button (Fades in)
+//                        Button(action: {
+//                            withAnimation {
+//                                navigateToSummary = true
+//                            }
+//                        }) {
+//                            Text("Continue")
+//                                .font(Font.custom("Visby", size: 18))
+//                                .padding()
+//                                .frame(minWidth: 150)
+//                                .background(buttonColors[1])
+//                                .foregroundColor(.white)
+//                                .clipShape(Capsule())
+//                                .shadow(radius: 5)
+//                                .opacity(showContinueButton ? 1 : 0) // Fade effect
+//                                .animation(.easeInOut(duration: 3), value: showContinueButton) // Smooth fade
+//                        }
+//                        .navigationDestination(isPresented: $navigateToSummary) {
+//                            MeditationSummaryView(selectedGardenElement: selectedElement, selectedTime:selectedTime)
+//                        }
+                        
                         // Continue Button (Fades in)
                         NavigationLink(destination: MeditationSummaryView(selectedGardenElement: selectedElement, selectedTime:selectedTime)
-                                        .navigationBarHidden(true), isActive: $navigateToSummary)
+                            .navigationBarHidden(true), isActive: $navigateToSummary)
                         
                         {
                             Text("Continue")
-                            .font(Font.custom("Visby", size: 18))
-                            .padding()
-                            .frame(minWidth: 150)
-                            .background(buttonColors[1])
-                            .foregroundColor(.white)
-                            .clipShape(Capsule())
-                            .shadow(radius: 5)
-                            .opacity(showContinueButton ? 1 : 0) // Fade effect
-                            .animation(.easeInOut(duration: 3), value: showContinueButton) // Smooth fade
+                                .font(Font.custom("Visby", size: 18))
+                                .padding()
+                                .frame(minWidth: 150)
+                                .background(buttonColors[1])
+                                .foregroundColor(.white)
+                                .clipShape(Capsule())
+                                .shadow(radius: 5)
+                                .opacity(showContinueButton ? 1 : 0) // Fade effect
+                                .animation(.easeInOut(duration: 3), value: showContinueButton) // Smooth fade
                         }
                         .padding(.top, 30)
                     } else {
@@ -275,7 +297,7 @@ struct MeditationStartView: View {
     }
     
     func fetchOracleTips() {
-                
+        
         let fetchRequest = FetchDescriptor<OracleTip>(
             predicate: #Predicate { $0.type == "meditation" },
             sortBy: [
@@ -286,21 +308,21 @@ struct MeditationStartView: View {
         
         do {
             
-           let  oracleTips = try modelContext.fetch(fetchRequest)
+            let  oracleTips = try modelContext.fetch(fetchRequest)
             
             if (oracleTips_meditation.isEmpty) {
                 
                 oracleTips_meditation.removeAll();
-
+                
                 for tip in oracleTips {
                     
                     oracleTips_meditation.append(tip)
                 }
             }
             
-       } catch {
-           print("Failed to fetch OracleTips: \(error)")
-       }
+        } catch {
+            print("Failed to fetch OracleTips: \(error)")
+        }
     }
 }
 
@@ -309,10 +331,10 @@ struct MeditationOracleTipsView: View {
     
     let oracleTips: [OracleTip]
     
-        var body: some View {
+    var body: some View {
+        
+        GeometryReader { geometry in
             
-            GeometryReader { geometry in
-
             ZStack {
                 PlayerView()
                     .ignoresSafeArea()
@@ -359,8 +381,8 @@ struct MeditationOracleTipsView: View {
 
 struct MeditationStartView_Previews: PreviewProvider {
     static var gardenElements: GardenElementData =
-            GardenElementData(name: "Flower", type: .png("flower"))
-
+    GardenElementData(name: "Flower", type: .png("flower"))
+    
     static var previews: some View {
         MeditationStartView(selectedTime: "3",selectedGardenElement: gardenElements)
     }

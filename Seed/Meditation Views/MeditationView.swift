@@ -90,7 +90,7 @@ struct MeditationView: View {
                     Spacer()
                     
                     // Navigation Link with Start Button
-                    NavigationLink(destination: MeditationStartView(selectedGardenElement: selectedGardenElement),
+                    NavigationLink(destination: MeditationStartView(selectedTime:selectedTime ?? "3", selectedGardenElement: selectedGardenElement),
                                    isActive: $navigateToMeditationStart) {
                         Button("Start") {
                             navigateToMeditationStart = true

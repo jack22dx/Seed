@@ -4,7 +4,8 @@ import SwiftData
 
 struct MeditationStartView: View {
     
-    var selectedGardenElement: GardenElementData    
+    var selectedTime : String
+    var selectedGardenElement: GardenElementData
     @State private var timeRemaining: Int = 0 // Timer will dynamically reflect the audio duration
     @State private var isPlaying: Bool = false
     @State private var player: AVAudioPlayer?
@@ -134,7 +135,7 @@ struct MeditationStartView: View {
                     // Playback Controls or Continue Button
                     if showContinueButton {
                         // Continue Button (Fades in)
-                        NavigationLink(destination: MeditationSummaryView(selectedGardenElement: selectedElement)
+                        NavigationLink(destination: MeditationSummaryView(selectedGardenElement: selectedElement, selectedTime:selectedTime)
                                         .navigationBarHidden(true), isActive: $navigateToSummary)
                         
                         {
@@ -361,6 +362,6 @@ struct MeditationStartView_Previews: PreviewProvider {
             GardenElementData(name: "Flower", type: .png("flower"))
 
     static var previews: some View {
-        MeditationStartView(selectedGardenElement: gardenElements)
+        MeditationStartView(selectedTime: "3",selectedGardenElement: gardenElements)
     }
 }

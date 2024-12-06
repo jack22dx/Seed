@@ -4,10 +4,16 @@ import SwiftData
 
 struct MeditationSummaryView: View {
     var selectedGardenElement: GardenElementData
-    
+    var selectedTime : String
     @State private var navigateToNextView = false
     @Query private var lessons: [LessonInfor]
+    @Query private var elementForGarden: [ElementForGarden]
+
     @Environment(\.modelContext) private var modelContext
+    var displayText: String {
+        let timeString = selectedTime ?? "3"
+        return timeString + " min 35 seconds"
+    }
     
     var body: some View {
         let lightblue = Color(hue: 0.55, saturation: 0.6, brightness: 0.9, opacity: 1.0)
@@ -26,6 +32,8 @@ struct MeditationSummaryView: View {
         ]
         
         NavigationStack {
+            
+            let selectedElement = selectedGardenElement
             ZStack {
                 PlayerView()
                     .ignoresSafeArea()
@@ -70,7 +78,7 @@ struct MeditationSummaryView: View {
                             .foregroundColor(.white)
                             .shadow(radius: 5)
                         
-                        Text("3 min 35 sec")
+                        Text(displayText)
                             .font(.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 20))
                             .foregroundColor(.white)
                             .shadow(radius: 5)
@@ -120,12 +128,12 @@ struct MeditationSummaryView: View {
                         .padding(.bottom, 20)
                     
                     // Continue Button
-                    NavigationLink(destination: MeditationStreakView()
+                    NavigationLink(destination: MeditationStreakView(selectedGardenElement: selectedElement, selectedTime:selectedTime)
                         .navigationBarHidden(true),
                                    isActive: $navigateToNextView) {
                         Button(action: {
                             navigateToNextView = true
-                            incrementCount(for: "Meditation")
+                            incrementCount(for: "Meditation", elementName:selectedElement.name)
                         }) {
                             Text("Continue")
                                 .font(.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
@@ -145,11 +153,19 @@ struct MeditationSummaryView: View {
         .navigationBarHidden(true)
     }
     
-    private func incrementCount(for name: String) {
+    private func incrementCount(for name: String,elementName: String) {
         guard let function = lessons.first(where: { $0.name == name }) else {
             print("No lesson found with name: \(name)")
             return
         }
+        
+        // 修改 isVisible 為 true
+         if let element = elementForGarden.first(where: { $0.elementName == elementName }) {
+             element.isVisible = true
+         }
+        
+        
+        
         
         function.count += 1
         
@@ -195,6 +211,6 @@ struct MeditationSummaryView_Previews: PreviewProvider {
     static var gardenElement = GardenElementData(name: "flower", type: .png("flower"))
     
     static var previews: some View {
-        MeditationSummaryView(selectedGardenElement: gardenElement)
+        MeditationSummaryView(selectedGardenElement: gardenElement, selectedTime:"3 min 35 sec")
     }
 }

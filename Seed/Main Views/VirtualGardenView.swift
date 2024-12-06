@@ -195,12 +195,18 @@ struct GIFView: UIViewRepresentable {
 struct AddElementsView: View {
     @Binding var gardenElements: [GardenElement]
     @Query private var lessons: [LessonInfor]
+    @Query private var elementForGarden: [ElementForGarden]
+    
     
     private var meditationLessonCount: Int {
         getLessonCount(name: "Meditation")
     }
     private func getLessonCount(name: String) -> Int {
         lessons.first(where: { $0.name == name })?.count ?? 0
+    }
+    
+    func isElementVisible(elementName: String) -> Bool {
+        elementForGarden.first(where: { $0.elementName == elementName })?.isVisible ?? false
     }
     
     var categorizedAssets: [String: [GardenElement]] {
@@ -237,7 +243,7 @@ struct AddElementsView: View {
                 GardenElement(id: UUID(), name: "Rose", type: .png("rose"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: true),
                 GardenElement(id: UUID(), name: "Cherry Blossom", type: .png("cherryblossom"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
                 GardenElement(id: UUID(), name: "Deer", type: .png("deer"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
-                GardenElement(id: UUID(), name: "Bouquet", type: .png("bouquet"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
+                GardenElement(id: UUID(), name: "Bouquet", type: .png("deer"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
                 GardenElement(id: UUID(), name: "Purple Rose", type: .png("purplerose"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
                 GardenElement(id: UUID(), name: "Christmastree", type: .png("christmastree"), position: CGPoint(x: 150, y: 450), scale: 1.0,isVisible: true),
                 GardenElement(id: UUID(), name: "Mushroom", type: .png("mushroom"), position: CGPoint(x: 150, y: 450), scale: 1.0, isVisible: true),

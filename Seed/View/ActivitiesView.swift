@@ -12,6 +12,13 @@ struct ActivitiesView: View {
     @AppStorage("userName") private var userName: String = "Friend" 
 
     var body: some View {
+        Button(action: {
+            printDatabaseLocation()
+            incrementCount(for: "Meditation") // Increment course count
+            print("Mission Complete tapped for Meditation")
+        }) {
+            Text("Completed")
+        }
         NavigationStack {
             ZStack {
                 PlayerView()
@@ -39,14 +46,6 @@ struct ActivitiesView: View {
                         isInitialized = true
                     }
                 }
-            }
-
-            Button(action: {
-                printDatabaseLocation()
-                incrementCount(for: "Meditation") // Increment course count
-                print("Mission Complete tapped for Meditation")
-            }) {
-                Text("Completed")
             }
         }
     }

@@ -12,12 +12,20 @@ class OraclePrompt {
     
     var type : String
     var id: Int
+    var tab: String
+    var activity: String
+    var level: Int
+    var seq: Int
     var text: String
 
-    init(type: String, id: Int, text: String) {
+    init( id: Int, type: String, tab: String, activity: String, level: Int, seq: Int, text: String) {
         
-        self.type = type
         self.id = id
+        self.type = type
+        self.tab = tab
+        self.activity = activity
+        self.level = level
+        self.seq = seq
         self.text = text
     }
 }

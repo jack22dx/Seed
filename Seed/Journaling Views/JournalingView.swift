@@ -4,7 +4,7 @@ import SwiftData
 
 struct JournalingView: View {
     @Query private var lessons: [LessonInfor]
-
+    
     @State private var outerCircleScale: CGFloat = 1.0
     @State private var innerCircleScale: CGFloat = 1.0
     @State private var showWelcomeText = true
@@ -13,7 +13,14 @@ struct JournalingView: View {
     @State private var isLearnMorePressed = false // Tracks whether "Learn More" has been pressed
     @State private var animationTaskID = UUID()  // Unique ID for tracking animation tasks
     @State private var navigateToMoodSelection = false // Tracks navigation to MoodSelectionView
-
+    
+    //    for oracle
+    @Environment(\.modelContext) private var modelContext
+    @State private var oracleFacts_journaling: [OracleFact] = []
+    @State private var clickTimes = 0;
+    @State private var  fullText = "A digital detox can reduce stress, improve focus, and boost your mood by giving your mind a chance to rest."
+    
+    
     var body: some View {
         let gardenElements: [GardenElementData] = [
             GardenElementData(name: "mountains", type: .png("mountains")),
@@ -48,16 +55,16 @@ struct JournalingView: View {
         
         let lightPink = Color(hue: 0.89, saturation: 0.4, brightness: 1.0, opacity: 1.0)
         let learnMoreText = "In this section, reflect on your emotions with guided questions. Answer freely and review your entries anytime on the summary page."
-
+        
         NavigationStack {
             ZStack {
                 // Background gradient
-            
+                
                 PlayerView()
                     .ignoresSafeArea()
                 Color.yellow
-                        .opacity(0.2) // Adjust transparency as needed
-                        .ignoresSafeArea()
+                    .opacity(0.2) // Adjust transparency as needed
+                    .ignoresSafeArea()
                 
                 VStack {
                     // Pulsing circle at the top
@@ -120,7 +127,7 @@ struct JournalingView: View {
                             .frame(width: UIScreen.main.bounds.width * 0.9, height: 300, alignment: .top)
                             .opacity(displayedText.isEmpty ? 0 : 1)
                     }
-
+                    
                     Spacer()
                     
                     // Action buttons
@@ -147,7 +154,7 @@ struct JournalingView: View {
                             }
                             .transition(.opacity) // Smooth fade-out
                         }
-
+                        
                         // Start Button (fades in and moves to center)
                         Button(action: {
                             clickTimes = clickTimes + 1
@@ -156,7 +163,7 @@ struct JournalingView: View {
                                 
                                 withAnimation(.easeInOut(duration: 1.5)) {
                                     isLearnMorePressed = true;
-                                     // Trigger fade-out
+                                    // Trigger fade-out
                                 }
                                 cancelTextAnimation() // Cancel any running animation
                                 startTextAnimation(fullText: learnMoreText) // Start new text animation
@@ -167,7 +174,7 @@ struct JournalingView: View {
                                 navigateToMoodSelection = true
                                 
                             }
-                                                             
+                            
                         }) {
                             Text(clickTimes == 1 ? "Continue" : "Start")
                                 .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
@@ -208,7 +215,7 @@ struct JournalingView: View {
         let words = fullText.split(separator: " ").map(String.init)
         var delay: Double = 0.1
         let currentTaskID = animationTaskID // Capture the task ID for this animation
-
+        
         for (index, word) in words.enumerated() {
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 if currentTaskID == animationTaskID { // Ensure this is the latest animation
@@ -228,25 +235,25 @@ struct JournalingView: View {
     }
     
     func fetchOracleFacts(randomOracleId: Int) {
-                
+        
         let fetchRequest = FetchDescriptor<OracleFact>(
             predicate: #Predicate { $0.id == randomOracleId && $0.type == "journaling"}
         )
         
         do {
             
-           let  oracleFacts = try modelContext.fetch(fetchRequest)
+            let  oracleFacts = try modelContext.fetch(fetchRequest)
             
             if (oracleFacts_journaling.isEmpty) {
-                                
+                
                 fullText = oracleFacts
-                       .map { $0.text }
-                       .joined(separator: " ")
+                    .map { $0.text }
+                    .joined(separator: " ")
             }
             
-       } catch {
-           print("Failed to fetch fetchOracleFacts: \(error)")
-       }
+        } catch {
+            print("Failed to fetch fetchOracleFacts: \(error)")
+        }
     }
     
     private func  changeOracleFacts(){
@@ -254,7 +261,7 @@ struct JournalingView: View {
         var changeOracleId = Int.random(in: 1...8)
         fetchOracleFacts(randomOracleId: changeOracleId)
         startTextAnimation(fullText: fullText)
-
+        
     }
 }
 

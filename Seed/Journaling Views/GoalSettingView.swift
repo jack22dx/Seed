@@ -33,7 +33,7 @@ struct GoalSettingView: View {
                             .fill(Color.white.opacity(0.6))
                             .frame(width: 120, height: 120)
                             .shadow(radius: 5)
-                        switch selectedGardenElement.type {
+                        switch selectedElement.type {
                         case .png(let imageName):
                             Image(imageName)
                                 .resizable()
@@ -48,13 +48,6 @@ struct GoalSettingView: View {
                                 .clipShape(Circle())
                                 .shadow(radius: 10)
                         }
-                        
-                        
-                        //                        Image("purplerose") // Replace with your flower asset if available
-                        //                            .resizable()
-                        //                            .scaledToFit()
-                        //                            .frame(width: 90, height: 90)
-                        //                            .foregroundColor(Color.purple)
                     }
                     .padding(.bottom, 30)
                     

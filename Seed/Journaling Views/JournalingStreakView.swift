@@ -9,10 +9,9 @@ struct JournalingStreakView: View {
     @Query private var lessons: [LessonInfor]  // Automatically query all lessons from the model context
     
     var body: some View {
-        
+        let selectedElement = selectedGardenElement
         let completedDays = getCompletedData(name: "Journaling") // Replace "Lesson Name" with actual name
         let dayLabels = ["M", "T", "W", "T", "F", "S", "S"]
-        
         let buttonColors = [
             LinearGradient(
                 gradient: Gradient(colors: [Color.orange, Color.red]),
@@ -46,7 +45,7 @@ struct JournalingStreakView: View {
                             .fill(Color.white.opacity(0.7))
                             .frame(width: 120, height: 120)
                             .shadow(radius: 10)
-                        switch selectedGardenElement.type {
+                        switch selectedElement.type {
                         case .png(let imageName):
                             Image(imageName)
                                 .resizable()

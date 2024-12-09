@@ -4,17 +4,16 @@ import SwiftData
 
 
 struct MoodSelectionView: View {
+    
     var selectedGardenElement: GardenElementData
     @State private var moodValue: Double = 1.0 // Slider value to represent mood
     @State private var navigateToGratitudeView = false // Tracks navigation to GratitudeView
     @Query private var lessons: [LessonInfor]// Automatically query all lessons from the model context
     @Environment(\.modelContext) private var modelContext
+    
     var body: some View {
-//        let backgroundGradient = LinearGradient(
-//            gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
-//            startPoint: .top,
-//            endPoint: .bottom
-//        )
+        
+        let selectedElement = selectedGardenElement
         
         NavigationStack {
             ZStack {
@@ -34,7 +33,8 @@ struct MoodSelectionView: View {
                             .fill(Color.white.opacity(0.6))
                             .frame(width: 120, height: 120)
                             .shadow(radius: 5)
-                        switch selectedGardenElement.type {
+                        
+                        switch selectedElement.type {
                         case .png(let imageName):
                             Image(imageName)
                                 .resizable()
@@ -49,11 +49,6 @@ struct MoodSelectionView: View {
                                 .clipShape(Circle())
                                 .shadow(radius: 10)
                         }
-//                        Image("purplerose") // Replace with your flower asset if available
-//                            .resizable()
-//                            .scaledToFit()
-//                            .frame(width: 80, height: 80)
-//                            .foregroundColor(Color.purple)
                     }
                     .padding(.bottom, 30)
                     

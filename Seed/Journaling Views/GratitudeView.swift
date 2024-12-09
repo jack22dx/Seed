@@ -38,19 +38,11 @@ struct GratitudeView: View {
         
         return filteredElements.randomElement() ?? Self.gardenElements.first { $0.name == "sunflower" }!
     }
-    
-    
-    
     @State private var gratitudeText: String = "" // For the user input in the text area
     @State private var navigateToSelfReflection = false // Tracks navigation to SelfReflectionView
     
     var body: some View {
-//        let backgroundGradient = LinearGradient(
-//            gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
-//            startPoint: .top,
-//            endPoint: .bottom
-//        )
-        
+        let selectedElement = selectedGardenElement
         NavigationStack {
             ZStack {
                 // Background gradient
@@ -71,7 +63,7 @@ struct GratitudeView: View {
                             .shadow(radius: 5)
                         
                         // Render image based on type
-                        switch selectedGardenElement.type {
+                        switch selectedElement.type {
                         case .png(let imageName):
                             Image(imageName)
                                 .resizable()
@@ -151,7 +143,7 @@ struct GratitudeView: View {
                     }
                     // Navigation Destination
                     .navigationDestination(isPresented: $navigateToSelfReflection) {
-                        SelfReflectionView( selectedGardenElement: selectedGardenElement)
+                        SelfReflectionView( selectedGardenElement: selectedElement)
                             .navigationBarHidden(true)
                     }
                     .padding(.bottom, 50)

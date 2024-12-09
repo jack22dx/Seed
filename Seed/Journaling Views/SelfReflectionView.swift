@@ -6,12 +6,7 @@ struct SelfReflectionView: View {
     @State private var reflectionText: String = "" // For the user input in the text area
     @State private var navigateToGoalSetting = false // Tracks navigation to GoalSettingView
     var body: some View {
-//        let backgroundGradient = LinearGradient(
-//            gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
-//            startPoint: .top,
-//            endPoint: .bottom
-//        )
-        
+        let selectedElement = selectedGardenElement
         NavigationStack {
             ZStack {
                 // Background gradient
@@ -30,7 +25,7 @@ struct SelfReflectionView: View {
                             .fill(Color.white.opacity(0.6))
                             .frame(width: 120, height: 120)
                             .shadow(radius: 5)
-                        switch selectedGardenElement.type {
+                        switch selectedElement.type {
                         case .png(let imageName):
                             Image(imageName)
                                 .resizable()
@@ -119,7 +114,7 @@ struct SelfReflectionView: View {
                             navigateToGoalSetting = true
                         }
                         .navigationDestination(isPresented: $navigateToGoalSetting) {
-                            GoalSettingView(selectedGardenElement: selectedGardenElement)
+                            GoalSettingView(selectedGardenElement: selectedElement)
                                 .navigationBarHidden(true)
                         }
                     }

@@ -24,11 +24,11 @@ struct SeedApp: App {
     let persistenceController = PersistenceController.shared
     var body: some Scene {
         WindowGroup {
-            WelcomeView()
+//            WelcomeView()
 //            MeditationView(selectedTime: "3")
 //            VirtualGardenView()
 //            MeditationActivitiesView()
-//            ActivitiesView()
+            ActivitiesView()
                 .environment(\.modelContext, container.mainContext)
         }
         .modelContainer(for: [LessonInfor.self,  ElementForGarden.self, OracleTip.self, OracleFact.self,  OraclePrompt.self ]) // Configure data model / 配置数据模型

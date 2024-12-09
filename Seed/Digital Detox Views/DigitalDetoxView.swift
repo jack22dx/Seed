@@ -1,5 +1,7 @@
 import SwiftUI
 import NavigationTransitions
+import SwiftData
+
 
 struct DigitalDetoxView: View {
     @State private var outerCircleScale: CGFloat = 1.0
@@ -11,6 +13,13 @@ struct DigitalDetoxView: View {
     @State private var animationTaskID = UUID()  // Unique ID for tracking animation tasks
     @State private var navigateToMoodSelection = false // Tracks navigation to MoodSelectionView
 
+    //    for oracle
+        @Environment(\.modelContext) private var modelContext
+        @State private var oracleFacts_detox: [OracleFact] = []
+        @State private var clickTimes = 0;
+        @State private var  fullText = "A digital detox can reduce stress, improve focus, and boost your mood by giving your mind a chance to rest."
+
+    
     var body: some View {
 //        let backgroundGradient = LinearGradient(
 //            gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
@@ -19,7 +28,6 @@ struct DigitalDetoxView: View {
 //        )
         
         let lightPink = Color(hue: 0.89, saturation: 0.4, brightness: 1.0, opacity: 1.0)
-        let fullText = "A digital detox can reduce stress, improve focus, and boost your mood by giving your mind a chance to rest."
         let learnMoreText = "Constant notifications and digital overload can trigger stress. Disconnecting helps you relax and recharge. Press start to begin a 25 minute digital detox."
 
         NavigationStack {
@@ -101,11 +109,7 @@ struct DigitalDetoxView: View {
                         // Learn More Button (fades out when pressed)
                         if !isLearnMorePressed {
                             Button(action: {
-                                withAnimation(.easeInOut(duration: 1.5)) {
-                                    isLearnMorePressed = true // Trigger fade-out
-                                }
-                                cancelTextAnimation() // Cancel any running animation
-                                startTextAnimation(fullText: learnMoreText) // Start new text animation
+                                changeOracleFacts();
                             }) {
                                 Text("Learn More")
                                     .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
@@ -127,11 +131,25 @@ struct DigitalDetoxView: View {
 
                         // Start Button (fades in and moves to center)
                         Button(action: {
-                            withAnimation {
+                            clickTimes = clickTimes + 1
+                            
+                            if(clickTimes == 1){
+                                
+                                withAnimation(.easeInOut(duration: 1.5)) {
+                                    isLearnMorePressed = true;
+                                     // Trigger fade-out
+                                }
+                                cancelTextAnimation() // Cancel any running animation
+                                startTextAnimation(fullText: learnMoreText) // Start new text animation
+                            }
+                            
+                            if(clickTimes > 1){
+                                
                                 navigateToMoodSelection = true
+                                
                             }
                         }) {
-                            Text("Start")
+                            Text(clickTimes == 1 ? "Continue" : "Start")
                                 .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
                                 .padding()
                                 .frame(minWidth: 150)
@@ -154,15 +172,16 @@ struct DigitalDetoxView: View {
                     }
                     .frame(maxWidth: .infinity) // Ensures proper centering
                     .padding(.bottom, 50)
-                    .animation(.easeInOut(duration: 1.5), value: isLearnMorePressed) // Animates position changes
+                    .animation(.easeInOut(duration: 1.0), value: isLearnMorePressed) // Animates position changes
                 }
             }
-            .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.5))) // Fade transition between views
+            .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.0))) // Fade transition between views
         }
     }
     
     /// Starts a word-by-word text animation.
     func startTextAnimation(fullText: String) {
+        displayedText = ""
         cancelTextAnimation() // Ensure no overlapping animations
         animationTaskID = UUID() // Create a new task identifier
         displayedText = "" // Clear any existing text
@@ -187,6 +206,36 @@ struct DigitalDetoxView: View {
     func cancelTextAnimation() {
         animationTaskID = UUID() // Invalidate any pending tasks
         displayedText = "" // Clear the text immediately
+    }
+    
+    func fetchOracleFacts(randomOracleId: Int) {
+                
+        let fetchRequest = FetchDescriptor<OracleFact>(
+            predicate: #Predicate { $0.id == randomOracleId && $0.type == "detox"}
+        )
+        
+        do {
+            
+           let  oracleFacts = try modelContext.fetch(fetchRequest)
+            
+            if (oracleFacts_detox.isEmpty) {
+                                
+                fullText = oracleFacts
+                       .map { $0.text }
+                       .joined(separator: " ")
+            }
+            
+       } catch {
+           print("Failed to fetch OracleFacts: \(error)")
+       }
+    }
+    
+    private func  changeOracleFacts(){
+        
+        var changeOracleId = Int.random(in: 1...7)
+        fetchOracleFacts(randomOracleId: changeOracleId)
+        startTextAnimation(fullText: fullText)
+
     }
 }
 

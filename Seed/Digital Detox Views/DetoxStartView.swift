@@ -1,5 +1,7 @@
 import SwiftUI
 import NavigationTransitions
+import SwiftData
+
 
 struct DetoxStartView: View {
     @State private var elapsedTime: TimeInterval = 0.0 // Cumulative elapsed time
@@ -9,6 +11,11 @@ struct DetoxStartView: View {
     @State private var showTipsPopup: Bool = false     // Tracks if the tips popup is displayed
     
     let totalTime: TimeInterval = 25 * 60 // 25 minutes in seconds
+    
+    //for oracle
+    @Environment(\.modelContext) private var modelContext
+    @State private var oracleTips_detox: [OracleTip] = []
+    @State private var clickTipBtn: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -25,6 +32,8 @@ struct DetoxStartView: View {
                             .foregroundColor(.white)
                             .shadow(radius: 5)
                             .padding(.bottom, 20)
+                            .padding(.top, 50)
+
                         
                         ZStack {
                             Circle()
@@ -64,28 +73,27 @@ struct DetoxStartView: View {
                             .shadow(radius: 5)
                     }
                     
+                    .padding(.bottom, 20) // 底部間距
+
                     // 提示按鈕
                     Button(action: {
-                        withAnimation(.easeInOut(duration: 0.5)) {
-                            showTipsPopup.toggle()
-                        }
+                        timer?.invalidate() // Pause the timer
+                        isRunning = false
+                        self.clickTipBtn = true
                     }) {
                         Text("Tips")
                             .font(Font.custom("Visby", size: 18))
-                            .padding()
-                            .frame(width: 120)
-                            .background(
-                                RoundedRectangle(cornerRadius: 40)
-                                    .fill(LinearGradient(
-                                        gradient: Gradient(colors: [Color.white.opacity(0.3), Color.white.opacity(0.5)]),
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    ))
-                            )
                             .foregroundColor(.white)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 5)
+                            .background(Color.orange.opacity(0.5))
+                            .cornerRadius(10)
                             .shadow(radius: 5)
                     }
-                    .padding(.bottom, 20)
+                    NavigationLink(
+                        destination: DetoxOracleTipsView(oracleTips: oracleTips_detox),
+                        isActive: $clickTipBtn // 使用狀態綁定
+                    ){}
                     
                     // 控制按鈕 (播放/暫停，停止)
                     HStack(spacing: 40) {
@@ -172,6 +180,7 @@ struct DetoxStartView: View {
                 if !isRunning {
                     startTimer()
                 }
+                fetchOracleTips()
             }
             .navigationDestination(isPresented: $navigateToSummary) {
                 DetoxSummaryView(elapsedTime: elapsedTime)
@@ -204,6 +213,89 @@ struct DetoxStartView: View {
         isRunning = false
         timer?.invalidate()
         timer = nil
+    }
+    
+    func fetchOracleTips() {
+        
+        let fetchRequest = FetchDescriptor<OracleTip>(
+            predicate: #Predicate { $0.type == "detox" },
+            sortBy: [
+                SortDescriptor(\OracleTip.level),  // Sort by level
+                SortDescriptor(\OracleTip.seq)     // Then sort by seq
+            ]
+        )
+        
+        do {
+            
+            let  oracleTips = try modelContext.fetch(fetchRequest)
+            
+            if (oracleTips_detox.isEmpty) {
+                
+                oracleTips_detox.removeAll();
+                
+                for tip in oracleTips {
+                    
+                    oracleTips_detox.append(tip)
+                }
+            }
+            
+        } catch {
+            print("Failed to fetch OracleTips: \(error)")
+        }
+    }
+}
+
+// MARK: - Tips Views
+struct DetoxOracleTipsView: View {
+    
+    let oracleTips: [OracleTip]
+    
+    var body: some View {
+        
+        GeometryReader { geometry in
+            
+            ZStack {
+                PlayerView()
+                    .ignoresSafeArea()
+                Color.red.opacity(0.2).ignoresSafeArea()
+
+                VStack {
+                    Text("Digital Detox Tips")
+                        .font(Font.custom("Visby", size: 30))
+                        .foregroundColor(.white)
+                        .padding()
+                    
+                    ScrollView {
+                        
+                        // Use ForEach to display the oracleTips
+                        ForEach(oracleTips, id: \.seq) { tip in
+                            Text("\(tip.seq). \(tip.text)")
+                                .font(Font.custom("Visby", size: 18))
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .lineSpacing(10)
+                        }
+                    }
+                    .frame(height: geometry.size.height * 0.6) // screen height 60%
+                    
+                    // scroll more icon
+                    VStack {
+                        Spacer()
+                        Image(systemName: "arrow.down.circle.fill")
+                            .foregroundColor(.white)
+                            .font(.system(size: 20))
+                            .padding(.bottom, 8)
+                        Text("Scroll down for more")
+                            .font(Font.custom("Visby", size: 14))
+                            .foregroundColor(.white)
+                    }
+                    .opacity(0.8)
+                    
+                    Spacer()
+                }
+            }
+        }
     }
 }
 

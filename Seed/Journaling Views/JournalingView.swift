@@ -13,7 +13,7 @@ struct JournalingView: View {
         GardenElementData(name: "cherryblossom", type: .png("cherryblossom")),
         GardenElementData(name: "rose", type: .png("rose"))
     ]
-    
+//    for oracle
     @Environment(\.modelContext) private var modelContext
     @State private var oracleFacts_journaling: [OracleFact] = []
     @State private var clickTimes = 0;
@@ -203,10 +203,10 @@ struct JournalingView: View {
                     }
                     .frame(maxWidth: .infinity) // Ensures proper centering
                     .padding(.bottom, 50)
-                    .animation(.easeInOut(duration: 0.5), value: isLearnMorePressed) // Animates position changes
+                    .animation(.easeInOut(duration: 1.0), value: isLearnMorePressed) // Animates position changes
                 }
             }
-            .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.5))) // Fade transition between views
+            .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.0))) // Fade transition between views
         }
     }
     

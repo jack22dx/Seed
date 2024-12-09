@@ -107,14 +107,15 @@ struct MeditationStartView: View {
                     }
                     .padding(.bottom,10)
                     
+                    //tip btn
                     Button(action: {
-                        player?.pause()
-                        timer?.invalidate() // Pause the timer
                         isPlaying = false
+                        player?.pause()
+                        timer?.invalidate()
                         self.clickTipBtn = true
                     }) {
                         Text("Tips")
-                            .font(Font.custom("Visby", size: 23))
+                            .font(Font.custom("Visby", size: 18))
                             .foregroundColor(.white)
                             .padding(.horizontal, 20)
                             .padding(.vertical, 5)
@@ -122,9 +123,10 @@ struct MeditationStartView: View {
                             .cornerRadius(10)
                             .shadow(radius: 5)
                     }
-                    .navigationDestination(isPresented: $clickTipBtn) {
-                        MeditationOracleTipsView(oracleTips: oracleTips_meditation)
-                    }
+                    NavigationLink(
+                        destination: MeditationOracleTipsView(oracleTips: oracleTips_meditation),
+                        isActive: $clickTipBtn // 使用狀態綁定
+                    ){}
                     
                     // Timer Display
                     Text(timeFormatted(timeRemaining))
@@ -321,6 +323,10 @@ struct MeditationOracleTipsView: View {
             
             ZStack {
                 PlayerView()
+                    .ignoresSafeArea()
+                
+                Color.blue
+                    .opacity(0.2) // Adjust transparency as needed
                     .ignoresSafeArea()
                 
                 VStack {

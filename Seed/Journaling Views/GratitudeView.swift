@@ -12,6 +12,11 @@ struct GratitudeView: View {
         GardenElementData(name: "cherryblossom", type: .png("cherryblossom")),
         GardenElementData(name: "rose", type: .png("rose"))
     ]
+    
+    //for oracle
+    @Environment(\.modelContext) private var modelContext
+    @State private var oracleTips_journaling: [OracleTip] = []
+    
     @Query private var lessons: [LessonInfor]  // Automatically query all lessons from the model context
     var journalingLessonCount: Int {
         lessons.first(where: { $0.name == "Journaling" })?.count ?? 0
@@ -99,30 +104,24 @@ struct GratitudeView: View {
                         .shadow(radius: 5)
                     
                     // Tips Button
-                    Button(action: {
-                        print("Tips button tapped")
-                    }) {
+                    // Tips Button in the center
+                    NavigationLink(destination: JournalingOracleTipsView(oracleTips: oracleTips_journaling)) {
                         Text("Tips")
-                            .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
-                            .padding()
-                            .frame(width: 120)
-                            .background(
-                                RoundedRectangle(cornerRadius: 40)
-                                    .fill(LinearGradient(
-                                        gradient: Gradient(colors: [Color.red.opacity(0.9), Color.orange.opacity(0.9)]),
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    ))
-                            )
+                            .font(Font.custom("Visby", size: 14))
                             .foregroundColor(.white)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 5)
+                            .background(Color.red)
+                            .opacity(0.8) // Adjust transparency as needed
+                            .cornerRadius(10)
                             .shadow(radius: 5)
                     }
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 30)
                     
                     // Text Input Area
                     TextEditor(text: $gratitudeText)
                         .padding()
-                        .frame(height: 150)
+                        .frame(height: 200)
                         .background(Color.white.opacity(0.9))
                         .cornerRadius(15)
                         .shadow(radius: 5)
@@ -158,11 +157,99 @@ struct GratitudeView: View {
                     .padding(.bottom, 50)
                     .buttonStyle(PlainButtonStyle()).navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.0))) // Avoid default NavigationLink styling
                 }
+                .onDisappear {
+                    
+                    fetchOracleTips()
+                }
+            }
+        }
+    }
+    func fetchOracleTips() {
+                
+        let fetchRequest = FetchDescriptor<OracleTip>(
+            predicate: #Predicate { $0.type == "journaling" },
+            sortBy: [
+                SortDescriptor(\OracleTip.level),  // Sort by level
+                SortDescriptor(\OracleTip.seq)     // Then sort by seq
+            ]
+        )
+        
+        do {
+            
+           let  oracleTips = try modelContext.fetch(fetchRequest)
+            
+            if (oracleTips_journaling.isEmpty) {
+                
+                oracleTips_journaling.removeAll();
+
+                for tip in oracleTips {
+                    
+                    oracleTips_journaling.append(tip)
+                }
+            }
+            
+       } catch {
+           print("Failed to fetch OracleTips: \(error)")
+       }
+    }
+}
+
+// MARK: - Tips Views
+struct JournalingOracleTipsView: View {
+    
+    let oracleTips: [OracleTip]
+    
+    var body: some View {
+        
+        GeometryReader { geometry in
+            
+            ZStack {
+                PlayerView()
+                    .ignoresSafeArea()
+                
+                Color.yellow
+                    .opacity(0.2) // Adjust transparency as needed
+                    .ignoresSafeArea()
+                
+                VStack {
+                    Text("Journaling Tips")
+                        .font(Font.custom("Visby", size: 30))
+                        .foregroundColor(.white)
+                        .padding()
+                    
+                    ScrollView {
+                        
+                        // Use ForEach to display the oracleTips
+                        ForEach(oracleTips, id: \.seq) { tip in
+                            Text("\(tip.seq). \(tip.text)")
+                                .font(Font.custom("Visby", size: 18))
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .lineSpacing(10)
+                        }
+                    }
+                    .frame(height: geometry.size.height * 0.6) // screen height 60%
+                    
+                    // scroll more icon
+                    VStack {
+                        Spacer()
+                        Image(systemName: "arrow.down.circle.fill")
+                            .foregroundColor(.white)
+                            .font(.system(size: 20))
+                            .padding(.bottom, 8)
+                        Text("Scroll down for more")
+                            .font(Font.custom("Visby", size: 14))
+                            .foregroundColor(.white)
+                    }
+                    .opacity(0.8)
+                    
+                    Spacer()
+                }
             }
         }
     }
 }
-
 struct GratitudeView_Previews: PreviewProvider {
     static var previews: some View {
         GratitudeView()

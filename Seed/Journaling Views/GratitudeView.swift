@@ -18,7 +18,7 @@ struct GratitudeView: View {
     
     var body: some View {
         
-        static let gardenElements: [GardenElementData] = [
+         let gardenElements: [GardenElementData] = [
             GardenElementData(name: "mountains", type: .png("mountains")),
             GardenElementData(name: "mushroom", type: .gif("mushroom")),
             GardenElementData(name: "christmastree", type: .png("christmastree")),

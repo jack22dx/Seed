@@ -7,6 +7,8 @@ struct JournalingStreakView: View {
     @State private var navigateToActivities = false
     @State private var navigateToGarden = false
     @Query private var lessons: [LessonInfor]  // Automatically query all lessons from the model context
+    @Environment(\.modelContext) private var modelContext
+    @Query private var elementForGarden: [ElementForGarden]
     
     var body: some View {
         let selectedElement = selectedGardenElement
@@ -60,11 +62,6 @@ struct JournalingStreakView: View {
                                 .clipShape(Circle())
                                 .shadow(radius: 10)
                         }
-                        //                        Image("purplerose") // Replace with your tree icon for journaling
-                        //                            .resizable()
-                        //                            .scaledToFit()
-                        //                            .frame(width: 100, height: 100)
-                        //                            .clipShape(Circle())
                     }
                     
                     // Congratulatory Text
@@ -112,6 +109,8 @@ struct JournalingStreakView: View {
                         // Activities Button
                         Button(action: {
                             navigateToActivities = true
+                            incrementCount(for: "Journaling", elementName: selectedElement.name)
+                            
                         }) {
                             Text("Activities")
                                 .font(Font.custom("Visby", size: 18))
@@ -130,6 +129,7 @@ struct JournalingStreakView: View {
                         // My Garden Button
                         Button(action: {
                             navigateToGarden = true
+                            incrementCount(for: "Journaling", elementName: selectedElement.name)
                         }) {
                             Text("My Garden")
                                 .font(Font.custom("Visby", size: 18))
@@ -153,6 +153,57 @@ struct JournalingStreakView: View {
             .navigationBarHidden(true)
         }
     }
+    
+    private func incrementCount(for name: String,elementName: String) {
+        guard let function = lessons.first(where: { $0.name == name }) else {
+            print("No lesson found with name: \(name)")
+            return
+        }
+        
+        // 修改 isVisible 為 true
+        if let element = elementForGarden.first(where: { $0.elementName == elementName }) {
+            element.isVisible = true
+        }
+        
+        function.count += 1
+        
+        let calendar = Calendar.current
+        let currentDay = calendar.component(.weekday, from: Date())
+        
+        switch currentDay {
+        case 1: function.Sunday = true
+        case 2: function.Monday = true
+        case 3: function.Tuesday = true
+        case 4: function.Wednesday = true
+        case 5: function.Thursday = true
+        case 6: function.Friday = true
+        case 7: function.Saturday = true
+        default:
+            print("Unexpected day of the week encountered.")
+            return
+        }
+        
+        do {
+            try modelContext.save()
+            print("Mission Complete for \(getDayName(for: currentDay))")
+        } catch {
+            print("Failed to save context: \(error)")
+        }
+    }
+  
+    private func getDayName(for dayNumber: Int) -> String {
+        switch dayNumber {
+        case 1: return "Sunday"
+        case 2: return "Monday"
+        case 3: return "Tuesday"
+        case 4: return "Wednesday"
+        case 5: return "Thursday"
+        case 6: return "Friday"
+        case 7: return "Saturday"
+        default: return "Unknown Day"
+        }
+    }
+    
     private func getCompletedData(name: String) -> [Bool] {
         // Return completed days (Mon-Sun) for a lesson
         if let lesson = lessons.first(where: { $0.name == name }) {

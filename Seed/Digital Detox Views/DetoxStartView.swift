@@ -2,8 +2,8 @@ import SwiftUI
 import NavigationTransitions
 import SwiftData
 
-
 struct DetoxStartView: View {
+    
     @State private var elapsedTime: TimeInterval = 0.0 // Cumulative elapsed time
     @State private var isRunning: Bool = false        // Tracks if the timer is running
     @State private var timer: Timer?                  // Timer instance
@@ -16,8 +16,13 @@ struct DetoxStartView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var oracleTips_detox: [OracleTip] = []
     @State private var clickTipBtn: Bool = false
+
+    var selectedGardenElement: GardenElementData
     
     var body: some View {
+        
+        let selectedElement = selectedGardenElement
+        
         NavigationStack {
             ZStack {
                 PlayerView()
@@ -27,7 +32,7 @@ struct DetoxStartView: View {
                 VStack(spacing: 40) {
                     // 標題與鹿的頭像
                     VStack(spacing: 10) {
-                        Text("Daphne the Deer")
+                        Text(selectedElement.name)
                             .font(Font.custom("Visby", size: 25))
                             .foregroundColor(.white)
                             .shadow(radius: 5)
@@ -40,12 +45,19 @@ struct DetoxStartView: View {
                                 .fill(Color.white.opacity(0.6))
                                 .frame(width: 100, height: 100)
                                 .shadow(radius: 10)
-                            
-                            Image("deer")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 60, height: 60)
-                                .clipShape(Circle())
+                            switch selectedElement.type {
+                            case .png(let imageName):
+                                Image(imageName)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 80, height: 80)
+                                    .clipShape(Circle())
+                            case .gif(let gifName):
+                                GIFView(gifName: gifName)
+                                    .scaledToFit()
+                                    .frame(width: 80, height: 80)
+                                    .clipShape(Circle())
+                            }
                         }
                         .padding(.bottom, 20)
                         
@@ -90,10 +102,9 @@ struct DetoxStartView: View {
                             .cornerRadius(10)
                             .shadow(radius: 5)
                     }
-                    NavigationLink(
-                        destination: DetoxOracleTipsView(oracleTips: oracleTips_detox),
-                        isActive: $clickTipBtn // 使用狀態綁定
-                    ){}
+                    .navigationDestination(isPresented: $clickTipBtn){
+                        DetoxOracleTipsView(oracleTips: oracleTips_detox)
+                    }
                     
                     // 控制按鈕 (播放/暫停，停止)
                     HStack(spacing: 40) {
@@ -183,7 +194,7 @@ struct DetoxStartView: View {
                 fetchOracleTips()
             }
             .navigationDestination(isPresented: $navigateToSummary) {
-                DetoxSummaryView(elapsedTime: elapsedTime)
+                DetoxSummaryView(elapsedTime: elapsedTime, selectedGardenElement: selectedElement)
             }
         }
     }
@@ -300,7 +311,9 @@ struct DetoxOracleTipsView: View {
 }
 
 struct DetoxStartView_Previews: PreviewProvider {
+    static var gardenElements: GardenElementData =
+    GardenElementData(name: "christmastree", type: .png("christmastree"))
     static var previews: some View {
-        DetoxStartView()
+        DetoxStartView(selectedGardenElement:gardenElements)
     }
 }

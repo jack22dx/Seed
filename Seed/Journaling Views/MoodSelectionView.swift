@@ -127,7 +127,7 @@ struct MoodSelectionView: View {
                             navigateToGratitudeView = true
                         }
                         .navigationDestination(isPresented: $navigateToGratitudeView) {
-                            GratitudeView()
+                            GratitudeView(selectedGardenElement: selectedElement)
                                 .navigationBarHidden(true)
                         }
                     }
@@ -138,50 +138,6 @@ struct MoodSelectionView: View {
             }
         }
     }
-    private func incrementCount(for name: String) {
-        // Increment count logic
-        if let function = lessons.first(where: { $0.name == name }) {
-            function.count += 1 // Increment count
-            // Update current day's attendance
-            let calendar = Calendar.current
-            let currentDay = calendar.component(.weekday, from: Date())
-            var currentDayEnglish = ""
-            switch currentDay {
-            case 1:
-                function.Sunday = true
-                currentDayEnglish = "Sunday"
-            case 2:
-                function.Monday = true
-                currentDayEnglish = "Monday"
-            case 3:
-                function.Tuesday = true
-                currentDayEnglish = "Tuesday"
-            case 4:
-                function.Wednesday = true
-                currentDayEnglish = "Wednesday"
-            case 5:
-                function.Thursday = true
-                currentDayEnglish = "Thursday"
-            case 6:
-                function.Friday = true
-                currentDayEnglish = "Friday"
-            case 7:
-                function.Saturday = true
-                currentDayEnglish = "Saturday"
-            default:
-                print("Unexpected day of the week encountered.")
-            }
-            
-            // Save the updated model context
-            do {
-                try modelContext.save() // Save changes to the model context
-                print("\(currentDayEnglish)'s Mission Complete:")
-            } catch {
-                print("Failed to save context: \(error)")
-            }
-        }
-    }
-    
 }
 
 struct MoodSelectionView_Previews: PreviewProvider {

@@ -8,7 +8,11 @@ struct DetoxStreakView: View {
     @State private var navigateToGarden = false
     @Query private var lessons: [LessonInfor]
     
+    let selectedGardenElement: GardenElementData
+    
     var body: some View {
+        
+        let selectedElement = selectedGardenElement
         
         let completedDays = getCompletedData(name: "Digital Detox") // Replace "Lesson Name" with actual name
         let dayLabels = ["M", "T", "W", "T", "F", "S", "S"]
@@ -36,7 +40,7 @@ struct DetoxStreakView: View {
                 
                 VStack(spacing: 30) {
                     // Title
-                    Text("Daphne the Deer")
+                    Text(selectedElement.name)
                         .font(Font.custom("Visby", size: 30))
                         .foregroundColor(.white)
                         .shadow(radius: 5)
@@ -48,11 +52,24 @@ struct DetoxStreakView: View {
                             .frame(width: 120, height: 120)
                             .shadow(radius: 10)
                         
-                        Image("deer") // Replace with your tree icon for journaling
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 100, height: 100)
-                            .clipShape(Circle())
+                        switch selectedElement.type {
+                        case .png(let imageName):
+                            Image(imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 80, height: 80)
+                                .clipShape(Circle())
+                        case .gif(let gifName):
+                            GIFView(gifName: gifName)
+                                .scaledToFit()
+                                .frame(width: 80, height: 80)
+                            .clipShape(Circle())}
+//
+//                        Image("deer") // Replace with your tree icon for journaling
+//                            .resizable()
+//                            .scaledToFit()
+//                            .frame(width: 100, height: 100)
+//                            .clipShape(Circle())
                     }
                     
                     // Congratulatory Text
@@ -154,7 +171,9 @@ struct DetoxStreakView: View {
 }
 
 struct DetoxStreakView_Previews: PreviewProvider {
+    static var gardenElements: GardenElementData =
+    GardenElementData(name: "christmastree", type: .png("christmastree"))
     static var previews: some View {
-        DetoxStreakView()
+        DetoxStreakView(selectedGardenElement:gardenElements)
     }
 }

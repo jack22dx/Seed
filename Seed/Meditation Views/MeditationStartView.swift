@@ -123,10 +123,10 @@ struct MeditationStartView: View {
                             .cornerRadius(10)
                             .shadow(radius: 5)
                     }
-                    NavigationLink(
-                        destination: MeditationOracleTipsView(oracleTips: oracleTips_meditation),
-                        isActive: $clickTipBtn // 使用狀態綁定
-                    ){}
+                    .navigationDestination(isPresented: $clickTipBtn)
+                    {
+                        MeditationOracleTipsView(oracleTips: oracleTips_meditation)
+                    }
                     
                     // Timer Display
                     Text(timeFormatted(timeRemaining))

@@ -77,7 +77,6 @@ struct MeditationActivitiesView: View {
                     
                     Spacer()
                     
-                    
                     // Bottom Navigation Bar
                     BottomNavigationBar(
                         navigateToGardenView: $navigateToGardenView,
@@ -158,37 +157,31 @@ struct MeditationCard: View {
                             HStack {
                                 ForEach(times, id: \.self) { time in
                                     let timeWithoutMin = time.replacingOccurrences(of: " min", with: "")
-                                    
-                                    Button(action: {
-                                        withAnimation {
-                                            selectedTime = timeWithoutMin
-                                            navigateToDidYouKnow = true
+                                    NavigationLink(destination: DidYouKnowView(selectedTime: selectedTime).navigationBarHidden(true), isActive: $navigateToDidYouKnow) {
+                                        Button(action: {
+                                            withAnimation {
+                                                selectedTime = timeWithoutMin
+                                                navigateToDidYouKnow = true
+                                                //                                                if title == "Guided Session" && time == "3 min" {
+                                                //                                                    navigateToDidYouKnow = true
+                                                //                                                }
+                                            }
+                                        }) {
+                                            Text(time)
+                                                .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 14))
+                                                .padding()
+                                                .frame(minWidth: 70)
+                                                .background(selectedTime == time ? Color.white.opacity(0.8) : Color.clear)
+                                                .foregroundColor(selectedTime == time ? color : .white)
+                                                .clipShape(Capsule())
+                                                .overlay(
+                                                    Capsule()
+                                                        .stroke(Color.white, lineWidth: 1)
+                                                )
                                         }
-                                    }) {
-                                        Text(time)
-                                            .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 14))
-                                            .padding()
-                                            .frame(minWidth: 70)
-                                            .background(selectedTime == time ? Color.white.opacity(0.8) : Color.clear)
-                                            .foregroundColor(selectedTime == time ? color : .white)
-                                            .clipShape(Capsule())
-                                            .overlay(
-                                                Capsule()
-                                                    .stroke(Color.white, lineWidth: 1)
-                                            )
                                     }
-                                    .background(
-                                        NavigationLink(value: timeWithoutMin) {
-                                            EmptyView()
-                                        }
-                                            .opacity(0) // Hide the navigation link visual appearance
-                                    )
                                 }
                             }
-                        }
-                        .navigationDestination(for: String.self) { selectedTime in
-                            DidYouKnowView(selectedTime: selectedTime)
-                                .navigationBarHidden(true)
                         }
                         .padding(.top, 10)
                     }

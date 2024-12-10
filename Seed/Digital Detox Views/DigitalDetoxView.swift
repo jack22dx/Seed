@@ -19,18 +19,51 @@ struct DigitalDetoxView: View {
         @State private var clickTimes = 0;
         @State private var  fullText = "A digital detox can reduce stress, improve focus, and boost your mood by giving your mind a chance to rest."
 
+    @Query private var lessons: [LessonInfor]  // Automatically query all lessons from the model context
+    var digitalDetoxCount: Int {
+        lessons.first(where: { $0.name == "Journaling" })?.count ?? 0
+    }
     
     var body: some View {
-//        let backgroundGradient = LinearGradient(
-//            gradient: Gradient(colors: [Color.yellow.opacity(0.7), Color.orange.opacity(0.6)]),
-//            startPoint: .top,
-//            endPoint: .bottom
-//        )
+        
+        let gardenElements: [GardenElementData] = [
+            GardenElementData(name: "Turtle", type: .png("turtle")),
+            GardenElementData(name: "Pine Tree", type: .gif("pinetree")),
+            GardenElementData(name: "Snow Mountain", type: .png("snowmountain")),
+            GardenElementData(name: "Yellow Tree", type: .png("yellowtree")),
+            GardenElementData(name: "Rabbit", type: .png("rabbit")),
+            GardenElementData(name: "Duck", type: .png("duck")),
+            GardenElementData(name: "Cat", type: .png("cat")),
+            GardenElementData(name: "Bird", type: .png("bird")),
+        ]
+        
+        // Compute selected garden element based on time
+        var selectedGardenElement: GardenElementData {
+            let filteredElements: [GardenElementData]
+            switch digitalDetoxCount {
+            case ...3:
+                filteredElements = gardenElements.filter { ["Turtle", "Pine Tree"].contains($0.name) }
+            case 3...6:
+                filteredElements = gardenElements.filter { ["Snow Mountain", "Yellow Tree", "Rabbit"].contains($0.name) }
+            case 7...:
+                filteredElements = gardenElements.filter { ["Duck", "Cat", "Bird"].contains($0.name) }
+            default:
+                filteredElements = []
+            }
+            // Safely handle empty filteredElements by checking first
+            if let selected = filteredElements.randomElement() {
+                return selected
+            } else {
+                // Return "Turtle" if no elements match
+                return gardenElements.first { $0.name == "Turtle" }!
+            }
+        }
         
         let lightPink = Color(hue: 0.89, saturation: 0.4, brightness: 1.0, opacity: 1.0)
         let learnMoreText = "Constant notifications and digital overload can trigger stress. Disconnecting helps you relax and recharge. Press start to begin a 25 minute digital detox."
 
         NavigationStack {
+          let selectedElement = selectedGardenElement
             ZStack {
                 // Background gradient
             
@@ -166,7 +199,7 @@ struct DigitalDetoxView: View {
                         }
                         .transition(.opacity) // Smooth fade-in
                         .navigationDestination(isPresented: $navigateToMoodSelection) {
-                            DetoxStartView()
+                            DetoxStartView(selectedGardenElement: selectedElement)
                                 .navigationBarHidden(true)
                         }
                     }
@@ -232,7 +265,7 @@ struct DigitalDetoxView: View {
     
     private func  changeOracleFacts(){
         
-        var changeOracleId = Int.random(in: 1...7)
+        let changeOracleId = Int.random(in: 1...7)
         fetchOracleFacts(randomOracleId: changeOracleId)
         startTextAnimation(fullText: fullText)
 

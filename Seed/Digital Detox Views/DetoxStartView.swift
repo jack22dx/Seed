@@ -90,10 +90,10 @@ struct DetoxStartView: View {
                             .cornerRadius(10)
                             .shadow(radius: 5)
                     }
-                    NavigationLink(
-                        destination: DetoxOracleTipsView(oracleTips: oracleTips_detox),
-                        isActive: $clickTipBtn // 使用狀態綁定
-                    ){}
+                    .navigationDestination(isPresented: $clickTipBtn)
+                    {
+                        DetoxOracleTipsView(oracleTips: oracleTips_detox)
+                    }
                     
                     // 控制按鈕 (播放/暫停，停止)
                     HStack(spacing: 40) {

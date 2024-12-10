@@ -232,7 +232,7 @@ struct DigitalDetoxView: View {
     
     private func  changeOracleFacts(){
         
-        var changeOracleId = Int.random(in: 1...7)
+        let changeOracleId = Int.random(in: 1...7)
         fetchOracleFacts(randomOracleId: changeOracleId)
         startTextAnimation(fullText: fullText)
 

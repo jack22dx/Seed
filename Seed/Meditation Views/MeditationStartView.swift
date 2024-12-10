@@ -19,7 +19,7 @@ struct MeditationStartView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var oracleTips_meditation: [OracleTip] = []
     @State private var clickTipBtn: Bool = false
-
+    
     
     var body: some View {
         
@@ -74,12 +74,6 @@ struct MeditationStartView: View {
                                 .frame(width: 80, height: 80)
                                 .clipShape(Circle())
                         }
-                        
-                        //                        Image("treeseed") // Replace with your tree icon
-                        //                            .resizable()
-                        //                            .scaledToFit()
-                        //                            .frame(width: 80, height: 80)
-                        //                            .clipShape(Circle())
                     }
                     .padding(.bottom, 10)
                     
@@ -122,12 +116,11 @@ struct MeditationStartView: View {
                             .background(Color.purple)
                             .cornerRadius(10)
                             .shadow(radius: 5)
+                    }                        // Navigation Destination
+                    .navigationDestination(isPresented: $clickTipBtn) {
+                        MeditationOracleTipsView(oracleTips: oracleTips_meditation)
+                        .navigationBarHidden(true)
                     }
-                    NavigationLink(
-                        destination: MeditationOracleTipsView(oracleTips: oracleTips_meditation),
-                        isActive: $clickTipBtn // 使用狀態綁定
-                    ){}
-                    
                     // Timer Display
                     Text(timeFormatted(timeRemaining))
                         .font(Font.custom("Visby", size: 24))
@@ -372,7 +365,7 @@ struct MeditationOracleTipsView: View {
 struct MeditationStartView_Previews: PreviewProvider {
     static var gardenElements: GardenElementData =
     GardenElementData(name: "Flower", type: .png("flower"))
-
+    
     static var previews: some View {
         MeditationStartView(selectedTime: "3",selectedGardenElement: gardenElements)
     }

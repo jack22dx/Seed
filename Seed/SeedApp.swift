@@ -15,7 +15,7 @@ struct SeedApp: App {
     private let context: ModelContext // Data context / 数据上下文
     private var resetService: ResetService? // Reset service / 重置服务
     init() {
-        container = try! ModelContainer(for: LessonInfor.self, ElementForGarden.self,  OracleTip.self, OracleFact.self, OraclePrompt.self, OraclePromptAnswer.self  )
+        container = try! ModelContainer(for: LessonInfor.self, ElementForGarden.self,  OracleTip.self, OracleFact.self, OraclePrompt.self, OraclePromptAnswer.self)
         context = container.mainContext // Get main context /获取主上下文
         initializeFunctionsIfNeeded() // Initialize data when the app starts / 在应用启动时初始化数据
         resetService = ResetService(context: context) // Set up the weekly reset service / 设置每周重置服务

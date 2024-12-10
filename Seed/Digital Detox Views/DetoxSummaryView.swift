@@ -3,16 +3,21 @@ import SwiftData
 import Charts
 
 struct DetoxSummaryView: View {
+    
     let elapsedTime: TimeInterval // Time spent during the detox
-
+    let selectedGardenElement: GardenElementData
+    
     @State private var navigateToNextView = false
     @Query private var lessons: [LessonInfor]
     @Query private var elementForGarden: [ElementForGarden]
     @Environment(\.modelContext) private var modelContext
-
-
+    
+    
     var body: some View {
-//        let lightblue = Color(hue: 0.55, saturation: 0.6, brightness: 0.9, opacity: 1.0)
+        
+        let selectedElement = selectedGardenElement
+        
+        //        let lightblue = Color(hue: 0.55, saturation: 0.6, brightness: 0.9, opacity: 1.0)
         let lightgreen = Color(hue: 0.33, saturation: 0.5, brightness: 0.8, opacity: 0.7)
         let buttonColors = [
             LinearGradient(
@@ -35,9 +40,9 @@ struct DetoxSummaryView: View {
             ("Sat", 25),
             ("Sun", 20)
         ] // Sample data for weekly detox times (in minutes)
-
+        
         let elapsedMinutes = Int(elapsedTime) / 60
-
+        
         NavigationStack {
             ZStack {
                 PlayerView()
@@ -45,53 +50,60 @@ struct DetoxSummaryView: View {
                 Color.red
                     .opacity(0.2) // Adjust transparency as needed
                     .ignoresSafeArea()
-
+                
                 VStack(spacing: 20) {
                     // Title
-                    Text("Daphne the Deer")
+                    Text(selectedElement.name)
                         .font(Font.custom("Visby", size: 30))
                         .foregroundColor(.white)
                         .shadow(radius: 5)
-
+                    
                     // Deer Icon
                     ZStack {
                         Circle()
                             .fill(Color.white.opacity(0.7))
                             .frame(width: 120, height: 120)
                             .shadow(radius: 10)
-
-                        Image("deer") // Replace with your detox deer icon
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 100, height: 100)
-                            .clipShape(Circle())
+                        switch selectedElement.type {
+                        case .png(let imageName):
+                            Image(imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 80, height: 80)
+                                .clipShape(Circle())
+                        case .gif(let gifName):
+                            GIFView(gifName: gifName)
+                                .scaledToFit()
+                                .frame(width: 80, height: 80)
+                                .clipShape(Circle())
+                        }
                     }
-
+                    
                     // Time Completed
                     VStack(spacing: 5) {
                         Text("Time Completed")
                             .font(Font.custom("Visby", size: 18))
                             .foregroundColor(.white)
                             .shadow(radius: 5)
-
+                        
                         Text("\(elapsedMinutes) min")
                             .font(Font.custom("Visby", size: 20))
                             .foregroundColor(.white)
                             .shadow(radius: 5)
                     }
                     .padding(.bottom, 20)
-
+                    
                     // Level Progress
                     ZStack {
                         Circle()
                             .stroke(lightgreen, lineWidth: 8)
                             .frame(width: 80, height: 80)
-
+                        
                         Text("Level 2")
                             .font(Font.custom("Visby", size: 18))
                             .foregroundColor(.white)
                     }
-
+                    
                     // Weekly Detox Graph
                     VStack(spacing: 10) {
                         Text("Weekly Detox Summary")
@@ -99,7 +111,7 @@ struct DetoxSummaryView: View {
                             .foregroundColor(.white)
                             .shadow(radius: 5)
                             .padding(.bottom, 20)
-
+                        
                         Chart {
                             ForEach(weeklyData, id: \.0) { day, time in
                                 BarMark(
@@ -115,19 +127,18 @@ struct DetoxSummaryView: View {
                             AxisMarks(position: .bottom)
                         }
                     }
-
+                    
                     // Detox Time Label
                     Text("Minutes Detoxed")
                         .font(Font.custom("Visby", size: 18))
                         .foregroundColor(.white)
                         .shadow(radius: 5)
                         .padding(.bottom, 20)
-
+                    
                     // Continue Button
                     Button(action: {
                         navigateToNextView = true
-                        incrementCount(for: "Meditation")
-                        
+                        incrementCount(for: "Digital Detox",elementName:selectedElement.name)
                     }) {
                         Text("Continue")
                             .font(Font.custom("Visby", size: 18))
@@ -140,7 +151,7 @@ struct DetoxSummaryView: View {
                     }
                     .navigationDestination(isPresented: $navigateToNextView)
                     {
-                        DetoxStreakView()
+                        DetoxStreakView(selectedGardenElement: selectedElement)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -149,33 +160,34 @@ struct DetoxSummaryView: View {
         .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 2.0)))
         .navigationBarHidden(true)
     }
-//    private func incrementCount(for name: String,elementName: String)
-    private func incrementCount(for name: String)
+    
+    private func incrementCount(for name: String,elementName: String)
     {
         guard let function = lessons.first(where: { $0.name == name }) else {
             print("No lesson found with name: \(name)")
             return
         }
         
-//        // 修改 isVisible 為 true
-//         if let element = elementForGarden.first(where: { $0.elementName == elementName }) {
-//             element.isVisible = true
-//         }
+        // 修改 isVisible 為 true
+        if let element = elementForGarden.first(where: { $0.elementName == elementName }) {
+            element.isVisible = true
+        }
         
         function.count += 1
         
         let calendar = Calendar.current
         let currentDay = calendar.component(.weekday, from: Date())
         
-        switch currentDay {
-        case 1: function.Sunday = true
-        case 2: function.Monday = true
-        case 3: function.Tuesday = true
-        case 4: function.Wednesday = true
-        case 5: function.Thursday = true
-        case 6: function.Friday = true
-        case 7: function.Saturday = true
-        default:
+        switch currentDay
+        {
+            case 1: function.Sunday = true
+            case 2: function.Monday = true
+            case 3: function.Tuesday = true
+            case 4: function.Wednesday = true
+            case 5: function.Thursday = true
+            case 6: function.Friday = true
+            case 7: function.Saturday = true
+            default:
             print("Unexpected day of the week encountered.")
             return
         }
@@ -187,6 +199,7 @@ struct DetoxSummaryView: View {
             print("Failed to save context: \(error)")
         }
     }
+    
     private func getDayName(for dayNumber: Int) -> String {
         switch dayNumber {
         case 1: return "Sunday"
@@ -199,11 +212,13 @@ struct DetoxSummaryView: View {
         default: return "Unknown Day"
         }
     }
-
+    
 }
 
 struct DetoxSummaryView_Previews: PreviewProvider {
+    static var gardenElements: GardenElementData =
+    GardenElementData(name: "christmastree", type: .png("christmastree"))
     static var previews: some View {
-        DetoxSummaryView(elapsedTime: 1500) // Example elapsed time in seconds (e.g., 25 minutes)
+        DetoxSummaryView(elapsedTime: 1500,selectedGardenElement:gardenElements) // Example elapsed time in seconds (e.g., 25 minutes)
     }
 }

@@ -20,8 +20,8 @@ struct JournalingView: View {
     @State private var clickTimes = 0;
     @State private var  fullText = "A digital detox can reduce stress, improve focus, and boost your mood by giving your mind a chance to rest."
     
-    
     var body: some View {
+        
         let gardenElements: [GardenElementData] = [
             GardenElementData(name: "mountains", type: .png("mountains")),
             GardenElementData(name: "mushroom", type: .gif("mushroom")),

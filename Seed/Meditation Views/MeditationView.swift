@@ -14,34 +14,33 @@ struct MeditationView: View {
         
         // Garden elements data source
         let gardenElements: [GardenElementData] = [
-            GardenElementData(name: "sunflower", type: .png("sunflower")),
-            GardenElementData(name: "butterfly", type: .gif("butterfly")),
-            GardenElementData(name: "bonsaitree", type: .png("bonsaitree")),
-            GardenElementData(name: "palmtree", type: .png("palmtree")),
-            GardenElementData(name: "purpletree", type: .png("purpletree")),
-            GardenElementData(name: "orangebutterfly", type: .png("orangebutterfly")),
-            GardenElementData(name: "treeseed", type: .png("treeseed"))
+            GardenElementData(name: "Sunflower", type: .png("sunflower")),
+            GardenElementData(name: "Butterfly", type: .gif("butterfly")),
+            GardenElementData(name: "Bonsai Tree", type: .png("bonsaitree")),
+            GardenElementData(name: "Palm Tree", type: .png("palmtree")),
+            GardenElementData(name: "Purple Tree", type: .png("purpletree")),
+            GardenElementData(name: "Orange Butterfly", type: .png("orangebutterfly")),
+            GardenElementData(name: "Treeseed", type: .png("treeseed"))
         ]
         
         // Compute selected garden element based on time
         var RandomGardenElement: GardenElementData {
             guard let time = selectedTime, let timeInt = Int(time) else {
-                return gardenElements.first { $0.name == "sunflower" }!
+                return gardenElements.first { $0.name == "Sunflower" }!
             }
             
             let filteredElements: [GardenElementData]
             switch timeInt {
             case ...3:
-                filteredElements = gardenElements.filter { ["sunflower", "butterfly"].contains($0.name) }
+                filteredElements = gardenElements.filter { ["Sunflower", "Butterfly"].contains($0.name) }
             case 3...6:
-                filteredElements = gardenElements.filter { ["bonsaitree", "palmtree"].contains($0.name) }
+                filteredElements = gardenElements.filter { ["Bonsai Tree", "Palm Tree","Sunflower", "Butterfly"].contains($0.name) }
             case 7...:
-                filteredElements = gardenElements.filter { ["purpletree", "orangebutterfly", "treeseed"].contains($0.name) }
+                filteredElements = gardenElements.filter { ["Purple Tree", "Orange Butterfly", "Treeseed","Bonsai Tree", "Palm Tree","Sunflower", "Butterfly"].contains($0.name) }
             default:
                 filteredElements = []
             }
-            
-            return filteredElements.randomElement() ?? gardenElements.first { $0.name == "sunflower" }!
+            return filteredElements.randomElement() ?? gardenElements.first { $0.name == "Sunflower" }!
         }
         
         let selectedGardenElement = RandomGardenElement;

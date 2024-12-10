@@ -15,13 +15,6 @@ struct ActivitiesView: View {
 
         NavigationStack {
             ZStack {
-                Button(action: {
-                    printDatabaseLocation()
-                    incrementCount(for: "Meditation") // Increment course count
-                    print("Mission Complete tapped for Meditation")
-                }) {
-                    Text("Completed")
-                }
                 PlayerView()
                     .ignoresSafeArea()
                 

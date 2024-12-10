@@ -17,7 +17,7 @@ struct MeditationSummaryView: View {
     
     
     var body: some View {
-//        let lightblue = Color(hue: 0.55, saturation: 0.6, brightness: 0.9, opacity: 1.0)
+        //        let lightblue = Color(hue: 0.55, saturation: 0.6, brightness: 0.9, opacity: 1.0)
         let lightpink = Color(hue: 0.89, saturation: 0.4, brightness: 1, opacity: 0.7)
         let buttonColors = [
             LinearGradient(
@@ -131,6 +131,7 @@ struct MeditationSummaryView: View {
                     // Continue Button
                     Button(action: {
                         navigateToMeditationStreak = true
+                        incrementCount(for:"Meditation",elementName: selectedElement.name)
                     }) {
                         Text("Continue")
                             .font(.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 18))
@@ -189,6 +190,7 @@ struct MeditationSummaryView: View {
             print("Failed to save context: \(error)")
         }
     }
+    
     private func getDayName(for dayNumber: Int) -> String {
         switch dayNumber {
         case 1: return "Sunday"
@@ -201,6 +203,7 @@ struct MeditationSummaryView: View {
         default: return "Unknown Day"
         }
     }
+    
 }
 
 struct MeditationSummaryView_Previews: PreviewProvider {

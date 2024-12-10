@@ -14,29 +14,32 @@ struct SeedApp: App {
     private let container: ModelContainer // Data model container / 数据模型容器
     private let context: ModelContext // Data context / 数据上下文
     private var resetService: ResetService? // Reset service / 重置服务
+    
     init() {
-//        container = try! ModelContainer(for: LessonInfor.self, ElementForGarden.self,  OracleTip.self, OracleFact.self, OraclePrompt.self, OraclePromptAnswer.self)
-        container = try! ModelContainer(for: LessonInfor.self, ElementForGarden.self, OracleTip.self, OracleFact.self,OraclePrompt.self)
-        context = container.mainContext // Get main context /获取主上下文
-        initializeFunctionsIfNeeded() // Initialize data when the app starts / 在应用启动时初始化数据
-        resetService = ResetService(context: context) // Set up the weekly reset service / 设置每周重置服务
+        do {
+            container = try ModelContainer(for: LessonInfor.self, ElementForGarden.self,  OracleTip.self, OracleFact.self, OraclePrompt.self , OraclePromptAnswer.self)
+//            container = try ModelContainer(for: LessonInfor.self, ElementForGarden.self)
+            context = container.mainContext // 獲取主上下文
+            initializeFunctionsIfNeeded() // 初始化資料
+            resetService = ResetService(context: context) // 配置重置服務
+            testInitialization() // 測試資料初始化
+        } catch {
+            fatalError("ModelContainer 初始化失敗: \(error)")
+        }
     }
     
-    let persistenceController = PersistenceController.shared
     var body: some Scene {
         WindowGroup {
-//            WelcomeView()
-//            MeditationView(selectedTime: "3")
-//            VirtualGardenView()
-//            MeditationActivitiesView()
+            //            WelcomeView()
+            //            MeditationActivitiesView()
+            //.environment(\.managedObjectContext, persistenceController.container.viewContext)
             ActivitiesView()
                 .environment(\.modelContext, container.mainContext)
         }
-        .modelContainer(for: [LessonInfor.self,  ElementForGarden.self, OracleTip.self, OracleFact.self,  OraclePrompt.self ]) // Configure data model / 配置数据模型
     }
+    
     private func initializeFunctionsIfNeeded() {
         let functionNames = ["Meditation", "Journaling", "Digital Detox"] // Course names / 课程名称
-        
         for name in functionNames {
             let fetchRequest = FetchDescriptor<LessonInfor>(predicate: #Predicate { $0.name == name }) // Fetch course information / 获取课程信息
             let existing = try? context.fetch(fetchRequest) // Query existing courses / 查询现有课程
@@ -46,14 +49,18 @@ struct SeedApp: App {
             }
         }
         
-        let elementNames = ["sunflower", "butterfly", "bonsaitree", "palmtree", "purpletree", "orangebutterfly", "treeseed", "rose", "cherryblossom", "deer", "deer", "purplerose", "christmastree", "mushroom", "mountains", "turtle", "pinetree", "snowmountain", "yellowtree", "rabbit", "duck", "cat", "bird"]
-        
-        for name in elementNames {
+        let elementNames = ["Sunflower", "Butterfly", "Bonsai Tree", "Palm Tree", "Purple Tree", "Orange Butterfly", "Treeseed", "rose", "cherryblossom", "deer", "deer", "purplerose", "christmastree", "mushroom", "mountains", "Turtle", "Pine Tree", "Snow Mountain", "Yellow Tree", "Rabbit", "Duck", "Cat", "Bird"]
+        for name in elementNames{
             let fetchRequest = FetchDescriptor<ElementForGarden>(predicate: #Predicate { $0.elementName == name })
             let existing = try? context.fetch(fetchRequest)
             if existing?.isEmpty ?? true {
                 let newElement = ElementForGarden(elementName: name, isVisible: false)
-                context.insert(newElement) // Insert new course / 插入新课程
+                context.insert(newElement)
+                do {
+                    try context.save()
+                } catch {
+                    print("保存資料失敗: \(error)")
+                }
             }
         }
         
@@ -152,11 +159,6 @@ struct SeedApp: App {
             oracleFacts.forEach { fact in
                 context.insert(fact)
             }
-            
-            //            for fact in oracleFacts {
-            //                print("type: \(fact.type), id: \(fact.id), Text: \(fact.text)")
-            //            }
-            
         }else{
             
             print("has oracle_fact data");
@@ -177,7 +179,7 @@ struct SeedApp: App {
                 OraclePrompt(id: 7, type: "journaling", tab:"mindfulness", activity:"peace", level: 3, seq: 1, text: "How are you feeling right now?"),
                 OraclePrompt(id: 8, type: "journaling", tab:"mindfulness", activity:"peace", level: 3, seq: 2, text: "What brings you a sense of peace or calm?"),
                 OraclePrompt(id: 9, type: "journaling", tab:"mindfulness", activity:"peace", level: 3, seq: 3, text: "What sensations can you notice in your body at this moment?"),
-
+                
                 OraclePrompt(id: 10, type: "journaling", tab:"self awareness", activity:"presence", level: 4, seq: 1, text: "How are you feeling right now?"),
                 OraclePrompt(id: 11, type: "journaling", tab:"self awareness", activity:"presence", level: 4, seq: 2, text: "When did you feel most present today?"),
                 OraclePrompt(id: 12, type: "journaling", tab:"self awareness", activity:"presence", level: 4, seq: 3, text: "What’s one small act of kindness you can do today?"),
@@ -187,7 +189,7 @@ struct SeedApp: App {
                 OraclePrompt(id: 16, type: "journaling", tab:"self awareness", activity:"challenges", level: 6, seq: 1, text: "How are you feeling right now?"),
                 OraclePrompt(id: 17, type: "journaling", tab:"self awareness", activity:"challenges", level: 6, seq: 2, text: "What is a recent challenge you faced, and how did you respond to it?"),
                 OraclePrompt(id: 18, type: "journaling", tab:"self awareness", activity:"challenges", level: 6, seq: 3, text: "How do you usually react when you feel anxious or stressed?"),
-
+                
                 OraclePrompt(id: 19, type: "journaling", tab:"emotions", activity:"patterns", level: 7, seq: 1, text: "How are you feeling right now?"),
                 OraclePrompt(id: 20, type: "journaling", tab:"emotions", activity:"patterns", level: 7, seq: 2, text: "What patterns have you noticed in your emotions over the past week?"),
                 OraclePrompt(id: 21, type: "journaling", tab:"emotions", activity:"patterns", level: 7, seq: 3, text: "What values or beliefs guide your actions and choices?"),
@@ -197,7 +199,7 @@ struct SeedApp: App {
                 OraclePrompt(id: 25, type: "journaling", tab:"emotions", activity:"mindfulness", level: 9, seq: 1, text: "How are you feeling right now?"),
                 OraclePrompt(id: 26, type: "journaling", tab:"emotions", activity:"mindfulness", level: 9, seq: 2, text: "How do you respond to difficult emotions, and how could you improve?"),
                 OraclePrompt(id: 27, type: "journaling", tab:"emotions", activity:"mindfulness", level: 9, seq: 3, text: "What does mindfulness mean to you, and how do you like to practice it?"),
-
+                
                 OraclePrompt(id: 28, type: "journaling", tab:"creativity", activity:"poem", level: 10, seq: 1, text: "How are you feeling right now?"),
                 OraclePrompt(id: 29, type: "journaling", tab:"creativity", activity:"poem", level: 10, seq: 2, text: "Write a short poem about something you have experienced in the last week."),
                 OraclePrompt(id: 30, type: "journaling", tab:"creativity", activity:"poem", level: 10, seq: 3, text: "Write a congratulatory poem or a journal entry to your past self, commending how far you have come since the beginning of your mindfulness journey."),
@@ -213,14 +215,13 @@ struct SeedApp: App {
             oraclePrompts.forEach { prompt in
                 context.insert(prompt)
             }
-            
         }else{
             
             print("has oracle_prompt data");
         }
         
         do {
-            try context.save() // Save context / 保存上下文
+            try context.save()
         } catch {
             print("Failed to save during initialization: \(error)") // Initialization save failed / 初始化保存失败
         }
@@ -270,4 +271,13 @@ struct SeedApp: App {
         }
         print("Database location: \(url.absoluteString)")
     }
+    
+    private func testInitialization() {
+        let lessons = try? context.fetch(FetchDescriptor<LessonInfor>())
+        print("Lessons Initialized: \(lessons?.count ?? 0)")
+        
+        let elements = try? context.fetch(FetchDescriptor<ElementForGarden>())
+        print("Elements Initialized: \(elements?.count ?? 0)")
+    }
+    
 }

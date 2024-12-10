@@ -53,16 +53,6 @@
 			path = Seed;
 			sourceTree = "<group>";
 		};
-		049BE7262CD9658400624DB8 /* SeedTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = SeedTests;
-			sourceTree = "<group>";
-		};
-		049BE7302CD9658400624DB8 /* SeedUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = SeedUITests;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,8 +86,6 @@
 			isa = PBXGroup;
 			children = (
 				049BE70E2CD9658300624DB8 /* Seed */,
-				049BE7262CD9658400624DB8 /* SeedTests */,
-				049BE7302CD9658400624DB8 /* SeedUITests */,
 				049BE70D2CD9658300624DB8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -152,9 +140,6 @@
 			dependencies = (
 				049BE7252CD9658400624DB8 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				049BE7262CD9658400624DB8 /* SeedTests */,
-			);
 			name = SeedTests;
 			packageProductDependencies = (
 			);
@@ -174,9 +159,6 @@
 			);
 			dependencies = (
 				049BE72F2CD9658400624DB8 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				049BE7302CD9658400624DB8 /* SeedUITests */,
 			);
 			name = SeedUITests;
 			packageProductDependencies = (

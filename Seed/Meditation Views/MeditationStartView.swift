@@ -19,7 +19,7 @@ struct MeditationStartView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var oracleTips_meditation: [OracleTip] = []
     @State private var clickTipBtn: Bool = false
-    
+
     
     var body: some View {
         
@@ -121,6 +121,11 @@ struct MeditationStartView: View {
                         MeditationOracleTipsView(oracleTips: oracleTips_meditation)
                         .navigationBarHidden(true)
                     }
+                    .navigationDestination(isPresented: $clickTipBtn)
+                    {
+                        MeditationOracleTipsView(oracleTips: oracleTips_meditation)
+                    }
+                    
                     // Timer Display
                     Text(timeFormatted(timeRemaining))
                         .font(Font.custom("Visby", size: 24))

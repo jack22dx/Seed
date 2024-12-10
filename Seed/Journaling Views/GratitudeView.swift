@@ -3,7 +3,7 @@ import NavigationTransitions
 import SwiftData
 
 struct GratitudeView: View {
-    
+    var selectedGardenElement: GardenElementData
     //for oracle
     @Environment(\.modelContext) private var modelContext
     @State private var oracleTips_journaling: [OracleTip] = []
@@ -18,32 +18,32 @@ struct GratitudeView: View {
     
     var body: some View {
         
-         let gardenElements: [GardenElementData] = [
-            GardenElementData(name: "mountains", type: .png("mountains")),
-            GardenElementData(name: "mushroom", type: .gif("mushroom")),
-            GardenElementData(name: "christmastree", type: .png("christmastree")),
-            GardenElementData(name: "purplerose", type: .png("purplerose")),
-            GardenElementData(name: "deer", type: .png("deer")),
-            GardenElementData(name: "cherryblossom", type: .png("cherryblossom")),
-            GardenElementData(name: "rose", type: .png("rose"))
-        ]
-        
-        // Compute selected garden element based on time
-        var selectedGardenElement: GardenElementData {
-            let filteredElements: [GardenElementData]
-            switch journalingLessonCount {
-            case ...3:
-                filteredElements = gardenElements.filter { ["rose", "cherryblossom"].contains($0.name) }
-            case 3...6:
-                filteredElements = gardenElements.filter { ["deer", "purplerose"].contains($0.name) }
-            case 7...:
-                filteredElements = gardenElements.filter { ["christmastree", "mushroom", "mountains"].contains($0.name) }
-            default:
-                filteredElements = []
-            }
-            
-            return filteredElements.randomElement() ?? gardenElements.first { $0.name == "sunflower" }!
-        }
+//         let gardenElements: [GardenElementData] = [
+//            GardenElementData(name: "mountains", type: .png("mountains")),
+//            GardenElementData(name: "mushroom", type: .gif("mushroom")),
+//            GardenElementData(name: "christmastree", type: .png("christmastree")),
+//            GardenElementData(name: "purplerose", type: .png("purplerose")),
+//            GardenElementData(name: "deer", type: .png("deer")),
+//            GardenElementData(name: "cherryblossom", type: .png("cherryblossom")),
+//            GardenElementData(name: "rose", type: .png("rose"))
+//        ]
+//        
+//        // Compute selected garden element based on time
+//        var selectedGardenElement: GardenElementData {
+//            let filteredElements: [GardenElementData]
+//            switch journalingLessonCount {
+//            case ...3:
+//                filteredElements = gardenElements.filter { ["rose", "cherryblossom"].contains($0.name) }
+//            case 3...6:
+//                filteredElements = gardenElements.filter { ["deer", "purplerose"].contains($0.name) }
+//            case 7...:
+//                filteredElements = gardenElements.filter { ["christmastree", "mushroom", "mountains"].contains($0.name) }
+//            default:
+//                filteredElements = []
+//            }
+//            
+//            return filteredElements.randomElement() ?? gardenElements.first { $0.name == "sunflower" }!
+//        }
 
         let selectedElement = selectedGardenElement
         NavigationStack {
@@ -246,7 +246,9 @@ struct JournalingOracleTipsView: View {
     }
 }
 struct GratitudeView_Previews: PreviewProvider {
+    static var gardenElements: GardenElementData =
+    GardenElementData(name: "christmastree", type: .png("christmastree"))
     static var previews: some View {
-        GratitudeView()
+        GratitudeView(selectedGardenElement: gardenElements)
     }
 }

@@ -52,13 +52,16 @@ struct GoalSettingView: View {
                     .padding(.bottom, 30)
                     
                     // Title Text
-                    Text("What’s a goal you’d like to work towards tomorrow?")
-                        .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 25))
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 20)
-                        .shadow(radius: 5)
+                    ScrollView{
+                        
+                        Text("What’s a goal you’d like to work towards tomorrow?")
+                            .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 25))
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 20)
+                            .shadow(radius: 5)
+                    }
                     
                     // Tips Button
                     // Tips Button in the center
@@ -108,7 +111,7 @@ struct GoalSettingView: View {
                     }
                     .padding(.bottom, 50)
                 }
-                .onDisappear {
+                .onAppear {
                     
                     fetchOracleTips()
                 }

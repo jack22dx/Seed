@@ -2,13 +2,22 @@ import SwiftUI
 import NavigationTransitions
 import SwiftData
 
-
 struct MoodSelectionView: View {
     
     var selectedGardenElement: GardenElementData
     @State private var moodValue: Double = 1.0 // Slider value to represent mood
     @State private var navigateToGratitudeView = false // Tracks navigation to GratitudeView
     @Query private var lessons: [LessonInfor]// Automatically query all lessons from the model context
+    var journalingLessonCount: Int {
+        lessons.first(where: { $0.name == "Journaling" })?.count ?? 0
+    }
+    @State private var type: String = "journaling"
+    @State private var tab: String = "mindfulness"
+    @State private var activity: String = "nature"
+    @State var oracle_prompt: String = ""
+    @State var oracle_prompt_id: Int = 0;
+    
+    
     @Environment(\.modelContext) private var modelContext
     
     var body: some View {
@@ -53,7 +62,7 @@ struct MoodSelectionView: View {
                     .padding(.bottom, 30)
                     
                     // Title Text
-                    Text("How do you feel today?")
+                    Text("How are you feeling right now?")
                         .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 25))
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
@@ -106,6 +115,7 @@ struct MoodSelectionView: View {
                     // Continue Button with Fade Transition
                     NavigationStack{
                         Button(action: {
+                            saveOraclePromptAnswer(id: oracle_prompt_id, answer: String(format: "%.0f", moodValue))
                             navigateToGratitudeView = true
                         }){
                             Text("Continue")
@@ -127,7 +137,7 @@ struct MoodSelectionView: View {
                             navigateToGratitudeView = true
                         }
                         .navigationDestination(isPresented: $navigateToGratitudeView) {
-                            GratitudeView(selectedGardenElement: selectedElement)
+                            GratitudeView(selectedGardenElement: selectedElement, type: type, tab: tab, activity: activity, level : journalingLessonCount)
                                 .navigationBarHidden(true)
                         }
                     }
@@ -136,14 +146,74 @@ struct MoodSelectionView: View {
                     .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.0)))// Fade transition// Avoid default NavigationLink styling
                 }
             }
+            .onAppear{
+                
+                fetchOraclePrompt()
+            }
+        }
+    }
+    
+    func fetchOraclePrompt() {
+
+        let fetchRequest = FetchDescriptor<OraclePrompt>(
+            predicate: #Predicate {
+                $0.type == type &&
+//                $0.tab == tab &&
+//                $0.activity == activity &&
+                $0.level == journalingLessonCount &&
+                $0.seq == 1
+            },
+            sortBy: [
+                SortDescriptor(\OraclePrompt.level),  // Sort by level
+                SortDescriptor(\OraclePrompt.seq)     // Then sort by seq
+            ]
+        )
+
+        do {
+            
+            let fetchedResults = try modelContext.fetch(fetchRequest)
+            
+            if let firstPrompt = fetchedResults.first {
+               
+               oracle_prompt = firstPrompt.text
+               oracle_prompt_id = firstPrompt.id
+               
+           } else {
+               
+               print("No oracle prompts found matching the criteria.")
+           }
+
+        } catch {
+            print("Failed to fetch OraclePrompt: \(error)")
+        }
+    }
+    
+    func saveOraclePromptAnswer(id: Int, answer: String) {
+                    
+        let promptAnswer = OraclePromptAnswer(
+            type: type,
+            prompt_id: id,
+            tab: tab,
+            activity: activity,
+            level:  journalingLessonCount,
+            answer: answer,
+            date: Date()
+        )
+        
+        do {
+            modelContext.insert(promptAnswer)
+            try modelContext.save()
+            print("OraclePromptAnswer saved successfully.")
+        } catch {
+            print("Failed to save OraclePromptAnswer: \(error)")
         }
     }
 }
 
-struct MoodSelectionView_Previews: PreviewProvider {
-    static var gardenElements: GardenElementData =
-    GardenElementData(name: "christmastree", type: .png("christmastree"))
-    static var previews: some View {
-        MoodSelectionView(selectedGardenElement: gardenElements)
-    }
-}
+//struct MoodSelectionView_Previews: PreviewProvider {
+//    static var gardenElements: GardenElementData =
+//    GardenElementData(name: "christmastree", type: .png("christmastree"))
+//    static var previews: some View {
+//        MoodSelectionView(selectedGardenElement: gardenElements)
+//    }
+//}

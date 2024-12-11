@@ -11,6 +11,14 @@ struct SelfReflectionView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var oracleTips_journaling: [OracleTip] = []
     
+    //for prompt
+    var type: String
+    var tab : String
+    var activity : String
+    var level : Int
+    @State var oracle_prompt: String = ""
+    @State var oracle_prompt_id: Int = 0;
+    
     var body: some View {
         let selectedElement = selectedGardenElement
         NavigationStack {
@@ -52,16 +60,18 @@ struct SelfReflectionView: View {
                         //                            .frame(width: 90, height: 90)
                         //                            .foregroundColor(Color.purple)
                     }
-                    .padding(.bottom, 30)
+                    .padding(.bottom, 25)
                     
                     // Title Text
-                    Text("What’s one thing you learned about yourself today?")
-                        .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 25))
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 20)
-                        .shadow(radius: 5)
+                    ScrollView{
+                        Text(oracle_prompt.isEmpty ? "What’s one thing you learned about yourself today?" : oracle_prompt)
+                            .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 25))
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 20)
+                            .shadow(radius: 5)
+                    }
                     
                     // Tips Button in the center
                     NavigationLink(destination: JournalingOracleTipsView(oracleTips: oracleTips_journaling)) {
@@ -80,7 +90,7 @@ struct SelfReflectionView: View {
                     // Text Input Area
                     TextEditor(text: $reflectionText)
                         .padding()
-                        .frame(height: 200)
+                        .frame(height: 180)
                         .background(Color.white.opacity(0.9))
                         .cornerRadius(15)
                         .shadow(radius: 5)
@@ -92,6 +102,7 @@ struct SelfReflectionView: View {
                     // Continue Button with Fade Transition
                     NavigationStack {
                         Button(action: {
+                            saveOraclePromptAnswer(id: oracle_prompt_id, answer: reflectionText)
                             navigateToGoalSetting = true
                         }) {
                             Text("Continue")
@@ -122,9 +133,10 @@ struct SelfReflectionView: View {
                     .navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.0)))// Avoid default NavigationLink styling
                 }
             }
-            .onDisappear {
+            .onAppear {
                 
                 fetchOracleTips()
+                fetchOraclePrompt()
             }
         }
     }
@@ -156,13 +168,70 @@ struct SelfReflectionView: View {
            print("Failed to fetch OracleTips: \(error)")
        }
     }
-}
-
-struct SelfReflectionView_Previews: PreviewProvider {
-    static var gardenElements: GardenElementData =
-    GardenElementData(name: "christmastree", type: .png("christmastree"))
     
-    static var previews: some View {
-        SelfReflectionView(selectedGardenElement:gardenElements)
+    func fetchOraclePrompt() {
+        
+        let fetchRequest = FetchDescriptor<OraclePrompt>(
+            predicate: #Predicate {
+                $0.type == type &&
+//                $0.tab == tab &&
+//                $0.activity == activity &&
+                $0.level == level &&
+                $0.seq == 3
+            },
+            sortBy: [
+                SortDescriptor(\OraclePrompt.level),  // Sort by level
+                SortDescriptor(\OraclePrompt.seq)     // Then sort by seq
+            ]
+        )
+
+        do {
+            
+            let fetchedResults = try modelContext.fetch(fetchRequest)
+            
+            if let firstPrompt = fetchedResults.first {
+               
+               oracle_prompt = firstPrompt.text
+               oracle_prompt_id = firstPrompt.id
+               
+           } else {
+               
+               print("No oracle prompts found matching the criteria.")
+           }
+            
+        } catch {
+            print("Failed to fetch OraclePrompt: \(error)")
+        }
+    }
+        
+    func saveOraclePromptAnswer(id: Int, answer: String) {
+
+
+        let promptAnswer = OraclePromptAnswer(
+            type: type,
+            prompt_id: id,
+            tab: tab,
+            activity: activity,
+            level:  level,
+            answer: answer,
+            date: Date()
+        )
+        
+        do {
+            modelContext.insert(promptAnswer)
+            try modelContext.save() 
+            print("OraclePromptAnswer saved successfully.")
+        } catch {
+            print("Failed to save OraclePromptAnswer: \(error)")
+        }
     }
 }
+
+//struct SelfReflectionView_Previews: PreviewProvider {
+//    static var gardenElements: GardenElementData =
+//    GardenElementData(name: "christmastree", type: .png("christmastree"))
+//    
+//    static var previews: some View {
+//        SelfReflectionView(selectedGardenElement:gardenElements)
+//    }
+//}

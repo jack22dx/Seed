@@ -16,6 +16,14 @@ struct GratitudeView: View {
     @State private var gratitudeText: String = "" // For the user input in the text area
     @State private var navigateToSelfReflection = false // Tracks navigation to SelfReflectionView
     
+    //for prompt
+    var type: String
+    var tab : String
+    var activity : String
+    var level : Int
+    @State var oracle_prompt: String = ""
+    @State var oracle_prompt_id: Int = 0;
+    
     var body: some View {
         
 //         let gardenElements: [GardenElementData] = [
@@ -57,7 +65,7 @@ struct GratitudeView: View {
                 
                 VStack {
                     Spacer()
-                    
+
                     // Decorative Circle with Flower Image
                     ZStack {
                         Circle()
@@ -87,21 +95,21 @@ struct GratitudeView: View {
                         //                            .frame(width: 90, height: 90)
                         //                            .foregroundColor(Color.purple)
                     }
-                    .padding(.bottom, 30)
-                    
                     // Title Text
-                    Text("What’s one thing you’re grateful for today?")
-                        .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 25))
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 20)
-                        .shadow(radius: 5)
+                    ScrollView{
+                        Text(oracle_prompt.isEmpty ? "What’s one thing you’re grateful for today?" : oracle_prompt)
+                            .font(Font.custom("FONTSPRING DEMO - Visby CF Demi Bold", size: 25))
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 20)
+                            .shadow(radius: 5)
+                    }
                     
                     // Tips Button
                     // Tips Button in the center
                     NavigationLink(destination: JournalingOracleTipsView(oracleTips: oracleTips_journaling)) {
-                        Text("Tips")
+                            Text("Tips")
                             .font(Font.custom("Visby", size: 14))
                             .foregroundColor(.white)
                             .padding(.horizontal, 20)
@@ -116,7 +124,7 @@ struct GratitudeView: View {
                     // Text Input Area
                     TextEditor(text: $gratitudeText)
                         .padding()
-                        .frame(height: 200)
+                        .frame(height: 180)
                         .background(Color.white.opacity(0.9))
                         .cornerRadius(15)
                         .shadow(radius: 5)
@@ -127,6 +135,7 @@ struct GratitudeView: View {
                     
                     // Continue Button with Fade Transition
                     Button(action: {
+                        saveOraclePromptAnswer(id: oracle_prompt_id, answer: gratitudeText)
                         navigateToSelfReflection = true // Set the state to trigger navigation
                     }) {
                         Text("Continue")
@@ -146,15 +155,16 @@ struct GratitudeView: View {
                     }
                     // Navigation Destination
                     .navigationDestination(isPresented: $navigateToSelfReflection) {
-                        SelfReflectionView( selectedGardenElement: selectedElement)
+                        SelfReflectionView( selectedGardenElement: selectedElement, type: type, tab: tab, activity: activity, level : level)
                             .navigationBarHidden(true)
                     }
                     .padding(.bottom, 50)
                     .buttonStyle(PlainButtonStyle()).navigationTransition(.fade(.cross).animation(.easeInOut(duration: 1.0))) // Avoid default NavigationLink styling
                 }
-                .onDisappear {
+                .onAppear{
                     
                     fetchOracleTips()
+                    fetchOraclePrompt()
                 }
             }
         }
@@ -186,6 +196,62 @@ struct GratitudeView: View {
        } catch {
            print("Failed to fetch OracleTips: \(error)")
        }
+    }
+    
+    func fetchOraclePrompt() {
+        
+        let fetchRequest = FetchDescriptor<OraclePrompt>(
+            predicate: #Predicate {
+                $0.type == type &&
+//                $0.tab == tab &&
+//                $0.activity == activity &&
+                $0.level == level &&
+                $0.seq == 2
+            },
+            sortBy: [
+                SortDescriptor(\OraclePrompt.level),  // Sort by level
+                SortDescriptor(\OraclePrompt.seq)     // Then sort by seq
+            ]
+        )
+
+        do {
+            
+            let fetchedResults = try modelContext.fetch(fetchRequest)
+            
+            if let firstPrompt = fetchedResults.first {
+               
+               oracle_prompt = firstPrompt.text
+               oracle_prompt_id = firstPrompt.id
+               
+           } else {
+               
+               print("No oracle prompts found matching the criteria.")
+           }
+            
+        } catch {
+            print("Failed to fetch OraclePrompt: \(error)")
+        }
+    }
+        
+    func saveOraclePromptAnswer(id: Int, answer: String) {
+
+        let promptAnswer = OraclePromptAnswer(
+            type: type,
+            prompt_id: id,
+            tab: tab,
+            activity: activity,
+            level:  level,
+            answer: answer,
+            date: Date()
+        )
+        
+        do {
+            modelContext.insert(promptAnswer)
+            try modelContext.save()  // 儲存到資料庫
+            print("OraclePromptAnswer saved successfully.")
+        } catch {
+            print("Failed to save OraclePromptAnswer: \(error)")
+        }
     }
 }
 
@@ -245,10 +311,10 @@ struct JournalingOracleTipsView: View {
         }
     }
 }
-struct GratitudeView_Previews: PreviewProvider {
-    static var gardenElements: GardenElementData =
-    GardenElementData(name: "christmastree", type: .png("christmastree"))
-    static var previews: some View {
-        GratitudeView(selectedGardenElement: gardenElements)
-    }
-}
+//struct GratitudeView_Previews: PreviewProvider {
+//    static var gardenElements: GardenElementData =
+//    GardenElementData(name: "christmastree", type: .png("christmastree"))
+//    static var previews: some View {
+//        GratitudeView(selectedGardenElement: gardenElements)
+//    }
+//}

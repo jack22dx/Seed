@@ -52,6 +52,7 @@ struct VirtualGardenView: View {
             position: CGPoint(x: 300, y: 50),
             scale: 1.0,
             isVisible: true
+            
         )
     ]
     @State private var navigateToGardenView = false

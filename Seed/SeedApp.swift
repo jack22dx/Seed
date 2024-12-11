@@ -30,10 +30,10 @@ struct SeedApp: App {
     
     var body: some Scene {
         WindowGroup {
-            //            WelcomeView()
+                        WelcomeView()
             //            MeditationActivitiesView()
             //.environment(\.managedObjectContext, persistenceController.container.viewContext)
-            ActivitiesView()
+//            ActivitiesView()
                 .environment(\.modelContext, container.mainContext)
         }
     }

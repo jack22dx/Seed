@@ -257,8 +257,7 @@ struct JournalingView: View {
     }
     
     private func  changeOracleFacts(){
-        
-        var changeOracleId = Int.random(in: 1...8)
+        let changeOracleId = Int.random(in: 1...8)
         fetchOracleFacts(randomOracleId: changeOracleId)
         startTextAnimation(fullText: fullText)
         

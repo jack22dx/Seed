@@ -28,13 +28,13 @@ struct DigitalDetoxView: View {
         
         let gardenElements: [GardenElementData] = [
             GardenElementData(name: "Turtle", type: .png("turtle")),
-            GardenElementData(name: "Pine Tree", type: .gif("pinetree")),
+            GardenElementData(name: "Pine Tree", type: .png("pinetree")),
             GardenElementData(name: "Snow Mountain", type: .png("snowmountain")),
             GardenElementData(name: "Yellow Tree", type: .png("yellowtree")),
-            GardenElementData(name: "Rabbit", type: .png("rabbit")),
-            GardenElementData(name: "Duck", type: .png("duck")),
-            GardenElementData(name: "Cat", type: .png("cat")),
-            GardenElementData(name: "Bird", type: .png("bird")),
+            GardenElementData(name: "Rabbit", type: .gif("rabbit")),
+            GardenElementData(name: "Duck", type: .gif("duck")),
+            GardenElementData(name: "Cat", type: .gif("cat")),
+            GardenElementData(name: "Bird", type: .gif("bird")),
         ]
         
         // Compute selected garden element based on time

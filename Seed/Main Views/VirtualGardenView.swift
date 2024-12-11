@@ -197,6 +197,8 @@ struct AddElementsView: View {
     @Query private var lessons: [LessonInfor]
     @Query private var elementForGarden: [ElementForGarden]
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss // 獲取 dismiss 方法
+
     // This is a computed property to get the "Meditation" lesson count
     private var meditationLessonCount: Int {
         getLessonCount(name: "Meditation")
@@ -297,6 +299,8 @@ struct AddElementsView: View {
                                     Button(action: {
                                         // Add selected element to gardenElements
                                         gardenElements.append(element)
+                                        dismiss() // 點擊後也返回上一層
+
                                     }) {
                                         VStack {
                                             // Display image or GIF based on element type

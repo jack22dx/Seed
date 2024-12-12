@@ -18,7 +18,7 @@ struct JournalingView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var oracleFacts_journaling: [OracleFact] = []
     @State private var clickTimes = 0;
-    @State private var  fullText = "A digital detox can reduce stress, improve focus, and boost your mood by giving your mind a chance to rest."
+    @State private var  fullText = "Journaling can reduce stress, improve focus, and boost your mood by giving your mind a chance to rest."
     
     var body: some View {
         

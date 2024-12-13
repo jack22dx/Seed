@@ -130,6 +130,23 @@ struct VirtualGardenView: View {
                         }
                     }
                 }
+
+                    // Draggable elements
+                    ForEach($gardenElements) { $element in
+                        Circle()
+                            .fill(Color.green.opacity(0.0))
+                            .frame(width: 100, height: 100)
+                            .position(element.position)
+                            .gesture(
+                                DragGesture()
+                                    .onChanged { value in
+                                        element.position = value.location
+                                    }
+                                    .onEnded { value in
+                                        saveElementPositions()
+                                    }
+                            )
+                    }
                 
                 // Top Controls: Plus and Gear
                 VStack {
@@ -155,19 +172,6 @@ struct VirtualGardenView: View {
                     
                     Spacer()
                 }
-                    // Draggable elements
-                    ForEach($gardenElements) { $element in
-                        Circle()
-                            .fill(Color.green.opacity(0.0))
-                            .frame(width: 100, height: 100)
-                            .position(element.position)
-                            .gesture(
-                                DragGesture()
-                                    .onChanged { value in
-                                        element.position = value.location
-                                    }
-                            )
-                    }
                 
                 // Fixed Bottom Navigation Bar
                 VStack {
@@ -188,11 +192,32 @@ struct VirtualGardenView: View {
                 navigateToAddElementsView = false
             }
         }
-
-
+        .onAppear {
+            loadElementPositions()
+        }
         .navigationTransition(
             .fade(.cross).animation(.easeInOut(duration: 2.0))
         )
+    }
+    private func saveElementPositions() {
+        let positions = gardenElements.map { ["x": $0.position.x, "y": $0.position.y] }
+        UserDefaults.standard.set(positions, forKey: "gardenElementPositions")
+    }
+
+    private func loadElementPositions() {
+        guard let positions = UserDefaults.standard.array(forKey: "gardenElementPositions") as? [[String: CGFloat]] else { return }
+        gardenElements = positions.map { dict in
+            let x = dict["x"] ?? 0
+            let y = dict["y"] ?? 0
+            return GardenElement(
+                id: UUID(),
+                name: "DefaultName",
+                type: .png("DefaultType"), // 使用 GardenElementType 枚舉
+                position: CGPoint(x: x, y: y),
+                scale: 1.0,
+                isVisible: true
+            )
+        }
     }
 }
 

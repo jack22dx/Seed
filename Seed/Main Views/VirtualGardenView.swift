@@ -60,6 +60,8 @@ struct VirtualGardenView: View {
     @State private var navigateToSummaryView = false
     @State private var showCongratulationsPopup = false
     @State private var navigateToAddElementsView = false
+    @State private var elementPosition: CGPoint = .zero
+
     
     var body: some View {
         NavigationStack {
@@ -153,7 +155,19 @@ struct VirtualGardenView: View {
                     
                     Spacer()
                 }
-                
+                    // Draggable elements
+                    ForEach($gardenElements) { $element in
+                        Circle()
+                            .fill(Color.green.opacity(0.0))
+                            .frame(width: 100, height: 100)
+                            .position(element.position)
+                            .gesture(
+                                DragGesture()
+                                    .onChanged { value in
+                                        element.position = value.location
+                                    }
+                            )
+                    }
                 
                 // Fixed Bottom Navigation Bar
                 VStack {
